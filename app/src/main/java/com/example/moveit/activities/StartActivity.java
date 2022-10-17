@@ -8,14 +8,14 @@ import android.widget.Button;
 
 import com.example.moveit.R;
 
-public class EntryList extends AppCompatActivity {
+public class StartActivity extends AppCompatActivity {
     private Button registerBtn;
     private Button loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_entry_list);
+        setContentView(R.layout.activity_start);
 
         registerBtn = findViewById(R.id.register);
         loginBtn = findViewById(R.id.login);

@@ -36,19 +36,22 @@ public class RegisterActivity extends AppCompatActivity {
         //Get Firebase Auth Instance:
         auth = FirebaseAuth.getInstance();
 
-        //Register user
+        setUpRegisterButton();
+    }
+
+    private void setUpRegisterButton() {
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = emailInput.getText().toString();
-                String password = passwordInput.getText().toString();
+                String emailText = emailInput.getText().toString();
+                String passwordText = passwordInput.getText().toString();
 
-                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+                if (TextUtils.isEmpty(emailText) || TextUtils.isEmpty(passwordText)) {
                     Toast.makeText(RegisterActivity.this, "Email or Password is empty", Toast.LENGTH_SHORT).show();
-                } else if (password.length() < 8) {
+                } else if (passwordText.length() < 8) {
                     Toast.makeText(RegisterActivity.this, "Password is less than 8 characters", Toast.LENGTH_SHORT).show();
                 } else {
-                    registerUser(email, password);
+                    registerUser(emailText, passwordText);
                 }
             }
         });
@@ -60,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Toast.makeText(RegisterActivity.this, "Successfully registered", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(RegisterActivity.this, EntriesList.class));
                 } else {
                     Toast.makeText(RegisterActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
                 }
