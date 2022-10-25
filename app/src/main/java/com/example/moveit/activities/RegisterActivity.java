@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 public class RegisterActivity extends AppCompatActivity {
     private EditText emailInput;
     private EditText passwordInput;
@@ -27,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_register);
 
         emailInput = findViewById(R.id.email);
@@ -36,10 +40,10 @@ public class RegisterActivity extends AppCompatActivity {
         //Get Firebase Auth Instance:
         auth = FirebaseAuth.getInstance();
 
-        setUpRegisterButton();
+        setUpRegisterBtn();
     }
 
-    private void setUpRegisterButton() {
+    private void setUpRegisterBtn() {
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,5 +77,17 @@ public class RegisterActivity extends AppCompatActivity {
 
     public static Intent makeIntent(Context context) {
         return new Intent(context, RegisterActivity.class);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemID = item.getItemId();
+
+        if (itemID == android.R.id.home) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
