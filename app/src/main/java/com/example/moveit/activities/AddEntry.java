@@ -3,10 +3,11 @@ package com.example.moveit.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-
 import com.example.moveit.R;
 import com.example.moveit.model.Entry;
 
@@ -15,10 +16,7 @@ import java.util.Objects;
 public class AddEntry extends AppCompatActivity {
 
     private Button saveBtn;
-    private ImageView green;
-    private ImageView yellow;
-    private ImageView red;
-    private Entry currentEntry;
+    private Entry currentEntry; //?
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +24,35 @@ public class AddEntry extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_add_entry);
 
-        //setUpMoods();
+        currentEntry = new Entry();
+
+        setUpMoods();
         //setUpSaveBtn();
+    }
+
+    private void setUpMoods() {
+        ImageView green = findViewById(R.id.green_circle);
+        ImageView yellow = findViewById(R.id.yellow_circle);
+        ImageView red = findViewById(R.id.red_circle);
+
+        green.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentEntry.setMood("GOOD");
+            }
+        });
+        yellow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentEntry.setMood("OK");
+            }
+        });
+        red.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentEntry.setMood("BAD");
+            }
+        });
     }
 
     @Override

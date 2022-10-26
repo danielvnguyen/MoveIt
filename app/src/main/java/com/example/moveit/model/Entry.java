@@ -1,19 +1,21 @@
 package com.example.moveit.model;
 
 import android.media.Image;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Entry {
     private String mood;
-    private Activity[] activities;
-    private Meal[] meals;
+    private ArrayList<Activity> activities;
+    private ArrayList<Meal> meals;
     private Integer calories;
     private Date date;
     private String note;
-    private Image[] images;
+    private ArrayList<Image> images;
 
-    public Entry(String mood, Activity[] activities, Meal[] meals, Integer calories,
-                 Date date, String note, Image[] images) {
+    public Entry(String mood, ArrayList<Activity> activities, ArrayList<Meal> meals, Integer calories,
+                 Date date, String note, ArrayList<Image> images) {
         this.mood = mood;
         this.activities = activities;
         this.meals = meals;
@@ -21,6 +23,16 @@ public class Entry {
         this.date = date;
         this.note = note;
         this.images = images;
+    }
+
+    public Entry() {
+        this.mood = "";
+        this.activities = null;
+        this.meals = null;
+        this.calories = 0;
+        this.date = null;
+        this.note = "";
+        this.images = null;
     }
 
     public String getMood() {
@@ -31,19 +43,19 @@ public class Entry {
         this.mood = mood;
     }
 
-    public Activity[] getActivities() {
+    public ArrayList<Activity> getActivities() {
         return activities;
     }
 
-    public void setActivities(Activity[] activities) {
+    public void setActivities(ArrayList<Activity> activities) {
         this.activities = activities;
     }
 
-    public Meal[] getMeals() {
+    public ArrayList<Meal> getMeals() {
         return meals;
     }
 
-    public void setMeals(Meal[] meals) {
+    public void setMeals(ArrayList<Meal> meals) {
         this.meals = meals;
     }
 
@@ -71,11 +83,11 @@ public class Entry {
         this.note = note;
     }
 
-    public Image[] getImages() {
+    public ArrayList<Image> getImages() {
         return images;
     }
 
-    public void setImages(Image[] images) {
+    public void setImages(ArrayList<Image> images) {
         this.images = images;
     }
 }
