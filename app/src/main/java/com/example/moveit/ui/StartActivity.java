@@ -1,4 +1,4 @@
-package com.example.moveit.activities;
+package com.example.moveit.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 

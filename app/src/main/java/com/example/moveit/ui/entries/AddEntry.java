@@ -1,9 +1,8 @@
-package com.example.moveit.activities;
+package com.example.moveit.ui.entries;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +15,7 @@ import java.util.Objects;
 public class AddEntry extends AppCompatActivity {
 
     private Button saveBtn;
-    private Entry currentEntry; //?
+    private Entry currentEntry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

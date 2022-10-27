@@ -10,19 +10,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".activities.ActivitiesList"
+            android:name=".ui.meals.AddMeal"
             android:exported="false" />
         <activity
-            android:name=".activities.EntriesList"
+            android:name=".ui.meals.MealList"
             android:exported="false" />
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".ui.activities.ActivitiesList"
             android:exported="false" />
         <activity
-            android:name=".activities.RegisterActivity"
+            android:name=".ui.entries.EntriesList"
             android:exported="false" />
         <activity
-            android:name=".activities.StartActivity"
+            android:name=".ui.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.AddEntry"
+            android:name=".ui.entries.AddEntry"
             android:exported="false" />
     </application>
 

@@ -8,4 +8,9 @@
     <string name="logout">Log out</string>
     <string name="save">Save</string>
     <string name="entry_prompt">How did your day go?</string>
+    <string name="meal_name">Meal Name</string>
+    <string name="calories">Calories</string>
+    <string name="note">Notes</string>
+    <string name="meals">Meals</string>
+    <string name="activities">Activities</string>
 </resources>

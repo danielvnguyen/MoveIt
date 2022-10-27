@@ -1,4 +1,4 @@
-package com.example.moveit.activities;
+package com.example.moveit.ui.entries;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.moveit.R;
+import com.example.moveit.ui.StartActivity;
+import com.example.moveit.ui.activities.ActivitiesList;
+import com.example.moveit.ui.meals.MealList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -27,6 +30,28 @@ public class EntriesList extends AppCompatActivity {
 
         setUpLogOutBtn();
         setUpAddEntryBtn();
+        setUpMealsBtn();
+        setUpActivitiesBtn();
+    }
+
+    private void setUpMealsBtn() {
+        Button editMealsBtn = findViewById(R.id.editMeals);
+        editMealsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(EntriesList.this, MealList.class));
+            }
+        });
+    }
+
+    private void setUpActivitiesBtn() {
+        Button editActivitiesBtn = findViewById(R.id.editActivities);
+        editActivitiesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(EntriesList.this, ActivitiesList.class));
+            }
+        });
     }
 
     private void setUpLogOutBtn() {

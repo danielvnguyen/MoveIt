@@ -1,16 +1,25 @@
 package com.example.moveit.model;
 
-import android.media.Image;
+import android.net.Uri;
 
 public class Meal {
     private String name;
     private Integer calories;
-    private Image image;
+    private Uri image;
+    private String note;
 
-    public Meal(String name, Integer calories, Image image) {
+    //to-do: add image uri to constructor
+    public Meal(String name, Integer calories, String note) {
         this.name = name;
         this.calories = calories;
-        this.image = image;
+        this.note = note;
+    }
+
+    public Meal() {
+        this.name = "";
+        this.calories = 0;
+        this.image = null;
+        this.note = "";
     }
 
     public String getName() {
@@ -29,7 +38,19 @@ public class Meal {
         this.calories = calories;
     }
 
-    public Image getImage() {
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public Uri getImage() {
         return image;
+    }
+
+    public void setImage(Uri image) {
+        this.image = image;
     }
 }
