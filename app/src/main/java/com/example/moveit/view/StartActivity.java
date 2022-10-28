@@ -21,11 +21,6 @@ public class StartActivity extends AppCompatActivity {
         Button registerBtn = findViewById(R.id.register);
         Button loginBtn = findViewById(R.id.login);
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            startActivity(new Intent(StartActivity.this, EntriesList.class));
-        }
-
         registerBtn.setOnClickListener((v) -> {
             Intent intent = RegisterActivity.makeIntent(this);
             startActivity(intent);
@@ -35,5 +30,14 @@ public class StartActivity extends AppCompatActivity {
             Intent intent = LoginActivity.makeIntent(this);
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            startActivity(new Intent(StartActivity.this, EntriesList.class));
+        }
     }
 }
