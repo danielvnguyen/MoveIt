@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -38,7 +40,24 @@ public class LoginActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
+        setUpShowHideBtn();
         setUpLoginBtn();
+    }
+
+    private void setUpShowHideBtn() {
+        Button showHideBtn = findViewById(R.id.showHideBtn);
+        showHideBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(showHideBtn.getText().toString().equals("Show")){
+                    passwordInput.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    showHideBtn.setText(R.string.hide);
+                } else{
+                    passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    showHideBtn.setText(R.string.show);
+                }
+            }
+        });
     }
 
     private void setUpLoginBtn() {

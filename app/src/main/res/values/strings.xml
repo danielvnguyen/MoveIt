@@ -13,4 +13,6 @@
     <string name="note">Notes</string>
     <string name="meals">Meals</string>
     <string name="activities">Activities</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
 </resources>
