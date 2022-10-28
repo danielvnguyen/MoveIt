@@ -1,4 +1,4 @@
-package com.example.moveit.ui.entries;
+package com.example.moveit.view.entries;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,9 +9,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.moveit.R;
-import com.example.moveit.ui.StartActivity;
-import com.example.moveit.ui.activities.ActivitiesList;
-import com.example.moveit.ui.meals.MealList;
+import com.example.moveit.view.StartActivity;
+import com.example.moveit.view.activities.ActivitiesList;
+import com.example.moveit.view.meals.MealList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 

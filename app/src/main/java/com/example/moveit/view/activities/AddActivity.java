@@ -1,4 +1,4 @@
-package com.example.moveit.ui.activities;
+package com.example.moveit.view.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import com.example.moveit.R;
 
-public class ActivitiesList extends AppCompatActivity {
+public class AddActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_activities_list);
+        setContentView(R.layout.activity_add);
     }
 }

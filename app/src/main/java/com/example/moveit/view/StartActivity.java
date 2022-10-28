@@ -1,4 +1,4 @@
-package com.example.moveit.ui;
+package com.example.moveit.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,18 +7,24 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import com.example.moveit.R;
+import com.example.moveit.view.entries.EntriesList;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class StartActivity extends AppCompatActivity {
-    private Button registerBtn;
-    private Button loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        registerBtn = findViewById(R.id.register);
-        loginBtn = findViewById(R.id.login);
+        Button registerBtn = findViewById(R.id.register);
+        Button loginBtn = findViewById(R.id.login);
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            startActivity(new Intent(StartActivity.this, EntriesList.class));
+        }
 
         registerBtn.setOnClickListener((v) -> {
             Intent intent = RegisterActivity.makeIntent(this);

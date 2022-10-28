@@ -1,4 +1,4 @@
-package com.example.moveit.ui.meals;
+package com.example.moveit.view.meals;
 
 import androidx.appcompat.app.AppCompatActivity;
 

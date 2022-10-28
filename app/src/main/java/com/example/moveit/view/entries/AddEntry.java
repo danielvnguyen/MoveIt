@@ -1,4 +1,4 @@
-package com.example.moveit.ui.entries;
+package com.example.moveit.view.entries;
 
 import androidx.appcompat.app.AppCompatActivity;
 
