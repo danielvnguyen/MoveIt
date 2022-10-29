@@ -2,6 +2,8 @@ package com.example.moveit.model;
 
 import android.media.Image;
 
+import com.example.moveit.model.meals.Meal;
+
 import java.util.ArrayList;
 import java.util.Date;
 

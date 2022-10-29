@@ -1,4 +1,4 @@
-package com.example.moveit.model;
+package com.example.moveit.model.meals;
 
 import android.net.Uri;
 

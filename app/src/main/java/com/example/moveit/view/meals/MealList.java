@@ -1,19 +1,27 @@
 package com.example.moveit.view.meals;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.moveit.R;
-import com.example.moveit.model.Meal;
+import com.example.moveit.model.meals.Meal;
+import com.example.moveit.model.meals.MealListAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -21,13 +29,14 @@ import java.util.Objects;
 public class MealList extends AppCompatActivity {
 
     private FloatingActionButton addMealBtn;
-    private ArrayAdapter<Meal> listAdapter;
+    private ArrayAdapter<Meal> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_meal_list);
+        setTitle(getString(R.string.your_meals));
 
         addMealBtn = findViewById(R.id.addMeal);
 
@@ -37,17 +46,36 @@ public class MealList extends AppCompatActivity {
 
     protected void onStart() {
         super.onStart();
-        listAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     private void setUpMealList() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         assert currentUser != null;
 
         ListView mealListView = findViewById(R.id.mealList);
-        ArrayList<Meal> mealList = new ArrayList<>();
-        listAdapter = new ArrayAdapter<>(this, R.layout.meal_list_item, mealList);
-        mealListView.setAdapter(listAdapter);
+        adapter = new MealListAdapter(MealList.this, R.layout.item_meal);
+        mealListView.setAdapter(adapter);
+
+        db.collection("meals").document(currentUser.getUid()).collection("mealList").get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ArrayList<Meal> mealList = new ArrayList<>();
+                            for (QueryDocumentSnapshot mealDoc : Objects.requireNonNull(task.getResult())) {
+                                Meal currentMeal = mealDoc.toObject(Meal.class);
+                                mealList.add(currentMeal);
+                            }
+
+                            adapter.clear();
+                            adapter.addAll(mealList);
+                        } else {
+                            Log.d("MealList", "Error retrieving documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
     private void setUpAddMealBtn() {
