@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import com.example.moveit.R;
@@ -34,24 +33,9 @@ public class AddEntry extends AppCompatActivity {
         ImageView yellow = findViewById(R.id.yellow_circle);
         ImageView red = findViewById(R.id.red_circle);
 
-        green.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentEntry.setMood("GOOD");
-            }
-        });
-        yellow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentEntry.setMood("OK");
-            }
-        });
-        red.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentEntry.setMood("BAD");
-            }
-        });
+        green.setOnClickListener(v -> currentEntry.setMood("GOOD"));
+        yellow.setOnClickListener(v -> currentEntry.setMood("OK"));
+        red.setOnClickListener(v -> currentEntry.setMood("BAD"));
     }
 
     @Override

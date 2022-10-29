@@ -8,15 +8,12 @@ import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.view.entries.EntriesList;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
@@ -46,39 +43,30 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setUpShowHideBtn() {
         Button showHideBtn = findViewById(R.id.showHideBtn);
-        showHideBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(showHideBtn.getText().toString().equals("Show")){
-                    passwordInput.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    showHideBtn.setText(R.string.hide);
-                } else{
-                    passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    showHideBtn.setText(R.string.show);
-                }
+        showHideBtn.setOnClickListener(v -> {
+            if(showHideBtn.getText().toString().equals("Show")){
+                passwordInput.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                showHideBtn.setText(R.string.hide);
+            } else{
+                passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                showHideBtn.setText(R.string.show);
             }
         });
     }
 
     private void setUpLoginBtn() {
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String emailText = emailInput.getText().toString();
-                String passwordText = passwordInput.getText().toString();
-                loginUser(emailText, passwordText);
-            }
+        loginBtn.setOnClickListener(v -> {
+            String emailText = emailInput.getText().toString();
+            String passwordText = passwordInput.getText().toString();
+            loginUser(emailText, passwordText);
         });
     }
 
     private void loginUser(String email, String password) {
-        auth.signInWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-            @Override
-            public void onSuccess(AuthResult authResult) {
-                Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(LoginActivity.this, EntriesList.class));
-                finish();
-            }
+        auth.signInWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
+            Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(LoginActivity.this, EntriesList.class));
+            finish();
         });
     }
 

@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -36,41 +35,23 @@ public class EntriesList extends AppCompatActivity {
 
     private void setUpMealsBtn() {
         Button editMealsBtn = findViewById(R.id.editMeals);
-        editMealsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(EntriesList.this, MealList.class));
-            }
-        });
+        editMealsBtn.setOnClickListener(v -> startActivity(new Intent(EntriesList.this, MealList.class)));
     }
 
     private void setUpActivitiesBtn() {
         Button editActivitiesBtn = findViewById(R.id.editActivities);
-        editActivitiesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(EntriesList.this, ActivitiesList.class));
-            }
-        });
+        editActivitiesBtn.setOnClickListener(v -> startActivity(new Intent(EntriesList.this, ActivitiesList.class)));
     }
 
     private void setUpLogOutBtn() {
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Toast.makeText(EntriesList.this, "Log Out Successful", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(EntriesList.this, StartActivity.class));
-            }
+        logoutBtn.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(EntriesList.this, "Log Out Successful", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(EntriesList.this, StartActivity.class));
         });
     }
 
     private void setUpAddEntryBtn() {
-        addEntryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(EntriesList.this, AddEntry.class));
-            }
-        });
+        addEntryBtn.setOnClickListener(v -> startActivity(new Intent(EntriesList.this, AddEntry.class)));
     }
 }

@@ -2,6 +2,8 @@ package com.example.moveit.model.meals;
 
 import android.net.Uri;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class Meal {
     private String name;
     private Integer calories;
@@ -51,5 +53,11 @@ public class Meal {
 
     public void setImage(Uri image) {
         this.image = image;
+    }
+
+    public String getId(String userId) {
+        String mealId = this.name.replaceAll("\\s+","");
+        return FirebaseFirestore.getInstance().collection("meals").document(userId)
+                .collection("mealList").document(mealId).getId();
     }
 }
