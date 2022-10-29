@@ -30,6 +30,9 @@ public class MealList extends AppCompatActivity {
 
     private FloatingActionButton addMealBtn;
     private ArrayAdapter<Meal> adapter;
+    private FirebaseFirestore db;
+    private FirebaseUser currentUser;
+    private ListView mealListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,23 +41,24 @@ public class MealList extends AppCompatActivity {
         setContentView(R.layout.activity_meal_list);
         setTitle(getString(R.string.your_meals));
 
+        db = FirebaseFirestore.getInstance();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert currentUser != null;
+
         addMealBtn = findViewById(R.id.addMeal);
+        mealListView = findViewById(R.id.mealList);
 
         setUpMealList();
         setUpAddMealBtn();
     }
 
-    protected void onStart() {
-        super.onStart();
-        adapter.notifyDataSetChanged();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpMealList();
     }
 
     private void setUpMealList() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert currentUser != null;
-
-        ListView mealListView = findViewById(R.id.mealList);
         adapter = new MealListAdapter(MealList.this, R.layout.item_meal);
         mealListView.setAdapter(adapter);
 

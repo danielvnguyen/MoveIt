@@ -16,4 +16,5 @@
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="your_meals">Your Meals</string>
+    <string name="delete">Delete</string>
 </resources>

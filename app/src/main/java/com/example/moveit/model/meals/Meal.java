@@ -8,7 +8,6 @@ public class Meal {
     private Uri image;
     private String note;
 
-    //to-do: add image uri to constructor
     public Meal(String name, Integer calories, String note) {
         this.name = name;
         this.calories = calories;
