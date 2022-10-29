@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         setUpRegisterBtn();
+        setUpShowHideBtn();
     }
 
     private void setUpRegisterBtn() {
@@ -49,6 +52,19 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this, "Password is less than 8 characters", Toast.LENGTH_SHORT).show();
             } else {
                 registerUser(emailText, passwordText);
+            }
+        });
+    }
+
+    private void setUpShowHideBtn() {
+        Button showHideBtn = findViewById(R.id.showHideBtn);
+        showHideBtn.setOnClickListener(v -> {
+            if(showHideBtn.getText().toString().equals("Show")){
+                passwordInput.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                showHideBtn.setText(R.string.hide);
+            } else{
+                passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                showHideBtn.setText(R.string.show);
             }
         });
     }
