@@ -42,6 +42,7 @@ public class MealList extends AppCompatActivity {
 
         addMealBtn = findViewById(R.id.addMeal);
         mealListView = findViewById(R.id.mealList);
+        mealListView.setEmptyView(findViewById(R.id.emptyTV));
 
         setUpMealList();
         setUpAddMealBtn();

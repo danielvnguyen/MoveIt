@@ -30,7 +30,7 @@ public class AddMeal extends AppCompatActivity {
     private EditText caloriesInput;
     private EditText mealNotesInput;
     private Button deleteBtn;
-    private Boolean editMode;
+    private Boolean editMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,17 +67,19 @@ public class AddMeal extends AppCompatActivity {
 
     private void setUpInterface() {
         mealNameInput = findViewById(R.id.mealName);
+        mealNameInput.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.required,0);
         caloriesInput = findViewById(R.id.caloriesInput);
         mealNotesInput = findViewById(R.id.mealNotes);
         deleteBtn = findViewById(R.id.deleteBtn);
 
         Bundle extras = getIntent().getExtras();
-        editMode = (Boolean) extras.get("editMode");
-        if (editMode) {
+        if (extras != null) {
             setTitle("Editing Meal");
             deleteBtn.setVisibility(View.VISIBLE);
 
+            editMode = (Boolean) extras.get("editMode");
             originalMealId = extras.get("mealId").toString();
+
             String originalName = extras.get("mealName").toString();
             String originalCalories = extras.get("calories").toString();
             String originalNote = extras.get("mealNote").toString();

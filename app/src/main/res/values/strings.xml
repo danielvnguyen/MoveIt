@@ -17,4 +17,5 @@
     <string name="hide">Hide</string>
     <string name="your_meals">Your Meals</string>
     <string name="delete">Delete</string>
+    <string name="empty_list">This list is empty!</string>
 </resources>
