@@ -47,7 +47,7 @@ public class EntriesList extends AppCompatActivity {
         logoutBtn.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             Toast.makeText(EntriesList.this, "Log Out Successful", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(EntriesList.this, StartActivity.class));
+            finish();
         });
     }
 

@@ -33,13 +33,13 @@
 
     <EditText
         android:id="@+id/mealNotes"
-        android:layout_width="400dp"
+        android:layout_width="0dp"
         android:layout_height="100dp"
         android:layout_marginTop="32dp"
         android:ems="10"
         android:gravity="start|top"
-        android:inputType="textMultiLine"
         android:hint="@string/note"
+        android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/caloriesInput" />
@@ -65,4 +65,53 @@
         app:layout_constraintBottom_toTopOf="@+id/saveBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/deleteImgBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="80dp"
+        android:background="@drawable/circle_button"
+        android:scaleType="center"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mealNotes"
+        app:srcCompat="@android:drawable/ic_menu_delete"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/uploadImgBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button"
+        android:scaleType="center"
+        app:layout_constraintEnd_toStartOf="@+id/deleteImgBtn"
+        app:layout_constraintStart_toEndOf="@+id/chooseImageBtn"
+        app:layout_constraintTop_toBottomOf="@+id/mealNotes"
+        app:srcCompat="@android:drawable/ic_menu_upload" />
+
+    <ImageView
+        android:id="@+id/chooseImageBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="80dp"
+        android:background="@drawable/circle_button"
+        android:scaleType="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mealNotes"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+    <ImageView
+        android:id="@+id/mealImageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/deleteBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/uploadImgBtn"
+        tools:srcCompat="@tools:sample/avatars"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
