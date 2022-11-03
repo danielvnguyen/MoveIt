@@ -8,7 +8,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,27 +22,23 @@ import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.model.meals.Meal;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Objects;
+import java.util.UUID;
 
 public class AddMeal extends AppCompatActivity {
 
     private Meal currentMeal;
     private String originalMealId;
+    private String originalImageUrl;
 
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
@@ -53,7 +48,6 @@ public class AddMeal extends AppCompatActivity {
     private final int IMAGE_REQUEST = 1;
 
     private ImageView chooseImgBtn;
-    private ImageView uploadImgBtn;
     private ImageView deleteImgBtn;
 
     private EditText mealNameInput;
@@ -83,6 +77,12 @@ public class AddMeal extends AppCompatActivity {
 
     private void setUpImageOptions() {
         chooseImgBtn.setOnClickListener(v -> selectImage());
+        deleteImgBtn.setOnClickListener(v -> deleteImage());
+    }
+
+    private void deleteImage() {
+        mealImageView.setVisibility(View.INVISIBLE);
+        deleteImgBtn.setVisibility(View.INVISIBLE);
     }
 
     private void selectImage() {
@@ -105,6 +105,7 @@ public class AddMeal extends AppCompatActivity {
                         getContentResolver(), imageUri);
                 mealImageView.setImageBitmap(bitmap);
                 mealImageView.setVisibility(View.VISIBLE);
+                deleteImgBtn.setVisibility(View.VISIBLE);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -116,6 +117,8 @@ public class AddMeal extends AppCompatActivity {
             DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
                     .document(originalMealId);
 
+            StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(originalImageUrl);
+            imageRef.delete();
             selectedMeal.delete().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Toast.makeText(AddMeal.this, "Deleted meal successfully!", Toast.LENGTH_SHORT).show();
@@ -134,7 +137,6 @@ public class AddMeal extends AppCompatActivity {
         mealNotesInput = findViewById(R.id.mealNotes);
         deleteBtn = findViewById(R.id.deleteBtn);
         chooseImgBtn = findViewById(R.id.chooseImageBtn);
-        uploadImgBtn = findViewById(R.id.uploadImgBtn);
         deleteImgBtn = findViewById(R.id.deleteImgBtn);
         mealImageView = findViewById(R.id.mealImageView);
 
@@ -145,10 +147,17 @@ public class AddMeal extends AppCompatActivity {
 
             editMode = (Boolean) extras.get("editMode");
             originalMealId = extras.get("mealId").toString();
+            originalImageUrl = extras.get("mealImageUrl").toString();
 
             String originalName = extras.get("mealName").toString();
             String originalCalories = extras.get("calories").toString();
             String originalNote = extras.get("mealNote").toString();
+
+            if (!originalImageUrl.equals("")) {
+                Picasso.with(mealImageView.getContext()).load(originalImageUrl).fit().into(mealImageView);
+                mealImageView.setVisibility(View.VISIBLE);
+                deleteImgBtn.setVisibility(View.VISIBLE);
+            }
             mealNameInput.setText(originalName);
             caloriesInput.setText(originalCalories);
             mealNotesInput.setText(originalNote);
@@ -167,9 +176,9 @@ public class AddMeal extends AppCompatActivity {
             }
             Integer calories = Integer.parseInt(caloriesInput.getText().toString());
             String mealNotes = mealNotesInput.getText().toString();
+            String mealId = mealName.replaceAll("\\s+","");
             if (editMode) {
                 currentMeal = new Meal(mealName, calories, mealNotes);
-                String mealId = mealName.replaceAll("\\s+","");
                 db.collection("meals").document(currentUser.getUid()).collection("mealList")
                         .document(originalMealId).delete();
                 db.collection("meals").document(currentUser.getUid()).collection("mealList")
@@ -184,35 +193,33 @@ public class AddMeal extends AppCompatActivity {
             } else {
                 if (imageUri != null) {
                     final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child("uploads").
-                            child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
-                    fileRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    String url = uri.toString();
-                                    Log.d("Download URL: ", url);
-                                    currentMeal = new Meal(mealName, calories, mealNotes, url);
-                                }
-                            });
-                        }
-                    });
-                }
-                if (currentMeal == null) {
+                            child(UUID.randomUUID() + "." + getFileExtension(imageUri));
+                    fileRef.putFile(imageUri).addOnCompleteListener(task -> fileRef.getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+                        String url = uri.toString();
+                        currentMeal = new Meal(mealName, calories, mealNotes, url);
+                        handleUpload(currentMeal, mealId);
+                    }));
+                } else {
                     currentMeal = new Meal(mealName, calories, mealNotes, "");
+                    handleUpload(currentMeal, mealId);
                 }
-                String mealId = mealName.replaceAll("\\s+","");
+            }
+        });
+    }
 
-                db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                        .document(mealId).set(currentMeal).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(AddMeal.this, "Saved meal successfully!", Toast.LENGTH_SHORT).show();
-                        finish();
-                    } else {
-                        Toast.makeText(AddMeal.this, "Error saving meal", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//    private void handleUpdate() {
+//
+//    }
+
+    private void handleUpload(Meal meal, String mealId) {
+        db.collection("meals").document(currentUser.getUid()).collection("mealList")
+                .document(mealId).set(meal).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(AddMeal.this, "Saved meal successfully!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(AddMeal.this, "Error saving meal", Toast.LENGTH_SHORT).show();
             }
         });
     }
