@@ -1,16 +1,21 @@
 package com.example.moveit.view.meals;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -18,14 +23,21 @@ import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.model.meals.Meal;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Objects;
 
 public class AddMeal extends AppCompatActivity {
@@ -35,12 +47,10 @@ public class AddMeal extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
-    private FirebaseStorage storage;
-    private StorageReference reference;
 
     private ImageView mealImageView;
-    private Uri filePath;
-    private final int PICK_IMAGE_REQUEST = 22;
+    private Uri imageUri;
+    private final int IMAGE_REQUEST = 1;
 
     private ImageView chooseImgBtn;
     private ImageView uploadImgBtn;
@@ -60,8 +70,6 @@ public class AddMeal extends AppCompatActivity {
         setContentView(R.layout.activity_add_meal);
 
         db = FirebaseFirestore.getInstance();
-        storage = FirebaseStorage.getInstance();
-        reference = storage.getReference();
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
@@ -81,21 +89,20 @@ public class AddMeal extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select image from here:"), PICK_IMAGE_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, "Select image from here:"), IMAGE_REQUEST);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST
+        if (requestCode == IMAGE_REQUEST
                 && resultCode == RESULT_OK
                 && data != null
                 && data.getData() != null) {
-            filePath = data.getData();
+            imageUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                        getContentResolver(), filePath);
-                mealImageView = findViewById(R.id.mealImageView);
+                        getContentResolver(), imageUri);
                 mealImageView.setImageBitmap(bitmap);
                 mealImageView.setVisibility(View.VISIBLE);
             } catch (IOException e) {
@@ -129,6 +136,7 @@ public class AddMeal extends AppCompatActivity {
         chooseImgBtn = findViewById(R.id.chooseImageBtn);
         uploadImgBtn = findViewById(R.id.uploadImgBtn);
         deleteImgBtn = findViewById(R.id.deleteImgBtn);
+        mealImageView = findViewById(R.id.mealImageView);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -159,10 +167,9 @@ public class AddMeal extends AppCompatActivity {
             }
             Integer calories = Integer.parseInt(caloriesInput.getText().toString());
             String mealNotes = mealNotesInput.getText().toString();
-            currentMeal = new Meal(mealName, calories, mealNotes);
-            String mealId = mealName.replaceAll("\\s+","");
-
             if (editMode) {
+                currentMeal = new Meal(mealName, calories, mealNotes);
+                String mealId = mealName.replaceAll("\\s+","");
                 db.collection("meals").document(currentUser.getUid()).collection("mealList")
                         .document(originalMealId).delete();
                 db.collection("meals").document(currentUser.getUid()).collection("mealList")
@@ -175,17 +182,45 @@ public class AddMeal extends AppCompatActivity {
                             }
                         });
             } else {
+                if (imageUri != null) {
+                    final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child("uploads").
+                            child(System.currentTimeMillis() + "." + getFileExtension(imageUri));
+                    fileRef.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String url = uri.toString();
+                                    Log.d("Download URL: ", url);
+                                    currentMeal = new Meal(mealName, calories, mealNotes, url);
+                                }
+                            });
+                        }
+                    });
+                }
+                if (currentMeal == null) {
+                    currentMeal = new Meal(mealName, calories, mealNotes, "");
+                }
+                String mealId = mealName.replaceAll("\\s+","");
+
                 db.collection("meals").document(currentUser.getUid()).collection("mealList")
                         .document(mealId).set(currentMeal).addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(AddMeal.this, "Saved meal successfully!", Toast.LENGTH_SHORT).show();
-                                finish();
-                            } else {
-                                Toast.makeText(AddMeal.this, "Error saving meal", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                    if (task.isSuccessful()) {
+                        Toast.makeText(AddMeal.this, "Saved meal successfully!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(AddMeal.this, "Error saving meal", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
+    }
+
+    private String getFileExtension(Uri imageUri) {
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(imageUri));
     }
 
     @Override

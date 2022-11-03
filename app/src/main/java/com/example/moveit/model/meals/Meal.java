@@ -1,26 +1,32 @@
 package com.example.moveit.model.meals;
 
-import android.net.Uri;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class Meal {
     private String name;
     private Integer calories;
-    private Uri image;
+    private String image;
     private String note;
+
+    public Meal(String name, Integer calories, String note, String image) {
+        this.name = name;
+        this.calories = calories;
+        this.note = note;
+        this.image = image;
+    }
 
     public Meal(String name, Integer calories, String note) {
         this.name = name;
         this.calories = calories;
         this.note = note;
+        this.image = "";
     }
 
     public Meal() {
         this.name = "";
         this.calories = 0;
-        this.image = null;
         this.note = "";
+        this.image = "";
     }
 
     public String getName() {
@@ -47,11 +53,11 @@ public class Meal {
         this.note = note;
     }
 
-    public Uri getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Uri image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
