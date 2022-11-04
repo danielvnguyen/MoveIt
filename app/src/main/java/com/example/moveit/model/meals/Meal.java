@@ -5,28 +5,29 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class Meal {
     private String name;
     private Integer calories;
-    private String image;
+    private String imageId;
     private String note;
 
-    public Meal(String name, Integer calories, String note, String image) {
+    public Meal(String name, Integer calories, String note, String imageId) {
         this.name = name;
         this.calories = calories;
         this.note = note;
-        this.image = image;
+        this.imageId = imageId;
     }
 
     public Meal(String name, Integer calories, String note) {
         this.name = name;
         this.calories = calories;
         this.note = note;
-        this.image = "";
+        this.imageId = "";
     }
 
+    //This is being used
     public Meal() {
         this.name = "";
         this.calories = 0;
         this.note = "";
-        this.image = "";
+        this.imageId = "";
     }
 
     public String getName() {
@@ -53,12 +54,12 @@ public class Meal {
         this.note = note;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
     }
 
     public String getId(String userId) {

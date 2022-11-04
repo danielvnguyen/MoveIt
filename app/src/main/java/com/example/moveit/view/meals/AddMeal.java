@@ -38,9 +38,14 @@ public class AddMeal extends AppCompatActivity {
 
     private Meal currentMeal;
     private String originalMealId;
-    private String originalImageUrl;
+    private String originalImageId;
+    private String originalName;
+    private String originalCalories;
+    private String originalNote;
+    private String currentImageUrl;
 
     private FirebaseFirestore db;
+    private FirebaseStorage storage;
     private FirebaseUser currentUser;
 
     private ImageView mealImageView;
@@ -64,6 +69,7 @@ public class AddMeal extends AppCompatActivity {
         setContentView(R.layout.activity_add_meal);
 
         db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
@@ -117,8 +123,11 @@ public class AddMeal extends AppCompatActivity {
             DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
                     .document(originalMealId);
 
-            StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(originalImageUrl);
-            imageRef.delete();
+            if (!originalImageId.equals("")) {
+                final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
+                        .child("uploads").child(originalImageId);
+                fileRef.delete();
+            }
             selectedMeal.delete().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Toast.makeText(AddMeal.this, "Deleted meal successfully!", Toast.LENGTH_SHORT).show();
@@ -147,16 +156,20 @@ public class AddMeal extends AppCompatActivity {
 
             editMode = (Boolean) extras.get("editMode");
             originalMealId = extras.get("mealId").toString();
-            originalImageUrl = extras.get("mealImageUrl").toString();
+            originalImageId = extras.get("mealImageId").toString();
 
-            String originalName = extras.get("mealName").toString();
-            String originalCalories = extras.get("calories").toString();
-            String originalNote = extras.get("mealNote").toString();
+            originalName = extras.get("mealName").toString();
+            originalCalories = extras.get("calories").toString();
+            originalNote = extras.get("mealNote").toString();
 
-            if (!originalImageUrl.equals("")) {
-                Picasso.with(mealImageView.getContext()).load(originalImageUrl).fit().into(mealImageView);
-                mealImageView.setVisibility(View.VISIBLE);
-                deleteImgBtn.setVisibility(View.VISIBLE);
+            if (!originalImageId.equals("")) {
+                final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
+                        .child("uploads").child(originalImageId);
+                fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String url = uri.toString();
+                    Picasso.with(mealImageView.getContext()).load(url).fit().into(mealImageView);
+                    mealImageView.setVisibility(View.VISIBLE);
+                });
             }
             mealNameInput.setText(originalName);
             caloriesInput.setText(originalCalories);
@@ -177,6 +190,7 @@ public class AddMeal extends AppCompatActivity {
             Integer calories = Integer.parseInt(caloriesInput.getText().toString());
             String mealNotes = mealNotesInput.getText().toString();
             String mealId = mealName.replaceAll("\\s+","");
+
             if (editMode) {
                 currentMeal = new Meal(mealName, calories, mealNotes);
                 db.collection("meals").document(currentUser.getUid()).collection("mealList")
@@ -192,12 +206,12 @@ public class AddMeal extends AppCompatActivity {
                         });
             } else {
                 if (imageUri != null) {
-                    final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child("uploads").
-                            child(UUID.randomUUID() + "." + getFileExtension(imageUri));
+                    String imageId = UUID.randomUUID() + "." + getFileExtension(imageUri);
+                    final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
+                            .child("uploads").child(imageId);
                     fileRef.putFile(imageUri).addOnCompleteListener(task -> fileRef.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
-                        String url = uri.toString();
-                        currentMeal = new Meal(mealName, calories, mealNotes, url);
+                        currentMeal = new Meal(mealName, calories, mealNotes, imageId);
                         handleUpload(currentMeal, mealId);
                     }));
                 } else {
