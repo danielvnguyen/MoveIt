@@ -1,6 +1,5 @@
 package com.example.moveit.view.meals;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,13 +35,14 @@ import java.util.UUID;
 
 public class AddMeal extends AppCompatActivity {
 
-    private Meal currentMeal;
     private String originalMealId;
     private String originalImageId;
     private String originalName;
     private String originalCalories;
     private String originalNote;
-    private String currentImageUrl;
+
+    private Meal currentMeal;
+    private Boolean imageStateAltered = false;
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -57,7 +57,7 @@ public class AddMeal extends AppCompatActivity {
 
     private EditText mealNameInput;
     private EditText caloriesInput;
-    private EditText mealNotesInput;
+    private EditText mealNoteInput;
 
     private Button deleteBtn;
     private Boolean editMode = false;
@@ -89,6 +89,7 @@ public class AddMeal extends AppCompatActivity {
     private void deleteImage() {
         mealImageView.setVisibility(View.INVISIBLE);
         deleteImgBtn.setVisibility(View.INVISIBLE);
+        imageStateAltered = true;
     }
 
     private void selectImage() {
@@ -112,6 +113,7 @@ public class AddMeal extends AppCompatActivity {
                 mealImageView.setImageBitmap(bitmap);
                 mealImageView.setVisibility(View.VISIBLE);
                 deleteImgBtn.setVisibility(View.VISIBLE);
+                imageStateAltered = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -143,7 +145,7 @@ public class AddMeal extends AppCompatActivity {
         mealNameInput = findViewById(R.id.mealName);
         mealNameInput.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.required,0);
         caloriesInput = findViewById(R.id.caloriesInput);
-        mealNotesInput = findViewById(R.id.mealNotes);
+        mealNoteInput = findViewById(R.id.mealNote);
         deleteBtn = findViewById(R.id.deleteBtn);
         chooseImgBtn = findViewById(R.id.chooseImageBtn);
         deleteImgBtn = findViewById(R.id.deleteImgBtn);
@@ -173,7 +175,7 @@ public class AddMeal extends AppCompatActivity {
             }
             mealNameInput.setText(originalName);
             caloriesInput.setText(originalCalories);
-            mealNotesInput.setText(originalNote);
+            mealNoteInput.setText(originalNote);
         } else {
             setTitle("Adding New Meal");
         }
@@ -183,16 +185,21 @@ public class AddMeal extends AppCompatActivity {
         Button saveBtn = findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(v -> {
             String mealName = mealNameInput.getText().toString();
+            Integer calories = Integer.parseInt(caloriesInput.getText().toString());
+            String mealNote = mealNoteInput.getText().toString();
+            String mealId = mealName.replaceAll("\\s+","");
             if (mealName.equals("")) {
                 Toast.makeText(AddMeal.this, "Please fill out the meal name", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Integer calories = Integer.parseInt(caloriesInput.getText().toString());
-            String mealNotes = mealNotesInput.getText().toString();
-            String mealId = mealName.replaceAll("\\s+","");
 
             if (editMode) {
-                currentMeal = new Meal(mealName, calories, mealNotes);
+                if (compareChanges(mealName, calories, mealNote, imageStateAltered)) {
+                    Toast.makeText(AddMeal.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                currentMeal = new Meal(mealName, calories, mealNote);
                 db.collection("meals").document(currentUser.getUid()).collection("mealList")
                         .document(originalMealId).delete();
                 db.collection("meals").document(currentUser.getUid()).collection("mealList")
@@ -211,11 +218,11 @@ public class AddMeal extends AppCompatActivity {
                             .child("uploads").child(imageId);
                     fileRef.putFile(imageUri).addOnCompleteListener(task -> fileRef.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
-                        currentMeal = new Meal(mealName, calories, mealNotes, imageId);
+                        currentMeal = new Meal(mealName, calories, mealNote, imageId);
                         handleUpload(currentMeal, mealId);
                     }));
                 } else {
-                    currentMeal = new Meal(mealName, calories, mealNotes, "");
+                    currentMeal = new Meal(mealName, calories, mealNote, "");
                     handleUpload(currentMeal, mealId);
                 }
             }
@@ -225,6 +232,11 @@ public class AddMeal extends AppCompatActivity {
 //    private void handleUpdate() {
 //
 //    }
+
+    private Boolean compareChanges(String mealName, Integer calories, String mealNote, Boolean imageStateAltered) {
+        return originalName.equals(mealName) && originalCalories.equals(String.valueOf(calories))
+                && originalNote.equals(mealNote) && !imageStateAltered;
+    }
 
     private void handleUpload(Meal meal, String mealId) {
         db.collection("meals").document(currentUser.getUid()).collection("mealList")

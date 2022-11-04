@@ -32,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/mealName" />
 
     <EditText
-        android:id="@+id/mealNotes"
+        android:id="@+id/mealNote"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:layout_marginTop="32dp"
@@ -74,7 +74,7 @@
         android:scaleType="center"
         android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/chooseImageBtn"
-        app:layout_constraintTop_toBottomOf="@+id/mealNotes"
+        app:layout_constraintTop_toBottomOf="@+id/mealNote"
         app:srcCompat="@android:drawable/ic_menu_delete"
         tools:visibility="visible" />
 
@@ -85,7 +85,7 @@
         android:background="@drawable/circle_button"
         android:scaleType="center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mealNotes"
+        app:layout_constraintTop_toBottomOf="@+id/mealNote"
         app:srcCompat="@android:drawable/ic_menu_gallery" />
 
     <ImageView
@@ -97,7 +97,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mealNotes"
+        app:layout_constraintTop_toBottomOf="@+id/mealNote"
         app:layout_constraintVertical_bias="0.617"
         tools:srcCompat="@drawable/default_image"
         tools:visibility="visible" />
