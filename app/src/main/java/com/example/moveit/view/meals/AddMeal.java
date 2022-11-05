@@ -3,6 +3,7 @@ package com.example.moveit.view.meals;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +11,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -35,14 +35,14 @@ import java.util.UUID;
 
 public class AddMeal extends AppCompatActivity {
 
-    private String originalMealId;
+    private String mealId;
+    private Meal currentMeal;
+    private Boolean imageStateAltered = false;
+
     private String originalImageId;
     private String originalName;
     private String originalCalories;
     private String originalNote;
-
-    private Meal currentMeal;
-    private Boolean imageStateAltered = false;
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -123,7 +123,7 @@ public class AddMeal extends AppCompatActivity {
     private void setUpDeleteBtn() {
         deleteBtn.setOnClickListener(v -> {
             DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                    .document(originalMealId);
+                    .document(mealId);
 
             if (!originalImageId.equals("")) {
                 final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
@@ -157,7 +157,7 @@ public class AddMeal extends AppCompatActivity {
             deleteBtn.setVisibility(View.VISIBLE);
 
             editMode = (Boolean) extras.get("editMode");
-            originalMealId = extras.get("mealId").toString();
+            mealId = extras.get("mealId").toString();
             originalImageId = extras.get("mealImageId").toString();
 
             originalName = extras.get("mealName").toString();
@@ -171,6 +171,7 @@ public class AddMeal extends AppCompatActivity {
                     String url = uri.toString();
                     Picasso.with(mealImageView.getContext()).load(url).fit().into(mealImageView);
                     mealImageView.setVisibility(View.VISIBLE);
+                    deleteImgBtn.setVisibility(View.VISIBLE);
                 });
             }
             mealNameInput.setText(originalName);
@@ -198,17 +199,34 @@ public class AddMeal extends AppCompatActivity {
                     return;
                 }
 
-                db.collection("meals").document(currentUser.getUid())
-                        .collection("mealList").document(originalMealId).update("name", mealName,
-                        "calories", calories, "note", mealNote).addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(AddMeal.this, "Updated meal successfully!", Toast.LENGTH_SHORT).show();
-                                finish();
-                            } else {
-                                Toast.makeText(AddMeal.this, "Error updating meal", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                if (imageStateAltered) {
+                    if (imageUri != null) {
+                        String imageId = UUID.randomUUID() + "." + getFileExtension(imageUri);
+                        final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
+                                .child("uploads").child(imageId);
+                        fileRef.putFile(imageUri);
+                        if (originalImageId.equals("")) {
+                            handleUpdate(mealName, calories, mealNote, imageId);
+                        } else {
+                            final StorageReference oldImageRef = storage.getReference().child(currentUser.getUid())
+                                    .child("uploads").child(originalImageId);
+                            oldImageRef.delete();
+                            handleUpdate(mealName, calories, mealNote, imageId);
+                        }
+                    } else {
+                        final StorageReference imageRef = storage.getReference().child(currentUser.getUid())
+                                .child("uploads").child(originalImageId);
+                        imageRef.delete();
+                        handleUpdate(mealName, calories, mealNote, "");
+                    }
+                } else {
+                    handleUpdate(mealName, calories, mealNote, originalImageId);
+                }
             } else {
+                ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setTitle("Saving...");
+                progressDialog.show();
+
                 String mealId = UUID.randomUUID().toString();
                 if (imageUri != null) {
                     String imageId = UUID.randomUUID() + "." + getFileExtension(imageUri);
@@ -218,18 +236,30 @@ public class AddMeal extends AppCompatActivity {
                             .addOnSuccessListener(uri -> {
                         currentMeal = new Meal(mealId, mealName, calories, mealNote, imageId);
                         handleUpload(currentMeal, mealId);
+                        progressDialog.dismiss();
                     }));
                 } else {
                     currentMeal = new Meal(mealId, mealName, calories, mealNote, "");
                     handleUpload(currentMeal, mealId);
+                    progressDialog.dismiss();
                 }
             }
         });
     }
 
-//    private void handleUpdate() {
-//
-//    }
+    //imageId: will be a valid image Id or an empty string ("") depending on the situation
+    private void handleUpdate(String mealName, Integer calories, String mealNote, String imageId) {
+        db.collection("meals").document(currentUser.getUid())
+                .collection("mealList").document(mealId).update("name", mealName,
+                "calories", calories, "note", mealNote, "imageId", imageId).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(AddMeal.this, "Updated meal successfully!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(AddMeal.this, "Error updating meal", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private Boolean compareChanges(String mealName, Integer calories, String mealNote, Boolean imageStateAltered) {
         return originalName.equals(mealName) && originalCalories.equals(String.valueOf(calories))
