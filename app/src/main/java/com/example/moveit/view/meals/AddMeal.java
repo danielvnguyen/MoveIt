@@ -187,7 +187,6 @@ public class AddMeal extends AppCompatActivity {
             String mealName = mealNameInput.getText().toString();
             Integer calories = Integer.parseInt(caloriesInput.getText().toString());
             String mealNote = mealNoteInput.getText().toString();
-            String mealId = mealName.replaceAll("\\s+","");
             if (mealName.equals("")) {
                 Toast.makeText(AddMeal.this, "Please fill out the meal name", Toast.LENGTH_SHORT).show();
                 return;
@@ -199,11 +198,9 @@ public class AddMeal extends AppCompatActivity {
                     return;
                 }
 
-                currentMeal = new Meal(mealName, calories, mealNote);
-                db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                        .document(originalMealId).delete();
-                db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                        .document(mealId).set(currentMeal).addOnCompleteListener(task -> {
+                db.collection("meals").document(currentUser.getUid())
+                        .collection("mealList").document(originalMealId).update("name", mealName,
+                        "calories", calories, "note", mealNote).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 Toast.makeText(AddMeal.this, "Updated meal successfully!", Toast.LENGTH_SHORT).show();
                                 finish();
@@ -212,17 +209,18 @@ public class AddMeal extends AppCompatActivity {
                             }
                         });
             } else {
+                String mealId = UUID.randomUUID().toString();
                 if (imageUri != null) {
                     String imageId = UUID.randomUUID() + "." + getFileExtension(imageUri);
                     final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
                             .child("uploads").child(imageId);
                     fileRef.putFile(imageUri).addOnCompleteListener(task -> fileRef.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
-                        currentMeal = new Meal(mealName, calories, mealNote, imageId);
+                        currentMeal = new Meal(mealId, mealName, calories, mealNote, imageId);
                         handleUpload(currentMeal, mealId);
                     }));
                 } else {
-                    currentMeal = new Meal(mealName, calories, mealNote, "");
+                    currentMeal = new Meal(mealId, mealName, calories, mealNote, "");
                     handleUpload(currentMeal, mealId);
                 }
             }
