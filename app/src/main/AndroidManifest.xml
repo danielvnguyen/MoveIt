@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
+            android:name=".view.categories.AddCategory"
+            android:exported="false" />
+        <activity
+            android:name=".view.categories.CategoriesList"
+            android:exported="false" />
+        <activity
             android:name=".view.meals.AddMeal"
             android:exported="false" />
         <activity

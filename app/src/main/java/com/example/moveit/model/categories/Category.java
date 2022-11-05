@@ -1,10 +1,10 @@
-package com.example.moveit.model;
+package com.example.moveit.model.categories;
 
-public class Activity {
+public class Category {
     private String name;
-    private Integer categoryId;
+    private String categoryId;
 
-    public Activity(String name, Integer categoryId) {
+    public Category(String name, String categoryId) {
         this.name = name;
         this.categoryId = categoryId;
     }
@@ -17,11 +17,11 @@ public class Activity {
         this.name = name;
     }
 
-    public Integer getCategoryId() {
+    public String getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Integer categoryId) {
+    public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
     }
 }
