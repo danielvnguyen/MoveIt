@@ -16,7 +16,9 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:navigationBarColor">@color/darkest_green</item>
         <item name="android:windowBackground">@color/beige</item>
-        <item name="android:statusBarColor" tools:ignore="DuplicateDefinition">@color/darkest_green</item>
+        <item name="android:statusBarColor" tools:ignore="DuplicateDefinition">
+            @color/darkest_green
+        </item>
     </style>
 
     <style name="Theme.MoveIt.NoActionBar">

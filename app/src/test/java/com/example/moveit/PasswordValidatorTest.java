@@ -17,11 +17,31 @@ public class PasswordValidatorTest {
 
     @Test
     public void validPassword() {
-        assertTrue(passwordValidator.validatePassword("Password123!"));
+        assertTrue(passwordValidator.validatePassword("Good123!"));
     }
 
     @Test
-    public void invalidPassword() {
-        assertFalse(passwordValidator.validatePassword("Bad"));
+    public void invalidLength() {
+        assertFalse(passwordValidator.validatePassword("Bad1!"));
+    }
+
+    @Test
+    public void invalidUppercase() {
+        assertFalse(passwordValidator.validatePassword("aaaa123!"));
+    }
+
+    @Test
+    public void invalidLowercase() {
+        assertFalse(passwordValidator.validatePassword("AAAA123!"));
+    }
+
+    @Test
+    public void invalidNumber() {
+        assertFalse(passwordValidator.validatePassword("Aaaa!!!!"));
+    }
+
+    @Test
+    public void invalidSymbol() {
+        assertFalse(passwordValidator.validatePassword("Aaaa1234"));
     }
 }
