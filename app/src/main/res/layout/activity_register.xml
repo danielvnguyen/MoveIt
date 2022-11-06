@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.RegisterActivity"
-    tools:ignore="LabelFor, Autofill, TextFields">
+    tools:ignore="LabelFor, Autofill, TextFields, ContentDescription">
 
     <EditText
         android:id="@+id/email"
@@ -46,8 +46,29 @@
         android:text="@string/register"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/passwordToolTip"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:clickable="true"
+        app:backgroundTint="@color/red"
+        app:fabCustomSize="35dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/register"
+        app:srcCompat="@android:drawable/ic_dialog_info" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/hold_tooltip_msg"
+        android:alpha="0.70"
+        app:layout_constraintStart_toEndOf="@+id/passwordToolTip"
+        app:layout_constraintTop_toBottomOf="@+id/register" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

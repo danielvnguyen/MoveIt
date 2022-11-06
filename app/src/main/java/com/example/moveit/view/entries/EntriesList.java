@@ -54,4 +54,10 @@ public class EntriesList extends AppCompatActivity {
     private void setUpAddEntryBtn() {
         addEntryBtn.setOnClickListener(v -> startActivity(new Intent(EntriesList.this, AddEntry.class)));
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
+    }
 }

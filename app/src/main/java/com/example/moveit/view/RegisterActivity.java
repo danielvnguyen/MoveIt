@@ -1,6 +1,7 @@
 package com.example.moveit.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.TooltipCompat;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,16 +15,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.moveit.R;
+import com.example.moveit.model.PasswordValidator;
 import com.example.moveit.view.entries.EntriesList;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText emailInput;
     private EditText passwordInput;
     private Button registerBtn;
     private FirebaseAuth auth;
+    private PasswordValidator passwordValidator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +43,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
+        passwordValidator = new PasswordValidator();
+        FloatingActionButton fab = findViewById(R.id.passwordToolTip);
+        TooltipCompat.setTooltipText(fab, getString(R.string.password_rules));
+
         setUpRegisterBtn();
         setUpShowHideBtn();
     }
@@ -48,8 +58,8 @@ public class RegisterActivity extends AppCompatActivity {
 
             if (TextUtils.isEmpty(emailText) || TextUtils.isEmpty(passwordText)) {
                 Toast.makeText(RegisterActivity.this, "Email or Password is empty", Toast.LENGTH_SHORT).show();
-            } else if (passwordText.length() < 8) {
-                Toast.makeText(RegisterActivity.this, "Password is less than 8 characters", Toast.LENGTH_SHORT).show();
+            } else if (!passwordValidator.validatePassword(passwordText)) {
+                Toast.makeText(RegisterActivity.this, "Password is not strong enough!", Toast.LENGTH_SHORT).show();
             } else {
                 registerUser(emailText, passwordText);
             }
@@ -74,6 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 Toast.makeText(RegisterActivity.this, "Successfully registered", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(RegisterActivity.this, EntriesList.class));
+                finish();
             } else {
                 Toast.makeText(RegisterActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
             }

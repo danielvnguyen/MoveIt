@@ -18,4 +18,6 @@
     <string name="your_meals">Your Meals</string>
     <string name="delete">Delete</string>
     <string name="empty_list">This list is empty!</string>
+    <string name="password_rules">Minimum eight characters, at least 1 uppercase, 1 lowercase, 1 number, and 1 special symbol</string>
+    <string name="hold_tooltip_msg"><![CDATA[< Hold to see password requirements]]></string>
 </resources>
