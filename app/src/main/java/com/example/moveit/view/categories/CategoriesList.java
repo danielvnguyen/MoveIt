@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.example.moveit.R;
+
 public class CategoriesList extends AppCompatActivity {
 
     @Override

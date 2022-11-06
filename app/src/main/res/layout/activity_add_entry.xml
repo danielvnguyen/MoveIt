@@ -56,7 +56,6 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/raleway_bold"
         android:text="@string/entry_prompt"
-        android:textColor="@color/black"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/yellow_circle"
         app:layout_constraintEnd_toEndOf="parent"
