@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
+            android:name=".view.HomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.categories.AddCategory"
             android:exported="false" />
         <activity
@@ -23,9 +26,6 @@
             android:exported="false" />
         <activity
             android:name=".view.activities.ActivitiesList"
-            android:exported="false" />
-        <activity
-            android:name=".view.entries.EntriesList"
             android:exported="false" />
         <activity
             android:name=".view.LoginActivity"

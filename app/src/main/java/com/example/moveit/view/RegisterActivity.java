@@ -16,13 +16,10 @@ import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.model.PasswordValidator;
-import com.example.moveit.view.entries.EntriesList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText emailInput;
@@ -83,7 +80,7 @@ public class RegisterActivity extends AppCompatActivity {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(RegisterActivity.this, "Successfully registered", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(RegisterActivity.this, EntriesList.class));
+                startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
                 finish();
             } else {
                 Toast.makeText(RegisterActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();

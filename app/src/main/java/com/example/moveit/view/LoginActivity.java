@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.moveit.R;
-import com.example.moveit.view.entries.EntriesList;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
@@ -65,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     private void loginUser(String email, String password) {
         auth.signInWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
             Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(LoginActivity.this, EntriesList.class));
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
         });
     }
