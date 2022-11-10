@@ -1,5 +1,7 @@
 package com.example.moveit.model.meals;
 
+import androidx.annotation.NonNull;
+
 public class Meal {
     private final String id;
     private final String name;
@@ -22,6 +24,11 @@ public class Meal {
         this.calories = 0;
         this.note = "";
         this.imageId = "";
+    }
+
+    @NonNull
+    public String toString() {
+        return name;
     }
 
     public String getName() {

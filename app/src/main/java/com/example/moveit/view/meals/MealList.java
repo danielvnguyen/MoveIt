@@ -4,9 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.moveit.R;
@@ -29,6 +33,8 @@ public class MealList extends AppCompatActivity {
     private FirebaseUser currentUser;
     private ListView mealListView;
 
+    private EditText mealFilter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +49,7 @@ public class MealList extends AppCompatActivity {
         addMealBtn = findViewById(R.id.addMeal);
         mealListView = findViewById(R.id.mealList);
         mealListView.setEmptyView(findViewById(R.id.emptyTV));
+        mealFilter = findViewById(R.id.mealSearchFilter);
 
         setUpMealList();
         setUpAddMealBtn();
@@ -69,6 +76,23 @@ public class MealList extends AppCompatActivity {
 
                         adapter.clear();
                         adapter.addAll(mealList);
+                        mealFilter.setVisibility(View.VISIBLE);
+                        mealFilter.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                (MealList.this).adapter.getFilter().filter(s);
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+
+                            }
+                        });
                     } else {
                         Log.d("MealList", "Error retrieving documents: ", task.getException());
                     }

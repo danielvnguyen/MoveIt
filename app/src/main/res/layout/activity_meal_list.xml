@@ -4,7 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.meals.MealList">
+    tools:context=".view.meals.MealList"
+    tools:ignore="TextFields, Autofill">
+
+    <EditText
+        android:id="@+id/mealSearchFilter"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/search"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addMeal"
@@ -22,9 +34,10 @@
         android:id="@+id/mealList"
         android:layout_width="409dp"
         android:layout_height="657dp"
+        android:layout_below="@+id/mealSearchFilter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/mealSearchFilter" />
 
     <TextView
         android:id="@+id/emptyTV"
