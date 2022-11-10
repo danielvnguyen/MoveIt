@@ -153,7 +153,7 @@ public class AddMeal extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            setTitle("Editing Meal");
+            setTitle(getString(R.string.edit_meal_title));
             deleteBtn.setVisibility(View.VISIBLE);
 
             editMode = (Boolean) extras.get("editMode");
@@ -178,7 +178,7 @@ public class AddMeal extends AppCompatActivity {
             caloriesInput.setText(originalCalories);
             mealNoteInput.setText(originalNote);
         } else {
-            setTitle("Adding New Meal");
+            setTitle(getString(R.string.add_meal_title));
         }
     }
 

@@ -34,7 +34,7 @@ public class MealList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_meal_list);
-        setTitle(getString(R.string.your_meals));
+        setTitle(getString(R.string.meal_list_title));
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();

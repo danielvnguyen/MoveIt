@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import com.example.moveit.R;
-import com.example.moveit.model.Entry;
+import com.example.moveit.model.entries.Entry;
 
 import java.util.Objects;
 
@@ -21,6 +21,7 @@ public class AddEntry extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_add_entry);
+        setTitle(getString(R.string.add_entry_title));
 
         currentEntry = new Entry();
 

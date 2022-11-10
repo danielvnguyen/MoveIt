@@ -12,5 +12,6 @@ public class ActivitiesList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activities_list);
+        setTitle(getString(R.string.activity_list_title));
     }
 }
