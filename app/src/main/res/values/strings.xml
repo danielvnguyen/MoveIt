@@ -11,8 +11,8 @@
     <string name="meal_name">Meal Name</string>
     <string name="calories">Calories</string>
     <string name="note">Notes</string>
-    <string name="meals">Meals</string>
-    <string name="activities">Activities</string>
+    <string name="meals">Edit Meals</string>
+    <string name="activities">Edit Activities</string>
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="meal_list_title">Your Meals</string>
@@ -27,4 +27,8 @@
     <string name="add_meal_title">Adding New Meal</string>
     <string name="edit_meal_title">Editing Meal</string>
     <string name="activity_list_title">Your Activities</string>
+    <string name="photo_gallery">Photo Gallery</string>
+    <string name="reminder_time">Set Reminder Time</string>
+    <string name="select_theme">Select Theme</string>
+    <string name="about">About</string>
 </resources>

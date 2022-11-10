@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".view.StartActivity">
 
     <Button
-        android:id="@+id/register"
-        android:layout_width="wrap_content"
+        android:id="@+id/login"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textAlignment="viewStart"
+        android:drawableLeft="@drawable/login_icon"
+        app:strokeColor="@color/dark_green"
+        app:strokeWidth="2dp"
         android:backgroundTint="@color/light_green"
-        android:text="@string/register"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login" />
+        android:text="@string/login" />
 
     <Button
-        android:id="@+id/login"
-        android:layout_width="wrap_content"
+        android:id="@+id/register"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAlignment="viewStart"
+        android:drawableLeft="@drawable/register_icon"
+        app:strokeColor="@color/dark_green"
+        app:strokeWidth="2dp"
         android:backgroundTint="@color/light_green"
-        android:text="@string/login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="@string/register" />
+</LinearLayout>
