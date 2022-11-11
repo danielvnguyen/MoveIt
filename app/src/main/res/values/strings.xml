@@ -32,4 +32,6 @@
     <string name="select_theme">Select Theme</string>
     <string name="about">About</string>
     <string name="search">Search...</string>
+    <string name="register_title">Create Account</string>
+    <string name="login_title">Login</string>
 </resources>

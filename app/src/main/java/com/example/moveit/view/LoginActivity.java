@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_login);
+        setTitle(getString(R.string.login_title));
 
         emailInput = findViewById(R.id.email);
         passwordInput = findViewById(R.id.password);

@@ -33,6 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_register);
+        setTitle(getString(R.string.register_title));
 
         emailInput = findViewById(R.id.email);
         passwordInput = findViewById(R.id.password);
