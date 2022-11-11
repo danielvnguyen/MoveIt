@@ -19,6 +19,12 @@
         <item name="android:statusBarColor" tools:ignore="DuplicateDefinition">
             @color/darkest_green
         </item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="CustomTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="Theme.MoveIt.NoActionBar">

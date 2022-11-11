@@ -11,10 +11,11 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="8dp"
-        android:fontFamily="@font/raleway_bold"
+        android:fontFamily="@font/raleway"
         android:gravity="center_vertical"
         android:text="@string/meal_name"
         android:textSize="34sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/mealImageView"
         app:layout_constraintTop_toTopOf="parent" />
