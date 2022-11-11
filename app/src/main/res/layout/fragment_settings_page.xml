@@ -14,7 +14,7 @@
         tools:ignore="UselessParent">
 
         <Button
-            android:id="@+id/editActivities"
+            android:id="@+id/editActivitiesBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -25,7 +25,7 @@
             android:text="@string/activities" />
 
         <Button
-            android:id="@+id/editMeals"
+            android:id="@+id/editMealsBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"
@@ -35,7 +35,7 @@
             android:text="@string/meals" />
 
         <Button
-            android:id="@+id/photoGallery"
+            android:id="@+id/photoGalleryBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"
@@ -45,7 +45,7 @@
             android:text="@string/photo_gallery" />
 
         <Button
-            android:id="@+id/editReminder"
+            android:id="@+id/editReminderBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"
@@ -55,7 +55,7 @@
             android:text="@string/reminder_time" />
 
         <Button
-            android:id="@+id/setTheme"
+            android:id="@+id/setThemeBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="viewStart"

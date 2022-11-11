@@ -14,13 +14,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.moveit.R;
+import com.example.moveit.view.SetThemeActivity;
 import com.example.moveit.view.activities.ActivitiesList;
 import com.example.moveit.view.meals.MealList;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsPage extends Fragment {
-
-    private Button logoutBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,30 +31,30 @@ public class SettingsPage extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        logoutBtn = requireView().findViewById(R.id.logout);
-
-        setUpLogOutBtn();
-        setUpMealsBtn();
-        setUpActivitiesBtn();
+        setUpButtons();
     }
 
-    private void setUpMealsBtn() {
-        Button editMealsBtn = requireView().findViewById(R.id.editMeals);
-        editMealsBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), MealList.class);
-            startActivity(intent);
-        });
-    }
+    private void setUpButtons() {
+        Button editMealsBtn = requireView().findViewById(R.id.editMealsBtn);
+        Button editActivitiesBtn = requireView().findViewById(R.id.editActivitiesBtn);
+        Button logoutBtn = requireView().findViewById(R.id.logout);
+        Button editThemeBtn = requireView().findViewById(R.id.setThemeBtn);
+        Button aboutBtn = requireView().findViewById(R.id.aboutBtn);
+        Button photoGalleryBtn = requireView().findViewById(R.id.photoGalleryBtn);
+        Button editReminderBtn = requireView().findViewById(R.id.editReminderBtn);
 
-    private void setUpActivitiesBtn() {
-        Button editActivitiesBtn = requireView().findViewById(R.id.editActivities);
         editActivitiesBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ActivitiesList.class);
             startActivity(intent);
         });
-    }
-
-    private void setUpLogOutBtn() {
+        editMealsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), MealList.class);
+            startActivity(intent);
+        });
+        editThemeBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), SetThemeActivity.class);
+            startActivity(intent);
+        });
         logoutBtn.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             Toast.makeText(getActivity(), "Log Out Successful!", Toast.LENGTH_SHORT).show();
