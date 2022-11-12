@@ -34,4 +34,8 @@
     <string name="search">Search...</string>
     <string name="register_title">Create Account</string>
     <string name="login_title">Login</string>
+    <string name="currentTheme">Current Theme:</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system_default">System Default</string>
 </resources>

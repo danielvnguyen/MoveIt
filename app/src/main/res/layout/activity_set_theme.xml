@@ -4,29 +4,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:configChanges="uiMode"
     tools:context=".view.SetThemeActivity">
 
-    <Switch
-        android:id="@+id/themeSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:scaleX="2"
-        android:scaleY="2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
-
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/currentThemeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:text="Current Theme: Light"
+        android:layout_marginTop="24dp"
+        android:text="@string/currentTheme"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="70dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentThemeText"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="RtlHardcoded">
+
+        <Button
+            android:id="@+id/lightBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/light_icon"
+            android:text="@string/light"
+            android:textAlignment="viewStart"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp" />
+
+        <Button
+            android:id="@+id/darkBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/dark_icon"
+            android:text="@string/dark"
+            android:textAlignment="viewStart"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp" />
+
+        <Button
+            android:id="@+id/systemDefaultBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/system_icon"
+            android:text="@string/system_default"
+            android:textAlignment="viewStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
