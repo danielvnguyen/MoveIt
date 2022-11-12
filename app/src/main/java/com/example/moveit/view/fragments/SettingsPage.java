@@ -58,7 +58,7 @@ public class SettingsPage extends Fragment {
         });
         logoutBtn.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
-            Toast.makeText(getActivity(), "Log Out Successful!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Log out successful", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), StartActivity.class);
             startActivity(intent);
             getActivity().finish();

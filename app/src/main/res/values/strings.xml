@@ -19,7 +19,7 @@
     <string name="delete">Delete</string>
     <string name="empty_list">This list is empty!</string>
     <string name="password_rules">Minimum eight characters, at least 1 uppercase, 1 lowercase, 1 number, and 1 special symbol</string>
-    <string name="hold_tooltip_msg"><![CDATA[< Hold to see password requirements]]></string>
+    <string name="hold_tooltip_msg">Hold to see password requirements ></string>
     <string name="entries">Entries</string>
     <string name="calendar">Calendar</string>
     <string name="settings">Settings</string>
@@ -29,9 +29,9 @@
     <string name="activity_list_title">Your Activities</string>
     <string name="photo_gallery">Photo Gallery</string>
     <string name="reminder_time">Set Reminder Time</string>
-    <string name="select_theme">Select Theme</string>
+    <string name="select_theme">Change Theme</string>
     <string name="about">About</string>
-    <string name="search">Search...</string>
+    <string name="search">Search…</string>
     <string name="register_title">Create Account</string>
     <string name="login_title">Login</string>
     <string name="currentTheme">Current Theme:</string>

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Patterns;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,9 +56,11 @@ public class RegisterActivity extends AppCompatActivity {
             String passwordText = passwordInput.getText().toString();
 
             if (TextUtils.isEmpty(emailText) || TextUtils.isEmpty(passwordText)) {
-                Toast.makeText(RegisterActivity.this, "Email or Password is empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Email or Password is empty!", Toast.LENGTH_SHORT).show();
             } else if (!passwordValidator.validatePassword(passwordText)) {
                 Toast.makeText(RegisterActivity.this, "Password is not strong enough!", Toast.LENGTH_SHORT).show();
+            } else if (!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
+                Toast.makeText(RegisterActivity.this, "Email has invalid format!", Toast.LENGTH_SHORT).show();
             } else {
                 registerUser(emailText, passwordText);
             }
