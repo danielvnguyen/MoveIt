@@ -38,4 +38,7 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="system_default">System Default</string>
+    <string name="currentThemeDark">Current Theme: Dark</string>
+    <string name="currentThemeLight">Current Theme: Light</string>
+    <string name="currentThemeSys">Current Theme: System Default</string>
 </resources>
