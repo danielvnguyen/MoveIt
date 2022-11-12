@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import com.example.moveit.R;
@@ -13,24 +15,38 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class StartActivity extends AppCompatActivity {
+    private ThemeSharedPreferences preferencesManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        preferencesManager = new ThemeSharedPreferences(StartActivity.this);
 
-        setUpTheme();
         setUpButtons();
     }
 
     private void setUpTheme() {
-        ThemeSharedPreferences preferencesManager = new ThemeSharedPreferences(StartActivity.this);
+        int currentTheme = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK);
+
         if (preferencesManager.getValue("currentTheme", "Dark").equals("Dark")){
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else if (preferencesManager.getValue("currentTheme", "Dark").equals("Light")) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+            switch (currentTheme) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    recreate();
+                    break;
+            }
+        } else if (preferencesManager.getValue("currentTheme", "Light").equals("Light")) {
+            switch (currentTheme) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    recreate();
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    break;
+            }
         }
     }
 
@@ -52,6 +68,7 @@ public class StartActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        setUpTheme();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             startActivity(new Intent(StartActivity.this, HomeActivity.class));

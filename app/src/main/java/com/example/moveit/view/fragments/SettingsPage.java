@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.view.SetThemeActivity;
+import com.example.moveit.view.StartActivity;
 import com.example.moveit.view.activities.ActivitiesList;
 import com.example.moveit.view.meals.MealList;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,6 +59,8 @@ public class SettingsPage extends Fragment {
         logoutBtn.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             Toast.makeText(getActivity(), "Log Out Successful!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), StartActivity.class);
+            startActivity(intent);
             getActivity().finish();
         });
     }
