@@ -20,6 +20,8 @@ import com.example.moveit.view.activities.ActivitiesList;
 import com.example.moveit.view.meals.MealList;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 public class SettingsPage extends Fragment {
 
     @Override
@@ -61,7 +63,8 @@ public class SettingsPage extends Fragment {
             Toast.makeText(getActivity(), "Log out successful", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), StartActivity.class);
             startActivity(intent);
-            getActivity().finish();
+            requireActivity().finish();
+            requireActivity().overridePendingTransition(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim);
         });
     }
 }

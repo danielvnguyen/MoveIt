@@ -95,11 +95,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, StartActivity.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemID = item.getItemId();
 
         if (itemID == android.R.id.home) {
+            Intent intent = new Intent(this, StartActivity.class);
+            startActivity(intent);
             finish();
+            overridePendingTransition(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim);
             return true;
         }
 
