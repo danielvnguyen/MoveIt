@@ -10,9 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".view.SetThemeActivity"
-            android:exported="false"
-            android:configChanges="uiMode"/>
+            android:configChanges="uiMode"
+            android:exported="false" />
         <activity
             android:name=".view.HomeActivity"
             android:exported="false" />
@@ -39,9 +46,9 @@
             android:exported="false" />
         <activity
             android:name=".view.StartActivity"
+            android:configChanges="uiMode"
             android:exported="true"
-            android:noHistory="true"
-            android:configChanges="uiMode">
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

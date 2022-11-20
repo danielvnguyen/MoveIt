@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.moveit.R;
+import com.example.moveit.view.activities.ActivitiesList;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -45,6 +46,15 @@ public class LoginActivity extends AppCompatActivity {
 
         setUpShowHideBtn();
         setUpLoginBtn();
+        setUpForgotPasswordBtn();
+    }
+
+    private void setUpForgotPasswordBtn() {
+        Button forgotPasswordBtn = findViewById(R.id.forgotPasswordBtn);
+        forgotPasswordBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(this, ForgotPasswordActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void setUpShowHideBtn() {
