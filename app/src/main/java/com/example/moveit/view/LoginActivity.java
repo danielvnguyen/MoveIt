@@ -1,6 +1,5 @@
 package com.example.moveit.view;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -16,10 +15,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.moveit.R;
-import com.example.moveit.view.activities.ActivitiesList;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
@@ -52,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private void setUpForgotPasswordBtn() {
         Button forgotPasswordBtn = findViewById(R.id.forgotPasswordBtn);
         forgotPasswordBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ForgotPasswordActivity.class);
+            Intent intent = ForgotPasswordActivity.makeIntent(this);
             startActivity(intent);
         });
     }
@@ -86,16 +81,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser(String email, String password) {
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(LoginActivity.this, "Log in successful", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                    finish();
-                } else {
-                    Toast.makeText(LoginActivity.this, "Failed to log in", Toast.LENGTH_SHORT).show();
-                }
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(LoginActivity.this, "Log in successful", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                finish();
+            } else {
+                Toast.makeText(LoginActivity.this, "Failed to log in", Toast.LENGTH_SHORT).show();
             }
         });
     }

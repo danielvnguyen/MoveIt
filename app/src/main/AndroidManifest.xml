@@ -10,12 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".ForgotPasswordActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+            android:name=".view.ForgotPasswordActivity"
+            android:exported="false" />
         <activity
             android:name=".view.SetThemeActivity"
             android:configChanges="uiMode"

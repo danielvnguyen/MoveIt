@@ -42,4 +42,6 @@
     <string name="currentThemeLight">Current Theme: Light</string>
     <string name="currentThemeSys">Current Theme: System Default</string>
     <string name="forgot_password">Forgot Password?</string>
+    <string name="send_request">Send</string>
+    <string name="forgot_password_title">Forgot Password</string>
 </resources>
