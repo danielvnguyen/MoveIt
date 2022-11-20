@@ -44,4 +44,9 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="send_request">Send</string>
     <string name="forgot_password_title">Forgot Password</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="account_settings_title">Your Account Settings</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="change_password">Change Password</string>
+    <string name="update_email">Update Email</string>
 </resources>

@@ -6,11 +6,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 
 import com.example.moveit.R;
 import com.example.moveit.model.ThemeSharedPreferences;
+import com.example.moveit.view.account.LoginActivity;
+import com.example.moveit.view.account.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

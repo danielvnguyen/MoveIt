@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".view.fragments.SettingsPage">
+    tools:context=".view.fragments.SettingsPage"
+    tools:ignore="RtlCompat, RtlHardcoded">
 
     <LinearLayout
         android:id="@+id/button_list"
@@ -53,6 +54,16 @@
             app:strokeColor="@color/dark_green"
             app:strokeWidth="2dp"
             android:text="@string/reminder_time" />
+
+        <Button
+            android:id="@+id/accountSettingsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="viewStart"
+            android:drawableLeft="@drawable/account_icon"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
+            android:text="@string/account_settings" />
 
         <Button
             android:id="@+id/setThemeBtn"

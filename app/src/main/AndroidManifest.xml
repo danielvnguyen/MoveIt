@@ -10,7 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".view.ForgotPasswordActivity"
+            android:name=".view.account.AccountSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.account.ForgotPasswordActivity"
             android:exported="false" />
         <activity
             android:name=".view.SetThemeActivity"
@@ -35,10 +38,10 @@
             android:name=".view.activities.ActivitiesList"
             android:exported="false" />
         <activity
-            android:name=".view.LoginActivity"
+            android:name=".view.account.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".view.RegisterActivity"
+            android:name=".view.account.RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".view.StartActivity"

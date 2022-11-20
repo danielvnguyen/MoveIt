@@ -1,4 +1,4 @@
-package com.example.moveit.view;
+package com.example.moveit.view.account;
 
 import androidx.appcompat.app.AppCompatActivity;
 

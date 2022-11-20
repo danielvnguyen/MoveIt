@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.view.SetThemeActivity;
 import com.example.moveit.view.StartActivity;
+import com.example.moveit.view.account.AccountSettingsActivity;
 import com.example.moveit.view.activities.ActivitiesList;
 import com.example.moveit.view.meals.MealList;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +46,7 @@ public class SettingsPage extends Fragment {
         Button aboutBtn = requireView().findViewById(R.id.aboutBtn);
         Button photoGalleryBtn = requireView().findViewById(R.id.photoGalleryBtn);
         Button editReminderBtn = requireView().findViewById(R.id.editReminderBtn);
+        Button accountSettingsBtn = requireView().findViewById(R.id.accountSettingsBtn);
 
         editActivitiesBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ActivitiesList.class);
@@ -58,6 +60,11 @@ public class SettingsPage extends Fragment {
             Intent intent = new Intent(getActivity(), SetThemeActivity.class);
             startActivity(intent);
         });
+        accountSettingsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+            startActivity(intent);
+        });
+
         logoutBtn.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             Toast.makeText(getActivity(), "Log out successful", Toast.LENGTH_SHORT).show();

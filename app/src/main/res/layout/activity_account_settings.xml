@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.account.AccountSettingsActivity">
+
+    <Button
+        android:id="@+id/changePasswordBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textAlignment="viewStart"
+        android:drawableLeft="@drawable/change_pw"
+        app:strokeColor="@color/dark_green"
+        app:strokeWidth="2dp"
+        android:text="@string/change_password" />
+
+    <Button
+        android:id="@+id/updateEmailBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="viewStart"
+        android:drawableLeft="@drawable/update_email"
+        app:strokeColor="@color/dark_green"
+        app:strokeWidth="2dp"
+        android:text="@string/update_email" />
+
+    <Button
+        android:id="@+id/deleteAccountBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="viewStart"
+        android:drawableLeft="@drawable/warning_icon"
+        app:strokeColor="@color/dark_red"
+        android:backgroundTint="@color/red"
+        app:strokeWidth="2dp"
+        android:text="@string/delete_account" />
+
+</LinearLayout>

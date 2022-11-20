@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.RegisterActivity"
+    tools:context=".view.account.RegisterActivity"
     tools:ignore="LabelFor, Autofill, TextFields, ContentDescription">
 
     <EditText

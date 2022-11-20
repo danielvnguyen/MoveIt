@@ -1,4 +1,4 @@
-package com.example.moveit.view;
+package com.example.moveit.view.account;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.TooltipCompat;
@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.model.PasswordValidator;
+import com.example.moveit.view.HomeActivity;
+import com.example.moveit.view.StartActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 

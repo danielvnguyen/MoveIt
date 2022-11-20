@@ -1,4 +1,4 @@
-package com.example.moveit.view;
+package com.example.moveit.view.account;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.moveit.R;
+import com.example.moveit.view.HomeActivity;
+import com.example.moveit.view.StartActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
