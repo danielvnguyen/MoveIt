@@ -10,8 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".view.account.ChangePasswordActivity"
+            android:name=".view.account.UpdateEmailActivity"
             android:exported="false"/>
+        <activity
+            android:name=".view.account.ChangePasswordActivity"
+            android:exported="false" />
         <activity
             android:name=".view.account.AccountSettingsActivity"
             android:exported="false" />

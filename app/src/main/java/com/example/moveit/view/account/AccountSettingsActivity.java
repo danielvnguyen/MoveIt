@@ -34,6 +34,10 @@ public class AccountSettingsActivity extends AppCompatActivity {
             Intent intent = ChangePasswordActivity.makeIntent(this);
             startActivity(intent);
         });
+        updateEmailBtn.setOnClickListener(view -> {
+            Intent intent = UpdateEmailActivity.makeIntent(this);
+            startActivity(intent);
+        });
     }
 
     @Override

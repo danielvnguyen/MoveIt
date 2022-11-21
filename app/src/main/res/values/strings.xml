@@ -49,7 +49,10 @@
     <string name="delete_account">Delete Account</string>
     <string name="change_password">Change Password</string>
     <string name="update_email">Update Email</string>
-    <string name="current_password">Current Password</string>
-    <string name="new_password">New Password</string>
+    <string name="current_password">Enter your current password</string>
+    <string name="new_password">Enter your new password</string>
     <string name="reset">Reset</string>
+    <string name="update">Update</string>
+    <string name="enter_a_new_email_address">Enter your new email address</string>
+    <string name="update_email_title">Update Email Address</string>
 </resources>
