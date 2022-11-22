@@ -7,10 +7,8 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -28,8 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -107,16 +103,10 @@ public class AddMeal extends AppCompatActivity {
                 && data != null
                 && data.getData() != null) {
             imageUri = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                        getContentResolver(), imageUri);
-                mealImageView.setImageBitmap(bitmap);
-                mealImageView.setVisibility(View.VISIBLE);
-                deleteImgBtn.setVisibility(View.VISIBLE);
-                imageStateAltered = true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Picasso.with(mealImageView.getContext()).load(imageUri).noFade().fit().into(mealImageView);
+            mealImageView.setVisibility(View.VISIBLE);
+            deleteImgBtn.setVisibility(View.VISIBLE);
+            imageStateAltered = true;
         }
     }
 
@@ -169,7 +159,7 @@ public class AddMeal extends AppCompatActivity {
                         .child("uploads").child(originalImageId);
                 fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                     String url = uri.toString();
-                    Picasso.with(mealImageView.getContext()).load(url).fit().into(mealImageView);
+                    Picasso.with(mealImageView.getContext()).load(url).noFade().fit().into(mealImageView);
                     mealImageView.setVisibility(View.VISIBLE);
                     deleteImgBtn.setVisibility(View.VISIBLE);
                 });

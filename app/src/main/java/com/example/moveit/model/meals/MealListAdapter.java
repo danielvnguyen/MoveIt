@@ -49,7 +49,7 @@ public class MealListAdapter extends ArrayAdapter<Meal> {
                     .child("uploads").child(mealImageId);
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 String url = uri.toString();
-                Picasso.with(mealImageView.getContext()).load(url).fit().into(mealImageView);
+                Picasso.with(mealImageView.getContext()).load(url).noFade().fit().into(mealImageView);
                 mealImageView.setVisibility(View.VISIBLE);
             });
         }
