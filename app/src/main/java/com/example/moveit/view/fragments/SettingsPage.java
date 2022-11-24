@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.moveit.R;
+import com.example.moveit.view.PhotoGalleryActivity;
 import com.example.moveit.view.SetThemeActivity;
 import com.example.moveit.view.StartActivity;
 import com.example.moveit.view.account.AccountSettingsActivity;
@@ -62,6 +63,10 @@ public class SettingsPage extends Fragment {
         });
         accountSettingsBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+            startActivity(intent);
+        });
+        photoGalleryBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PhotoGalleryActivity.class);
             startActivity(intent);
         });
 
