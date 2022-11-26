@@ -1,26 +1,23 @@
 package com.example.moveit.view.photoGallery;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.example.moveit.R;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
@@ -45,6 +42,33 @@ public class ViewPhotoActivity extends AppCompatActivity {
 
     private void setUpButtons() {
         ImageView downloadImgBtn = findViewById(R.id.downloadImgBtn);
+        ImageView deleteImgBtn = findViewById(R.id.deleteImgBtn);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        deleteImgBtn.setOnClickListener(v -> {
+            db.collection("meals").document(currentUser.getUid())
+                    .collection("mealList").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                            String imageId = Objects.requireNonNull(queryDocumentSnapshots.getDocuments().get(i).get("imageId")).toString();
+                            if (imageId.equals(currentImageId)) {
+                                String mealId = queryDocumentSnapshots.getDocuments().get(i).getId();
+                                db.collection("meals").document(currentUser.getUid())
+                                        .collection("mealList").document(mealId).update("imageId", "");
+                            }
+                        }
+                    });
+
+            final StorageReference imageRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
+                    .child("uploads").child(currentImageId);
+            imageRef.delete().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(ViewPhotoActivity.this, "Successfully deleted image", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(ViewPhotoActivity.this, "Failed to deleted image", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
 
         downloadImgBtn.setOnClickListener(v -> {
             final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
