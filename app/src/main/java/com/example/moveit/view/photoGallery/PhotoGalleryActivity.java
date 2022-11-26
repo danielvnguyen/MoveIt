@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.example.moveit.R;
 import com.example.moveit.databinding.ActivityPhotoGalleryBinding;
 import com.example.moveit.model.GalleryGridAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
@@ -22,6 +25,19 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     private ListResult images;
     private ActivityPhotoGalleryBinding binding;
+    private FirebaseStorage storage;
+    private FirebaseUser currentUser;
+    private GalleryGridAdapter adapter;
+
+    private FloatingActionButton addNewImgBtn;
+    private FloatingActionButton takeImageBtn;
+    private FloatingActionButton chooseFromGalleryBtn;
+
+    private Animation rotateOpen;
+    private Animation rotateClose;
+    private Animation fromBottom;
+    private Animation toBottom;
+    private Boolean buttonClicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +47,41 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         setTitle(getString(R.string.photo_gallery_title));
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        storage = FirebaseStorage.getInstance();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         assert currentUser != null;
 
+        setUpGallery();
+        setUpAddImgButtons();
+    }
+
+    private void setUpAddImgButtons() {
+        rotateOpen = AnimationUtils.loadAnimation(this, R.anim.rotate_open_anim);
+        rotateClose = AnimationUtils.loadAnimation(this, R.anim.rotate_close_anim);
+        fromBottom = AnimationUtils.loadAnimation(this, R.anim.from_bottom_anim);
+        toBottom = AnimationUtils.loadAnimation(this, R.anim.to_bottom_anim);
+        addNewImgBtn = findViewById(R.id.addNewImgBtn);
+        takeImageBtn = findViewById(R.id.takeNewImageBtn);
+        chooseFromGalleryBtn = findViewById(R.id.chooseFromGalleryBtn);
+
+        addNewImgBtn.setOnClickListener(v -> {
+            setVisibility(buttonClicked);
+            setAnimation(buttonClicked);
+            buttonClicked = !buttonClicked;
+        });
+        takeImageBtn.setOnClickListener(v -> {
+
+        });
+        chooseFromGalleryBtn.setOnClickListener(v -> {
+
+        });
+    }
+
+    private void setUpGallery() {
         StorageReference ref = storage.getReference().child(currentUser.getUid()).child("uploads");
         ref.listAll().addOnCompleteListener(task -> {
             images = task.getResult();
-            GalleryGridAdapter adapter = new GalleryGridAdapter(PhotoGalleryActivity.this, images);
+            adapter = new GalleryGridAdapter(PhotoGalleryActivity.this, images);
             binding.gridView.setAdapter(adapter);
 
             binding.gridView.setOnItemClickListener((parent, view, position, id) -> {
@@ -49,6 +92,34 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 startActivity(intent);
             });
         });
+    }
+
+    private void setVisibility(Boolean buttonClicked) {
+        if (buttonClicked) {
+            takeImageBtn.setVisibility(View.GONE);
+            chooseFromGalleryBtn.setVisibility(View.GONE);
+        } else {
+            takeImageBtn.setVisibility(View.VISIBLE);
+            chooseFromGalleryBtn.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setAnimation(Boolean buttonClicked) {
+        if (buttonClicked) {
+            takeImageBtn.startAnimation(toBottom);
+            chooseFromGalleryBtn.startAnimation(toBottom);
+            addNewImgBtn.startAnimation(rotateClose);
+        } else {
+            takeImageBtn.startAnimation(fromBottom);
+            chooseFromGalleryBtn.startAnimation(fromBottom);
+            addNewImgBtn.startAnimation(rotateOpen);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpGallery();
     }
 
     @Override

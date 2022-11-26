@@ -83,8 +83,8 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private void deleteImage() {
-        mealImageView.setVisibility(View.INVISIBLE);
-        deleteImgBtn.setVisibility(View.INVISIBLE);
+        mealImageView.setVisibility(View.GONE);
+        deleteImgBtn.setVisibility(View.GONE);
         imageStateAltered = true;
     }
 
