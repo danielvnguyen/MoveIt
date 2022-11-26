@@ -14,15 +14,13 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.moveit.R;
-import com.example.moveit.view.PhotoGalleryActivity;
+import com.example.moveit.view.photoGallery.PhotoGalleryActivity;
 import com.example.moveit.view.SetThemeActivity;
 import com.example.moveit.view.StartActivity;
 import com.example.moveit.view.account.AccountSettingsActivity;
 import com.example.moveit.view.activities.ActivitiesList;
 import com.example.moveit.view.meals.MealList;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Objects;
 
 public class SettingsPage extends Fragment {
 

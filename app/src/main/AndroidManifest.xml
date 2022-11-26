@@ -10,8 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".view.PhotoGalleryActivity"
+            android:name=".view.photoGallery.ViewPhotoActivity"
             android:exported="false"/>
+        <activity
+            android:name=".view.photoGallery.PhotoGalleryActivity"
+            android:exported="false" />
         <activity
             android:name=".view.account.UpdateEmailActivity"
             android:exported="false" />

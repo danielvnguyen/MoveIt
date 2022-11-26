@@ -1,11 +1,11 @@
-package com.example.moveit.view;
+package com.example.moveit.view.photoGallery;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.databinding.ActivityPhotoGalleryBinding;
@@ -41,11 +41,12 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             GalleryGridAdapter adapter = new GalleryGridAdapter(PhotoGalleryActivity.this, images);
             binding.gridView.setAdapter(adapter);
 
-            binding.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(PhotoGalleryActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
-                }
+            binding.gridView.setOnItemClickListener((parent, view, position, id) -> {
+                Intent intent = ViewPhotoActivity.makeIntent(this);
+                Object currentItem = binding.gridView.getItemAtPosition(position);
+                String imageId = currentItem.toString().substring(currentItem.toString().indexOf("uploads/") + 8);
+                intent.putExtra("imageId", imageId);
+                startActivity(intent);
             });
         });
     }

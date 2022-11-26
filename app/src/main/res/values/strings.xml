@@ -56,4 +56,6 @@
     <string name="enter_a_new_email_address">Enter your new email address</string>
     <string name="update_email_title">Update Email Address</string>
     <string name="photo_gallery_title">Your Photo Gallery</string>
+    <string name="view_photo_title">Viewing a Photo</string>
+    <string name="date_time"><![CDATA[Date & Time]]></string>
 </resources>
