@@ -51,7 +51,7 @@ public class GalleryGridAdapter extends BaseAdapter {
 
         ImageView imageView = convertView.findViewById(R.id.gridImage);
         images.getItems().get(position).getDownloadUrl().addOnCompleteListener(task ->
-                Picasso.with(imageView.getContext()).load(task.getResult()).noFade().fit().into(imageView));
+                Picasso.with(imageView.getContext()).load(task.getResult()).noFade().fit().centerCrop().into(imageView));
 
         return convertView;
     }

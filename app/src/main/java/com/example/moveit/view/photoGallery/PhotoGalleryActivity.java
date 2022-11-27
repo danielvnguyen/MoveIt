@@ -2,6 +2,7 @@ package com.example.moveit.view.photoGallery;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -78,11 +79,16 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     }
 
     private void setUpGallery() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.show();
+
         StorageReference ref = storage.getReference().child(currentUser.getUid()).child("uploads");
         ref.listAll().addOnCompleteListener(task -> {
             images = task.getResult();
             adapter = new GalleryGridAdapter(PhotoGalleryActivity.this, images);
             binding.gridView.setAdapter(adapter);
+            progressDialog.dismiss();
 
             binding.gridView.setOnItemClickListener((parent, view, position, id) -> {
                 Intent intent = ViewPhotoActivity.makeIntent(this);

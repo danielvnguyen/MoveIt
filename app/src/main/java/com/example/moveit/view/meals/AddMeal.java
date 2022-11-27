@@ -103,7 +103,7 @@ public class AddMeal extends AppCompatActivity {
                 && data != null
                 && data.getData() != null) {
             imageUri = data.getData();
-            Picasso.with(mealImageView.getContext()).load(imageUri).noFade().fit().into(mealImageView);
+            Picasso.with(mealImageView.getContext()).load(imageUri).noFade().fit().centerInside().into(mealImageView);
             mealImageView.setVisibility(View.VISIBLE);
             deleteImgBtn.setVisibility(View.VISIBLE);
             imageStateAltered = true;
@@ -159,7 +159,7 @@ public class AddMeal extends AppCompatActivity {
                         .child("uploads").child(originalImageId);
                 fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                     String url = uri.toString();
-                    Picasso.with(mealImageView.getContext()).load(url).noFade().fit().into(mealImageView);
+                    Picasso.with(mealImageView.getContext()).load(url).noFade().fit().centerInside().into(mealImageView);
                     mealImageView.setVisibility(View.VISIBLE);
                     deleteImgBtn.setVisibility(View.VISIBLE);
                 });

@@ -2,6 +2,7 @@ package com.example.moveit.view.meals;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -63,6 +64,10 @@ public class MealList extends AppCompatActivity {
     }
 
     private void setUpMealList() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.show();
+
         adapter = new MealListAdapter(MealList.this, R.layout.item_meal);
         mealListView.setAdapter(adapter);
 
@@ -77,6 +82,7 @@ public class MealList extends AppCompatActivity {
 
                         adapter.clear();
                         adapter.addAll(mealList);
+                        progressDialog.dismiss();
                         mealFilter.setVisibility(View.VISIBLE);
                         mealFilter.addTextChangedListener(new TextWatcher() {
                             @Override

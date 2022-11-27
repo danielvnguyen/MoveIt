@@ -102,7 +102,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
             });
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 String url = uri.toString();
-                Picasso.with(currentImageView.getContext()).load(url).noFade().fit().into(currentImageView);
+                Picasso.with(currentImageView.getContext()).load(url).noFade().fit().centerInside().into(currentImageView);
                 currentImageView.setVisibility(View.VISIBLE);
             });
         }
