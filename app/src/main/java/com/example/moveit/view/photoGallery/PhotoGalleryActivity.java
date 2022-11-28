@@ -1,14 +1,17 @@
 package com.example.moveit.view.photoGallery;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.MimeTypeMap;
 
 import com.example.moveit.R;
 import com.example.moveit.databinding.ActivityPhotoGalleryBinding;
@@ -19,8 +22,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
-
 import java.util.Objects;
+import java.util.UUID;
 
 public class PhotoGalleryActivity extends AppCompatActivity {
 
@@ -40,6 +43,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private Animation toBottom;
     private Boolean buttonClicked = false;
 
+    private final int IMAGE_REQUEST = 1;
+    private final int CAMERA_REQUEST = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,11 +76,34 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             buttonClicked = !buttonClicked;
         });
         takeImageBtn.setOnClickListener(v -> {
-
         });
         chooseFromGalleryBtn.setOnClickListener(v -> {
-
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select image from here:"), IMAGE_REQUEST);
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IMAGE_REQUEST
+                && resultCode == RESULT_OK
+                && data != null
+                && data.getData() != null) {
+            Uri imageUri = data.getData();
+            String imageId = UUID.randomUUID() + "." + getFileExtension(imageUri);
+            final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
+                    .child("uploads").child(imageId);
+            fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> setUpGallery());
+        }
+    }
+
+    private String getFileExtension(Uri imageUri) {
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(imageUri));
     }
 
     private void setUpGallery() {
