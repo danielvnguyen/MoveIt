@@ -17,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -59,8 +58,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private Animation toBottom;
     private Boolean buttonClicked = false;
 
-    private final int IMAGE_REQUEST = 1;
-    private final int CAMERA_REQUEST = 2;
+    private static final int IMAGE_REQUEST = 1;
+    private static final int CAMERA_REQUEST = 2;
     private String currentPhotoPath;
 
     @Override

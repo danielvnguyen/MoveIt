@@ -1,14 +1,23 @@
 package com.example.moveit.view.meals;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -26,6 +35,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -46,10 +60,13 @@ public class AddMeal extends AppCompatActivity {
 
     private ImageView mealImageView;
     private Uri imageUri;
-    private final int IMAGE_REQUEST = 1;
+    private static final int IMAGE_REQUEST = 1;
+    private static final int CAMERA_REQUEST = 2;
+    private String currentPhotoPath;
 
     private ImageView chooseImgBtn;
     private ImageView deleteImgBtn;
+    private ImageView takeNewImgBtn;
 
     private EditText mealNameInput;
     private EditText caloriesInput;
@@ -80,6 +97,13 @@ public class AddMeal extends AppCompatActivity {
     private void setUpImageOptions() {
         chooseImgBtn.setOnClickListener(v -> selectImage());
         deleteImgBtn.setOnClickListener(v -> deleteImage());
+        takeNewImgBtn.setOnClickListener(v -> takeNewImage());
+    }
+
+    private void takeNewImage() {
+        if (checkAndRequestPermissions()) {
+            startCameraIntent();
+        }
     }
 
     private void deleteImage() {
@@ -103,6 +127,14 @@ public class AddMeal extends AppCompatActivity {
                 && data != null
                 && data.getData() != null) {
             imageUri = data.getData();
+            Picasso.with(mealImageView.getContext()).load(imageUri).noFade().fit().centerInside().into(mealImageView);
+            mealImageView.setVisibility(View.VISIBLE);
+            deleteImgBtn.setVisibility(View.VISIBLE);
+            imageStateAltered = true;
+        } else if (requestCode == CAMERA_REQUEST
+                && resultCode == RESULT_OK) {
+            File f = new File(currentPhotoPath);
+            imageUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", f);
             Picasso.with(mealImageView.getContext()).load(imageUri).noFade().fit().centerInside().into(mealImageView);
             mealImageView.setVisibility(View.VISIBLE);
             deleteImgBtn.setVisibility(View.VISIBLE);
@@ -139,6 +171,7 @@ public class AddMeal extends AppCompatActivity {
         deleteBtn = findViewById(R.id.deleteBtn);
         chooseImgBtn = findViewById(R.id.chooseImageBtn);
         deleteImgBtn = findViewById(R.id.deleteImgBtn);
+        takeNewImgBtn = findViewById(R.id.takeNewImageBtn);
         mealImageView = findViewById(R.id.mealImageView);
 
         Bundle extras = getIntent().getExtras();
@@ -272,6 +305,58 @@ public class AddMeal extends AppCompatActivity {
         ContentResolver contentResolver = getContentResolver();
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(imageUri));
+    }
+
+    private void startCameraIntent() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            File imageFile = null;
+            try {
+                imageFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            if (imageFile != null) {
+                Uri imageUri = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider", imageFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private File createImageFile() throws IOException {
+        String currentTimeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageName = "jpg_"+currentTimeStamp+"_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imageFile = File.createTempFile(imageName, ".jpg", storageDir);
+
+        currentPhotoPath = imageFile.getAbsolutePath();
+        return imageFile;
+    }
+
+    private boolean checkAndRequestPermissions() {
+        if (Build.VERSION.SDK_INT >= 27) {
+            int cameraPermission = ActivityCompat.checkSelfPermission(
+                    AddMeal.this, Manifest.permission.CAMERA);
+            if (cameraPermission == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(AddMeal.this,
+                        new String[]{Manifest.permission.CAMERA}, 20);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 20 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startCameraIntent();
+        } else
+            Toast.makeText(AddMeal.this, "Permission required to take photos",
+                    Toast.LENGTH_SHORT).show();
     }
 
     @Override

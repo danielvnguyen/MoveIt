@@ -78,10 +78,20 @@
         android:background="@drawable/circle_button"
         android:scaleType="center"
         android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@+id/chooseImageBtn"
+        app:layout_constraintStart_toEndOf="@+id/takeNewImageBtn"
         app:layout_constraintTop_toBottomOf="@+id/mealNote"
         app:srcCompat="@android:drawable/ic_menu_delete"
         tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/takeNewImageBtn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circle_button"
+        android:scaleType="center"
+        app:layout_constraintStart_toEndOf="@+id/chooseImageBtn"
+        app:layout_constraintTop_toBottomOf="@+id/mealNote"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <ImageView
         android:id="@+id/chooseImageBtn"
