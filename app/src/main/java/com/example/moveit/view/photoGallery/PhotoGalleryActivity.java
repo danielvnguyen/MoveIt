@@ -1,18 +1,29 @@
 package com.example.moveit.view.photoGallery;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
-
+import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.databinding.ActivityPhotoGalleryBinding;
 import com.example.moveit.model.GalleryGridAdapter;
@@ -22,6 +33,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -45,6 +61,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
     private final int IMAGE_REQUEST = 1;
     private final int CAMERA_REQUEST = 2;
+    private String currentPhotoPath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +94,9 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             buttonClicked = !buttonClicked;
         });
         takeImageBtn.setOnClickListener(v -> {
+            if (checkAndRequestPermissions()) {
+                startCameraIntent();
+            }
         });
         chooseFromGalleryBtn.setOnClickListener(v -> {
             Intent intent = new Intent();
@@ -83,6 +104,35 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select image from here:"), IMAGE_REQUEST);
         });
+    }
+
+    private void startCameraIntent() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            File imageFile = null;
+            try {
+                imageFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            if (imageFile != null) {
+                Uri imageUri = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider", imageFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
+        }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private File createImageFile() throws IOException {
+        String currentTimeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageName = "jpg_"+currentTimeStamp+"_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imageFile = File.createTempFile(imageName, ".jpg", storageDir);
+
+        currentPhotoPath = imageFile.getAbsolutePath();
+        return imageFile;
     }
 
     @Override
@@ -97,7 +147,38 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
                     .child("uploads").child(imageId);
             fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> setUpGallery());
+        } else if (requestCode == CAMERA_REQUEST
+                && resultCode == RESULT_OK) {
+            File f = new File(currentPhotoPath);
+            Uri imageUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", f);
+            String imageId = UUID.randomUUID() + "." + getFileExtension(imageUri);
+            final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
+                    .child("uploads").child(imageId);
+            fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> setUpGallery());
         }
+    }
+
+    private boolean checkAndRequestPermissions() {
+        if (Build.VERSION.SDK_INT >= 27) {
+            int cameraPermission = ActivityCompat.checkSelfPermission(
+                    PhotoGalleryActivity.this, Manifest.permission.CAMERA);
+            if (cameraPermission == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(PhotoGalleryActivity.this,
+                        new String[]{Manifest.permission.CAMERA}, 20);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 20 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startCameraIntent();
+        } else
+            Toast.makeText(PhotoGalleryActivity.this, "Permission required to take photos",
+                    Toast.LENGTH_SHORT).show();
     }
 
     private String getFileExtension(Uri imageUri) {
