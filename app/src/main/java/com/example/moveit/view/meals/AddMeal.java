@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -26,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.moveit.R;
 import com.example.moveit.model.meals.Meal;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,8 +34,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -127,7 +125,7 @@ public class AddMeal extends AppCompatActivity {
                 && data != null
                 && data.getData() != null) {
             imageUri = data.getData();
-            Picasso.with(mealImageView.getContext()).load(imageUri).noFade().fit().centerInside().into(mealImageView);
+            Glide.with(mealImageView.getContext()).load(imageUri).centerInside().into(mealImageView);
             mealImageView.setVisibility(View.VISIBLE);
             deleteImgBtn.setVisibility(View.VISIBLE);
             imageStateAltered = true;
@@ -135,7 +133,7 @@ public class AddMeal extends AppCompatActivity {
                 && resultCode == RESULT_OK) {
             File f = new File(currentPhotoPath);
             imageUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", f);
-            Picasso.with(mealImageView.getContext()).load(imageUri).noFade().fit().centerInside().into(mealImageView);
+            Glide.with(mealImageView.getContext()).load(imageUri).centerInside().into(mealImageView);
             mealImageView.setVisibility(View.VISIBLE);
             deleteImgBtn.setVisibility(View.VISIBLE);
             imageStateAltered = true;
@@ -191,8 +189,7 @@ public class AddMeal extends AppCompatActivity {
                 final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
                         .child("uploads").child(originalImageId);
                 fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    String url = uri.toString();
-                    Picasso.with(mealImageView.getContext()).load(url).noFade().fit().centerInside().into(mealImageView);
+                    Glide.with(mealImageView.getContext()).load(uri).centerInside().into(mealImageView);
                     mealImageView.setVisibility(View.VISIBLE);
                     deleteImgBtn.setVisibility(View.VISIBLE);
                 });

@@ -10,14 +10,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+
+import com.bumptech.glide.Glide;
 import com.example.moveit.R;
 import com.example.moveit.view.meals.AddMeal;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
-
 import java.util.Objects;
 
 public class MealListAdapter extends ArrayAdapter<Meal> {
@@ -48,8 +48,7 @@ public class MealListAdapter extends ArrayAdapter<Meal> {
             final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
                     .child("uploads").child(mealImageId);
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                String url = uri.toString();
-                Picasso.with(mealImageView.getContext()).load(url).noFade().fit().centerCrop().into(mealImageView);
+                Glide.with(mealImageView.getContext()).load(uri).centerCrop().into(mealImageView);
                 mealImageView.setVisibility(View.VISIBLE);
             });
         }

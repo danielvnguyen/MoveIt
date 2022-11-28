@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 import com.example.moveit.R;
 import com.google.firebase.storage.ListResult;
-import com.squareup.picasso.Picasso;
 
 public class GalleryGridAdapter extends BaseAdapter {
     private final Context context;
@@ -51,7 +51,7 @@ public class GalleryGridAdapter extends BaseAdapter {
 
         ImageView imageView = convertView.findViewById(R.id.gridImage);
         images.getItems().get(position).getDownloadUrl().addOnCompleteListener(task ->
-                Picasso.with(imageView.getContext()).load(task.getResult()).noFade().fit().centerCrop().into(imageView));
+                Glide.with(imageView.getContext()).load(task.getResult()).centerCrop().into(imageView));
 
         return convertView;
     }
