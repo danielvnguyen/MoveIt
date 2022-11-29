@@ -15,11 +15,11 @@ import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.view.AboutInfoActivity;
+import com.example.moveit.view.categories.CategoriesList;
 import com.example.moveit.view.photoGallery.PhotoGalleryActivity;
 import com.example.moveit.view.SetThemeActivity;
 import com.example.moveit.view.StartActivity;
 import com.example.moveit.view.account.AccountSettingsActivity;
-import com.example.moveit.view.activities.ActivitiesList;
 import com.example.moveit.view.meals.MealList;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -49,7 +49,7 @@ public class SettingsPage extends Fragment {
         Button accountSettingsBtn = requireView().findViewById(R.id.accountSettingsBtn);
 
         editActivitiesBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ActivitiesList.class);
+            Intent intent = new Intent(getActivity(), CategoriesList.class);
             startActivity(intent);
         });
         editMealsBtn.setOnClickListener(v -> {

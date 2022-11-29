@@ -19,4 +19,17 @@
         app:srcCompat="@android:drawable/ic_input_add"
         tools:ignore="ContentDescription" />
 
+    <TextView
+        android:id="@+id/emptyTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/raleway"
+        android:text="@string/empty_list"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        android:paddingTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
+
 </FrameLayout>

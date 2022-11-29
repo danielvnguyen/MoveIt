@@ -16,7 +16,6 @@ public class ActivitiesList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activities_list);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        setTitle(getString(R.string.activity_list_title));
     }
 
     @Override
