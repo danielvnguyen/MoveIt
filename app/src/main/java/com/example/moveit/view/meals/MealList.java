@@ -24,17 +24,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Objects;
 
 public class MealList extends AppCompatActivity {
 
-    private FloatingActionButton addMealBtn;
     private ArrayAdapter<Meal> adapter;
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
-    private ListView mealListView;
-
     private EditText mealFilter;
 
     @Override
@@ -48,13 +44,8 @@ public class MealList extends AppCompatActivity {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         assert currentUser != null;
 
-        addMealBtn = findViewById(R.id.addMeal);
-        mealListView = findViewById(R.id.mealList);
-        mealListView.setEmptyView(findViewById(R.id.emptyTV));
-        mealFilter = findViewById(R.id.mealSearchFilter);
-
-        setUpMealList();
         setUpAddMealBtn();
+        setUpMealList();
     }
 
     @Override
@@ -64,6 +55,10 @@ public class MealList extends AppCompatActivity {
     }
 
     private void setUpMealList() {
+        ListView mealListView = findViewById(R.id.mealList);
+        mealListView.setEmptyView(findViewById(R.id.emptyTV));
+        mealFilter = findViewById(R.id.mealSearchFilter);
+
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading...");
         progressDialog.show();
@@ -107,6 +102,7 @@ public class MealList extends AppCompatActivity {
     }
 
     private void setUpAddMealBtn() {
+        FloatingActionButton addMealBtn = findViewById(R.id.addMeal);
         addMealBtn.setOnClickListener(v -> startActivity(new Intent(MealList.this, AddMeal.class)));
     }
 

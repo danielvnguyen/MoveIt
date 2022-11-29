@@ -9,6 +9,12 @@ public class Category {
         this.categoryId = categoryId;
     }
 
+    //Do not remove
+    public Category() {
+        this.name = "";
+        this.categoryId = "";
+    }
+
     public String getName() {
         return name;
     }

@@ -67,4 +67,6 @@
     <string name="view_change_log">View Change Log</string>
     <string name="linked_in_url">https://www.linkedin.com/in/daniel-v-nguyen/</string>
     <string name="github_url">https://github.com/danielvnguyen</string>
+    <string name="category_name">Category Name</string>
+    <string name="add_category_title">Adding New Category</string>
 </resources>

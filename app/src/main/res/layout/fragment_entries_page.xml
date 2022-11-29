@@ -27,9 +27,6 @@
         android:text="@string/empty_list"
         android:textAlignment="center"
         android:textSize="34sp"
-        android:paddingTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent" />
+        android:paddingTop="16dp" />
 
 </FrameLayout>

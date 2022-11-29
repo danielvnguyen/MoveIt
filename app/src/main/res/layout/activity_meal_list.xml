@@ -7,17 +7,6 @@
     tools:context=".view.meals.MealList"
     tools:ignore="TextFields, Autofill">
 
-    <EditText
-        android:id="@+id/mealSearchFilter"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="@string/search"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addMeal"
         android:layout_width="wrap_content"
@@ -30,27 +19,49 @@
         app:srcCompat="@android:drawable/ic_input_add"
         tools:ignore="ContentDescription" />
 
-    <ListView
-        android:id="@+id/mealList"
-        android:layout_width="409dp"
-        android:layout_height="657dp"
-        android:layout_below="@+id/mealSearchFilter"
-        android:divider="@null"
-        android:dividerHeight="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mealSearchFilter" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/mealSearchFilter"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/search"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <ListView
+            android:id="@+id/mealList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mealSearchFilter" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/emptyTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/raleway"
+        android:paddingTop="48dp"
         android:text="@string/empty_list"
         android:textAlignment="center"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mealSearchFilter" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -206,9 +206,13 @@ public class AddMeal extends AppCompatActivity {
         Button saveBtn = findViewById(R.id.saveBtn);
         saveBtn.setOnClickListener(v -> {
             String mealName = mealNameInput.getText().toString();
-            Integer calories = Integer.parseInt(caloriesInput.getText().toString());
+            String caloriesText = caloriesInput.getText().toString();
+            Integer calories = null;
+            if (!caloriesText.isEmpty()) {
+                calories = Integer.parseInt(caloriesInput.getText().toString());
+            }
             String mealNote = mealNoteInput.getText().toString();
-            if (mealName.equals("")) {
+            if (mealName.isEmpty()) {
                 Toast.makeText(AddMeal.this, "Please fill out the meal name", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -252,9 +256,10 @@ public class AddMeal extends AppCompatActivity {
                     String imageId = UUID.randomUUID() + "." + getFileExtension(imageUri);
                     final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
                             .child("uploads").child(imageId);
+                    Integer finalCalories = calories;
                     fileRef.putFile(imageUri).addOnCompleteListener(task -> fileRef.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
-                        currentMeal = new Meal(mealId, mealName, calories, mealNote, imageId);
+                        currentMeal = new Meal(mealId, mealName, finalCalories, mealNote, imageId);
                         handleUpload(currentMeal, mealId);
                         progressDialog.dismiss();
                     }));
