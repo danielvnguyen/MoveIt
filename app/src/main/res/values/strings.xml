@@ -17,7 +17,6 @@
     <string name="hide">Hide</string>
     <string name="meal_list_title">Your Meals</string>
     <string name="delete">Delete</string>
-    <string name="empty_list">This list is empty!</string>
     <string name="password_rules">Minimum eight characters, at least 1 uppercase, 1 lowercase, 1 number, and 1 special symbol</string>
     <string name="hold_tooltip_msg">Hold to see password requirements ></string>
     <string name="entries">Entries</string>
@@ -69,4 +68,8 @@
     <string name="github_url">https://github.com/danielvnguyen</string>
     <string name="category_name">Category Name</string>
     <string name="add_category_title">Adding New Category</string>
+    <string name="no_activities">You have no activities in this category</string>
+    <string name="no_categories">You have no activity categories</string>
+    <string name="no_meals">You have no meals</string>
+    <string name="no_entries">You have no entries. Create one by pressing the + button!</string>
 </resources>

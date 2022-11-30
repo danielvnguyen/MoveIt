@@ -25,6 +25,7 @@
             android:text="@string/category_name"
             android:textSize="26sp"
             android:drawablePadding="20dp"
+            android:textColor="@color/white"
             android:textStyle="bold"
             android:paddingLeft="16dp"
             app:drawableLeftCompat="@drawable/folder_icon" />

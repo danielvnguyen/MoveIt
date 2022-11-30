@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/raleway"
-        android:text="@string/empty_list"
+        android:text="@string/no_entries"
         android:textAlignment="center"
         android:textSize="34sp"
         android:paddingTop="16dp" />

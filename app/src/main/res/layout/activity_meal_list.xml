@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/raleway"
         android:paddingTop="48dp"
-        android:text="@string/empty_list"
+        android:text="@string/no_meals"
         android:textAlignment="center"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
