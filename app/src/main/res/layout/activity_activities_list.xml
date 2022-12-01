@@ -76,7 +76,7 @@
         </LinearLayout>
 
         <ListView
-            android:id="@+id/categoryListView"
+            android:id="@+id/activityListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null"

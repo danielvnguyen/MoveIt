@@ -3,24 +3,29 @@ package com.example.moveit.view.activities;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.moveit.R;
-import com.example.moveit.view.meals.AddMeal;
+import com.example.moveit.model.activities.Activity;
+import com.example.moveit.model.activities.ActivityListAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class ActivitiesList extends AppCompatActivity {
@@ -31,6 +36,7 @@ public class ActivitiesList extends AppCompatActivity {
 
     private String originalCategoryName;
     private EditText categoryNameInput;
+    private ArrayAdapter<Activity> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,36 @@ public class ActivitiesList extends AppCompatActivity {
 
         setUpInterface();
         setUpButtons();
+        setUpActivitiesList();
+    }
+
+    private void setUpActivitiesList() {
+        ListView activityListView = findViewById(R.id.activityListView);
+        activityListView.setEmptyView(findViewById(R.id.emptyTV));
+
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.show();
+
+        adapter = new ActivityListAdapter(ActivitiesList.this, R.layout.item_activity);
+        activityListView.setAdapter(adapter);
+
+        db.collection("categories").document(currentUser.getUid()).collection("categoryList")
+                .document(categoryId).collection("activityList").get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<Activity> activityList = new ArrayList<>();
+                        for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task.getResult())) {
+                            Activity currentActivity = activityDoc.toObject(Activity.class);
+                            activityList.add(currentActivity);
+                        }
+
+                        adapter.clear();
+                        adapter.addAll(activityList);
+                        progressDialog.dismiss();
+                    } else {
+                        Log.d("ActivitiesList", "Error retrieving documents: ", task.getException());
+                    }
+                });
     }
 
     private void setUpButtons() {
@@ -109,6 +145,12 @@ public class ActivitiesList extends AppCompatActivity {
                 Toast.makeText(ActivitiesList.this, "Error deleting category & activities", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpActivitiesList();
     }
 
     @Override

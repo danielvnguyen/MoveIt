@@ -12,6 +12,12 @@ public class Activity {
         this.activityId = activityId;
     };
 
+    public Activity() {
+        this.name = "";
+        this.categoryId = "";
+        this.activityId = "";
+    }
+
     public String getName() {
         return name;
     }
