@@ -1,6 +1,7 @@
 package com.example.moveit.view.photoGallery;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -58,31 +59,16 @@ public class ViewPhotoActivity extends AppCompatActivity {
     private void setUpButtons() {
         ImageView downloadImgBtn = findViewById(R.id.downloadImgBtn);
         ImageView deleteImgBtn = findViewById(R.id.deleteImgBtn);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         deleteImgBtn.setOnClickListener(v -> {
-            db.collection("meals").document(currentUser.getUid())
-                    .collection("mealList").get().addOnSuccessListener(queryDocumentSnapshots -> {
-                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
-                            String imageId = Objects.requireNonNull(queryDocumentSnapshots.getDocuments().get(i).get("imageId")).toString();
-                            if (imageId.equals(currentImageId)) {
-                                String mealId = queryDocumentSnapshots.getDocuments().get(i).getId();
-                                db.collection("meals").document(currentUser.getUid())
-                                        .collection("mealList").document(mealId).update("imageId", "");
-                            }
-                        }
-                    });
-
-            final StorageReference imageRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
-                    .child("uploads").child(currentImageId);
-            imageRef.delete().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(ViewPhotoActivity.this, "Successfully deleted image", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(ViewPhotoActivity.this, "Failed to deleted image", Toast.LENGTH_SHORT).show();
-                }
-            });
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle(R.string.confirm_delete_photo);
+            builder.setMessage(R.string.no_takesies_backsies);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> handleDelete());
+            builder.setNegativeButton(R.string.no, (dialog, which) -> {});
+            AlertDialog dialog = builder.create();
+            dialog.show();
         });
 
         downloadImgBtn.setOnClickListener(v -> {
@@ -97,6 +83,32 @@ public class ViewPhotoActivity extends AppCompatActivity {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
                 }
             });
+        });
+    }
+
+    private void handleDelete() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("meals").document(currentUser.getUid())
+                .collection("mealList").get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                        String imageId = Objects.requireNonNull(queryDocumentSnapshots.getDocuments().get(i).get("imageId")).toString();
+                        if (imageId.equals(currentImageId)) {
+                            String mealId = queryDocumentSnapshots.getDocuments().get(i).getId();
+                            db.collection("meals").document(currentUser.getUid())
+                                    .collection("mealList").document(mealId).update("imageId", "");
+                        }
+                    }
+                });
+
+        final StorageReference imageRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
+                .child("uploads").child(currentImageId);
+        imageRef.delete().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(ViewPhotoActivity.this, "Successfully deleted image", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(ViewPhotoActivity.this, "Failed to deleted image", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

@@ -2,7 +2,7 @@ package com.example.moveit.model.entries;
 
 import android.media.Image;
 
-import com.example.moveit.model.activities.CardioActivity;
+import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.meals.Meal;
 
 import java.util.ArrayList;
@@ -10,14 +10,14 @@ import java.util.Date;
 
 public class Entry {
     private String mood;
-    private ArrayList<CardioActivity> activities;
+    private ArrayList<Activity> activities;
     private ArrayList<Meal> meals;
     private Integer calories;
     private Date date;
     private String note;
     private ArrayList<Image> images;
 
-    public Entry(String mood, ArrayList<CardioActivity> activities, ArrayList<Meal> meals, Integer calories,
+    public Entry(String mood, ArrayList<Activity> activities, ArrayList<Meal> meals, Integer calories,
                  Date date, String note, ArrayList<Image> images) {
         this.mood = mood;
         this.activities = activities;
@@ -46,11 +46,11 @@ public class Entry {
         this.mood = mood;
     }
 
-    public ArrayList<CardioActivity> getActivities() {
+    public ArrayList<Activity> getActivities() {
         return activities;
     }
 
-    public void setActivities(ArrayList<CardioActivity> activities) {
+    public void setActivities(ArrayList<Activity> activities) {
         this.activities = activities;
     }
 

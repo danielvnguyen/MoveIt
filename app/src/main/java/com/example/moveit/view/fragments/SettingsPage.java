@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ import com.example.moveit.view.StartActivity;
 import com.example.moveit.view.account.AccountSettingsActivity;
 import com.example.moveit.view.meals.MealList;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Objects;
 
 public class SettingsPage extends Fragment {
 
@@ -74,12 +77,22 @@ public class SettingsPage extends Fragment {
         });
 
         logoutBtn.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            Toast.makeText(getActivity(), "Log out successful", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getActivity(), StartActivity.class);
-            startActivity(intent);
-            requireActivity().finish();
-            requireActivity().overridePendingTransition(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim);
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+            builder.setCancelable(true);
+            builder.setTitle(R.string.confirm_logout);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> handleLogout());
+            builder.setNegativeButton(R.string.no, (dialog, which) -> {});
+            AlertDialog dialog = builder.create();
+            dialog.show();
         });
+    }
+
+    private void handleLogout() {
+        FirebaseAuth.getInstance().signOut();
+        Toast.makeText(getActivity(), "Log out successful", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), StartActivity.class);
+        startActivity(intent);
+        requireActivity().finish();
+        requireActivity().overridePendingTransition(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim);
     }
 }

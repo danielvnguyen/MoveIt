@@ -1,5 +1,6 @@
 package com.example.moveit.view.account;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -38,6 +39,20 @@ public class AccountSettingsActivity extends AppCompatActivity {
             Intent intent = UpdateEmailActivity.makeIntent(this);
             startActivity(intent);
         });
+        deleteAccountBtn.setOnClickListener(view -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle(R.string.confirm_delete_account);
+            builder.setMessage(R.string.no_takesies_backsies);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> handleDeleteAccount());
+            builder.setNegativeButton(R.string.no, (dialog, which) -> {});
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        });
+    }
+
+    private void handleDeleteAccount() {
+
     }
 
     @Override

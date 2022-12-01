@@ -2,6 +2,7 @@ package com.example.moveit.view.meals;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
@@ -142,22 +143,33 @@ public class AddMeal extends AppCompatActivity {
 
     private void setUpDeleteBtn() {
         deleteBtn.setOnClickListener(v -> {
-            DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                    .document(mealId);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle(R.string.confirm_delete_meal);
+            builder.setMessage(R.string.no_takesies_backsies);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> handleDelete());
+            builder.setNegativeButton(R.string.no, (dialog, which) -> {});
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        });
+    }
 
-            if (!originalImageId.equals("")) {
-                final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
-                        .child("uploads").child(originalImageId);
-                fileRef.delete();
+    private void handleDelete() {
+        DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
+                .document(mealId);
+
+        if (!originalImageId.equals("")) {
+            final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
+                    .child("uploads").child(originalImageId);
+            fileRef.delete();
+        }
+        selectedMeal.delete().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(AddMeal.this, "Deleted meal successfully!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(AddMeal.this, "Error deleting meal", Toast.LENGTH_SHORT).show();
             }
-            selectedMeal.delete().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(AddMeal.this, "Deleted meal successfully!", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(AddMeal.this, "Error deleting meal", Toast.LENGTH_SHORT).show();
-                }
-            });
         });
     }
 

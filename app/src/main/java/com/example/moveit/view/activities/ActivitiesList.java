@@ -1,8 +1,10 @@
 package com.example.moveit.view.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -44,7 +46,6 @@ public class ActivitiesList extends AppCompatActivity {
     }
 
     private void setUpButtons() {
-        //Title will be 'new [this category] activity
         FloatingActionButton addNewActivityButton = findViewById(R.id.addNewActivityBtn);
         Button saveCategoryBtn = findViewById(R.id.saveCategoryBtn);
         Button deleteCategoryBtn = findViewById(R.id.deleteCategoryBtn);
@@ -69,17 +70,20 @@ public class ActivitiesList extends AppCompatActivity {
             }
         });
         deleteCategoryBtn.setOnClickListener(v -> {
-            DocumentReference selectedCategory = db.collection("categories")
-                    .document(currentUser.getUid()).collection("categoryList").document(categoryId);
-
-            selectedCategory.delete().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(ActivitiesList.this, "Successfully deleted category & activities", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(ActivitiesList.this, "Error deleting category & activities", Toast.LENGTH_SHORT).show();
-                }
-            });
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle(R.string.confirm_delete_category);
+            builder.setMessage(R.string.no_takesies_backsies);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> handleDelete());
+            builder.setNegativeButton(R.string.no, (dialog, which) -> {});
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        });
+        addNewActivityButton.setOnClickListener(v -> {
+            Intent intent = AddActivity.makeIntent(this);
+            intent.putExtra("categoryName", originalCategoryName);
+            intent.putExtra("categoryId", categoryId);
+            startActivity(intent);
         });
     }
 
@@ -91,6 +95,20 @@ public class ActivitiesList extends AppCompatActivity {
         categoryId = extras.get("categoryId").toString();
         setTitle(originalCategoryName);
         categoryNameInput.setText(originalCategoryName);
+    }
+
+    private void handleDelete() {
+        DocumentReference selectedCategory = db.collection("categories")
+                .document(currentUser.getUid()).collection("categoryList").document(categoryId);
+
+        selectedCategory.delete().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(ActivitiesList.this, "Successfully deleted category & activities", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(ActivitiesList.this, "Error deleting category & activities", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
