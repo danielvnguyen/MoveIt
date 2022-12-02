@@ -43,9 +43,14 @@ public class MealListAdapter extends ArrayAdapter<Meal> {
 
         nameText.setText(mealName);
         if (getItem(position).getCalories() != null) {
-            String mealCalories = (getItem(position).getCalories() + " calories per " +
-                    getItem(position).getServingSize().getSize() + getItem(position).getServingSize().getUnits());
-            caloriesText.setText(mealCalories);
+            if (!getItem(position).getServingSize().getUnits().equals("Unit")) {
+                String mealCaloriesServingSize = (getItem(position).getCalories() + " calories per " +
+                        getItem(position).getServingSize().getSize() + getItem(position).getServingSize().getUnits());
+                caloriesText.setText(mealCaloriesServingSize);
+            } else {
+                String mealCalories = (getItem(position).getCalories() + " calories");
+                caloriesText.setText(mealCalories);
+            }
         } else {
             caloriesText.setText("");
         }

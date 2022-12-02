@@ -24,7 +24,7 @@
     <string name="settings">Settings</string>
     <string name="add_entry_title">Adding New Entry</string>
     <string name="add_meal_title">Adding New Meal</string>
-    <string name="edit_meal_title">Editing Meal</string>
+    <string name="edit_meal_title">Editing Meal:&#160;</string>
     <string name="activity_list_title">Your Activity Categories</string>
     <string name="photo_gallery">Photo Gallery</string>
     <string name="reminder_time">Set Reminder Time</string>
@@ -88,4 +88,5 @@
     <string name="per">per</string>
     <string name="number_hint">#</string>
     <string name="meal_calories">Meal Calories</string>
+    <string name="_0">0</string>
 </resources>

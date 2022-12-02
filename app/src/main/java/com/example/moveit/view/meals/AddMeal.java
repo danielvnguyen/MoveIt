@@ -155,14 +155,13 @@ public class AddMeal extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            setTitle(getString(R.string.edit_meal_title));
             deleteBtn.setVisibility(View.VISIBLE);
-
             editMode = (Boolean) extras.get("editMode");
             mealId = extras.get("mealId").toString();
             originalImageId = extras.get("mealImageId").toString();
 
             originalName = extras.get("mealName").toString();
+            setTitle(getString(R.string.edit_meal_title) + originalName);
             originalCalories = extras.get("calories").toString();
             originalNote = extras.get("mealNote").toString();
             originalServingSizeNum = extras.get("servingSizeNum").toString();
@@ -190,13 +189,15 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private int validateCalories(String caloriesText, String servingSizeText) {
-        if (!caloriesText.isEmpty() && !servingSizeText.isEmpty() && !selectedUnits.equals("Unit")) {
+        if (!caloriesText.isEmpty() && (!servingSizeText.isEmpty() && !servingSizeText.equals("0")) && !selectedUnits.equals("Unit")) {
             return 0;
-        } else if (caloriesText.isEmpty() && servingSizeText.isEmpty() && selectedUnits.equals("Unit")) {
+        } else if (!caloriesText.isEmpty() && (servingSizeText.isEmpty() || servingSizeText.equals("0")) && selectedUnits.equals("Unit")) {
             return 1;
-        } else {
-            Toast.makeText(AddMeal.this, "Please fill out all 3: calories, serving size, units", Toast.LENGTH_SHORT).show();
+        } else if (caloriesText.isEmpty() && (servingSizeText.isEmpty() || servingSizeText.equals("0")) && selectedUnits.equals("Unit")) {
             return 2;
+        } else {
+            Toast.makeText(AddMeal.this, "Please fill out both calories & serving size, or only calories", Toast.LENGTH_SHORT).show();
+            return 3;
         }
     }
 
@@ -206,10 +207,15 @@ public class AddMeal extends AppCompatActivity {
             String mealName = mealNameInput.getText().toString();
             String caloriesText = caloriesInput.getText().toString();
             String servingSizeText = servingSizeInput.getText().toString();
-            Integer calories = null;
+            String mealNote = mealNoteInput.getText().toString();
+            if (mealName.isEmpty()) {
+                Toast.makeText(AddMeal.this, "Please fill out the meal name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Integer calories = 0;
             Integer servingSizeNum = null;
             ServingSize servingSize = new ServingSize();
-
             int validationResult = validateCalories(caloriesText, servingSizeText);
             switch(validationResult) {
                 case 0:
@@ -217,16 +223,13 @@ public class AddMeal extends AppCompatActivity {
                     servingSizeNum = Integer.parseInt(servingSizeText);
                     servingSize = new ServingSize(servingSizeNum, selectedUnits);
                     break;
-                case 2:
+                case 1:
+                    calories = Integer.parseInt(caloriesText);
+                    break;
+                case 3:
                     return;
                 default:
                     break;
-            }
-
-            String mealNote = mealNoteInput.getText().toString();
-            if (mealName.isEmpty()) {
-                Toast.makeText(AddMeal.this, "Please fill out the meal name", Toast.LENGTH_SHORT).show();
-                return;
             }
 
             if (editMode) {

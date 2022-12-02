@@ -11,7 +11,7 @@ public class ServingSize {
 
     public ServingSize() {
         this.size = 0;
-        this.units = "";
+        this.units = "Unit";
     }
 
     public Integer getSize() {
