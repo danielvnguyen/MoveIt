@@ -75,6 +75,12 @@
                 app:strokeWidth="2dp" />
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/activities_listview_header"
+            android:textSize="16sp" />
+
         <ListView
             android:id="@+id/activityListView"
             android:layout_width="match_parent"
@@ -92,7 +98,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/raleway"
-        android:paddingTop="130dp"
+        android:paddingTop="136dp"
         android:text="@string/no_activities"
         android:textAlignment="center"
         android:textSize="34sp"

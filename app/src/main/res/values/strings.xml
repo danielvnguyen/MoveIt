@@ -82,6 +82,7 @@
     <string name="confirm_delete_category">Are you sure you want to delete this category?</string>
     <string name="activity_name">Activity Name</string>
     <string name="confirm_delete_activity">Are you sure you want to delete this activity?</string>
-    <string name="edit_activity_title">\"Editing Activity: \"</string>
-    <string name="new_activity_title">\"New Activity: \"</string>
+    <string name="edit_activity_title">Editing:&#160;</string>
+    <string name="new_activity_title">New Activity:&#160;</string>
+    <string name="activities_listview_header">Activities:</string>
 </resources>
