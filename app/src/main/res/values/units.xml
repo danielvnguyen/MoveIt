@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="units_array">
+        <item>Unit</item>
+        <item>g</item>
+        <item>mg</item>
+        <item>kg</item>
+        <item>L</item>
+        <item>mL</item>
+        <item>dL</item>
+    </string-array>
+</resources>

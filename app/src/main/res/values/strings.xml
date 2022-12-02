@@ -85,4 +85,7 @@
     <string name="edit_activity_title">Editing:&#160;</string>
     <string name="new_activity_title">New Activity:&#160;</string>
     <string name="activities_listview_header">Activities:</string>
+    <string name="per">per</string>
+    <string name="number_hint">#</string>
+    <string name="meal_calories">Meal Calories</string>
 </resources>

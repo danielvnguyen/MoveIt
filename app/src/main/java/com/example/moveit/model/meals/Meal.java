@@ -6,13 +6,15 @@ public class Meal {
     private final String id;
     private final String name;
     private final Integer calories;
+    private final ServingSize servingSize;
     private final String imageId;
     private final String note;
 
-    public Meal(String id, String name, Integer calories, String note, String imageId) {
+    public Meal(String id, String name, Integer calories, ServingSize servingSize, String note, String imageId) {
         this.id = id;
         this.name = name;
         this.calories = calories;
+        this.servingSize = servingSize;
         this.note = note;
         this.imageId = imageId;
     }
@@ -22,8 +24,13 @@ public class Meal {
         this.id = "";
         this.name = "";
         this.calories = 0;
+        this.servingSize = null;
         this.note = "";
         this.imageId = "";
+    }
+
+    public ServingSize getServingSize() {
+        return servingSize;
     }
 
     @NonNull

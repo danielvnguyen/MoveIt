@@ -33,18 +33,27 @@ public class MealListAdapter extends ArrayAdapter<Meal> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        String mealName = getItem(position).getName();
-        String mealImageId = getItem(position).getImageId();
         LayoutInflater inflater = LayoutInflater.from(context);
         @SuppressLint("ViewHolder") View mealView = inflater.inflate(resource, parent, false);
-
         TextView nameText = mealView.findViewById(R.id.mealNameTV);
+        TextView caloriesText = mealView.findViewById(R.id.mealCaloriesTV);
+
+        String mealName = getItem(position).getName();
+        String mealImageId = getItem(position).getImageId();
+
         nameText.setText(mealName);
-        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        if (getItem(position).getCalories() != null) {
+            String mealCalories = (getItem(position).getCalories() + " calories per " +
+                    getItem(position).getServingSize().getSize() + getItem(position).getServingSize().getUnits());
+            caloriesText.setText(mealCalories);
+        } else {
+            caloriesText.setText("");
+        }
 
         ImageView mealImageView = mealView.findViewById(R.id.mealImageView);
         if (!mealImageId.equals("")) {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            assert currentUser != null;
             final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
                     .child("uploads").child(mealImageId);
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -58,6 +67,8 @@ public class MealListAdapter extends ArrayAdapter<Meal> {
            intent.putExtra("editMode", true);
            intent.putExtra("mealName", getItem(position).getName());
            intent.putExtra("calories", getItem(position).getCalories());
+           intent.putExtra("servingSizeNum", getItem(position).getServingSize().getSize());
+           intent.putExtra("servingSizeUnits", getItem(position).getServingSize().getUnits());
            intent.putExtra("mealNote", getItem(position).getNote());
            intent.putExtra("mealId", getItem(position).getId());
            intent.putExtra("mealImageId", getItem(position).getImageId());
