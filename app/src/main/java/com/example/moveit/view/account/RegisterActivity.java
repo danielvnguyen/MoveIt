@@ -19,7 +19,6 @@ import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.meals.Meal;
 import com.example.moveit.model.meals.ServingSize;
-import com.example.moveit.view.HomeActivity;
 import com.example.moveit.view.StartActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,16 +42,21 @@ public class RegisterActivity extends AppCompatActivity {
             {"Running", "Walking", "Swimming", "Skip Rope", "Cycling"}, {"Yoga", "Meditation", "Stretching"},
             {"High Knees", "Heel Taps", "Leg Raises", "Balance Walking"}};
     private final Meal[] defaultMeals = {
-            new Meal(UUID.randomUUID().toString(), getString(R.string.chicken_name), 231,
-                    new ServingSize(140, "g"), getString(R.string.chicken_note), getString(R.string.chicken_url)),
-            new Meal(UUID.randomUUID().toString(), getString(R.string.rice_name), 130,
-                    new ServingSize(100, "g"), getString(R.string.rice_note), getString(R.string.rice_url)),
-            new Meal(UUID.randomUUID().toString(), getString(R.string.caesar_salad_name), 309,
-                    new ServingSize(192,"g"), getString(R.string.caesar_salad_note), getString(R.string.caesar_salad_url)),
-            new Meal(UUID.randomUUID().toString(), getString(R.string.california_roll_name), 28,
-                    new ServingSize(30, "g"), getString(R.string.california_roll_note), getString(R.string.california_roll_url)),
-            new Meal(UUID.randomUUID().toString(), getString(R.string.quarter_pounder_name), 530,
-                    new ServingSize(220, "g"), getString(R.string.quarter_pounder_note), getString(R.string.quarter_pounder_url))};
+            new Meal(UUID.randomUUID().toString(), "Chicken Breast", 231,
+                    new ServingSize(140, "g"), "1 cup, chopped or diced",
+                    "https://cdn.pixabay.com/photo/2022/01/18/08/42/chicken-6946606_960_720.jpg"),
+            new Meal(UUID.randomUUID().toString(), "White Rice", 130,
+                    new ServingSize(100, "g"), "Cooked, long-grain",
+                    "https://cdn.pixabay.com/photo/2012/11/27/03/35/usd-67411_960_720.jpg"),
+            new Meal(UUID.randomUUID().toString(), "Chicken Caesar Salad", 309,
+                    new ServingSize(192,"g"), "Includes 6.67g crouton, 5.56g parmesan",
+                    "https://cdn.pixabay.com/photo/2014/01/17/08/56/caesar-246818_960_720.jpg"),
+            new Meal(UUID.randomUUID().toString(), "California Roll", 28,
+                    new ServingSize(30, "g"), "Non-spicy version",
+                    "https://cdn.pixabay.com/photo/2021/02/25/20/45/california-shrimp-roll-6050079_960_720.jpg"),
+            new Meal(UUID.randomUUID().toString(), "Quarter Pounder", 530,
+                    new ServingSize(220, "g"), "One hamburger with single patty and no condiments",
+                    "https://cdn.pixabay.com/photo/2017/04/04/16/25/hamburger-2201748_960_720.jpg")};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,9 +116,12 @@ public class RegisterActivity extends AppCompatActivity {
                 currentUser = auth.getCurrentUser();
                 assert currentUser != null;
                 initializeUser();
-                Toast.makeText(RegisterActivity.this, "Successfully registered", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(RegisterActivity.this, HomeActivity.class));
-                finish();
+                currentUser.sendEmailVerification().addOnSuccessListener(unused -> {
+                    auth.signOut();
+                    Toast.makeText(RegisterActivity.this, "Email verification has been sent", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, LoginActivity.class));
+                    finish();
+                });
             } else {
                 Toast.makeText(RegisterActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
             }
