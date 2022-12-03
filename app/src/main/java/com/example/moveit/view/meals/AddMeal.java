@@ -161,7 +161,7 @@ public class AddMeal extends AppCompatActivity {
             originalImageId = extras.get("mealImageId").toString();
 
             originalName = extras.get("mealName").toString();
-            setTitle(getString(R.string.edit_meal_title) + originalName);
+            setTitle(getString(R.string.edit_meal_title));
             originalCalories = extras.get("calories").toString();
             originalNote = extras.get("mealNote").toString();
             originalServingSizeNum = extras.get("servingSizeNum").toString();
@@ -170,7 +170,7 @@ public class AddMeal extends AppCompatActivity {
 
             if (!originalImageId.equals("")) {
                 if (originalImageId.contains("https")) {
-                    Glide.with(mealImageView.getContext()).load(originalImageId).centerCrop().into(mealImageView);
+                    Glide.with(mealImageView.getContext()).load(originalImageId).centerInside().into(mealImageView);
                     mealImageView.setVisibility(View.VISIBLE);
                 } else {
                     final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())

@@ -136,12 +136,13 @@ public class AddActivity extends AppCompatActivity {
 
             Bundle extras = getIntent().getExtras();
             String categoryName = extras.get("categoryName").toString();
-            setTitle(getString(R.string.new_activity_title) + categoryName);
+            activityNameInput.setHint(categoryName + " " + getString(R.string.activity_name));
+            setTitle(getString(R.string.new_activity_title));
             categoryId = extras.get("categoryId").toString();
         } else if (getIntent().getExtras().size() == 3) {
             Bundle extras = getIntent().getExtras();
             originalActivityName = extras.get("activityName").toString();
-            setTitle(getString(R.string.edit_activity_title) + originalActivityName);
+            setTitle(getString(R.string.edit_activity_title));
             activityId = extras.get("activityId").toString();
             categoryId = extras.get("categoryId").toString();
 
