@@ -169,13 +169,18 @@ public class AddMeal extends AppCompatActivity {
             selectedUnits = originalServingSizeUnits;
 
             if (!originalImageId.equals("")) {
-                final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
-                        .child("uploads").child(originalImageId);
-                fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    Glide.with(mealImageView.getContext()).load(uri).centerInside().into(mealImageView);
+                if (originalImageId.contains("https")) {
+                    Glide.with(mealImageView.getContext()).load(originalImageId).centerCrop().into(mealImageView);
                     mealImageView.setVisibility(View.VISIBLE);
-                    deleteImgBtn.setVisibility(View.VISIBLE);
-                });
+                } else {
+                    final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
+                            .child("uploads").child(originalImageId);
+                    fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        Glide.with(mealImageView.getContext()).load(uri).centerInside().into(mealImageView);
+                        mealImageView.setVisibility(View.VISIBLE);
+                        deleteImgBtn.setVisibility(View.VISIBLE);
+                    });
+                }
             }
             mealNameInput.setText(originalName);
             caloriesInput.setText(originalCalories);

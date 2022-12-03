@@ -57,14 +57,19 @@ public class MealListAdapter extends ArrayAdapter<Meal> {
 
         ImageView mealImageView = mealView.findViewById(R.id.mealImageView);
         if (!mealImageId.equals("")) {
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-            assert currentUser != null;
-            final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
-                    .child("uploads").child(mealImageId);
-            fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                Glide.with(mealImageView.getContext()).load(uri).centerCrop().into(mealImageView);
+            if (mealImageId.contains("https")) {
+                Glide.with(mealImageView.getContext()).load(mealImageId).centerCrop().into(mealImageView);
                 mealImageView.setVisibility(View.VISIBLE);
-            });
+            } else {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                assert currentUser != null;
+                final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
+                        .child("uploads").child(mealImageId);
+                fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    Glide.with(mealImageView.getContext()).load(uri).centerCrop().into(mealImageView);
+                    mealImageView.setVisibility(View.VISIBLE);
+                });
+            }
         }
 
         mealView.setOnClickListener(v -> {

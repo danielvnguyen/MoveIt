@@ -89,4 +89,19 @@
     <string name="number_hint">#</string>
     <string name="meal_calories">Meal Calories</string>
     <string name="_0">0</string>
+    <string name="chicken_url">https://cdn.pixabay.com/photo/2022/01/18/08/42/chicken-6946606_960_720.jpg</string>
+    <string name="rice_url">https://cdn.pixabay.com/photo/2012/11/27/03/35/usd-67411_960_720.jpg</string>
+    <string name="caesar_salad_url">https://cdn.pixabay.com/photo/2014/01/17/08/56/caesar-246818_960_720.jpg</string>
+    <string name="california_roll_url">https://cdn.pixabay.com/photo/2021/02/25/20/45/california-shrimp-roll-6050079_960_720.jpg</string>
+    <string name="quarter_pounder_url">https://cdn.pixabay.com/photo/2017/04/04/16/25/hamburger-2201748_960_720.jpg</string>
+    <string name="chicken_name">Chicken Breast</string>
+    <string name="chicken_note">1 cup, chopped or diced</string>
+    <string name="rice_name">White Rice</string>
+    <string name="rice_note">Cooked, long-grain</string>
+    <string name="caesar_salad_name">Chicken Caesar Salad</string>
+    <string name="caesar_salad_note">Includes 6.67g crouton, 5.56g parmesan</string>
+    <string name="california_roll_name">California Roll</string>
+    <string name="california_roll_note">Non-spicy version</string>
+    <string name="quarter_pounder_name">Quarter Pounder</string>
+    <string name="quarter_pounder_note">One hamburger with single patty and no condiments</string>
 </resources>

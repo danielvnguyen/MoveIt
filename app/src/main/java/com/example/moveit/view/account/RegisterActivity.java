@@ -2,7 +2,6 @@ package com.example.moveit.view.account;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.TooltipCompat;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,18 +13,18 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.moveit.R;
 import com.example.moveit.model.PasswordValidator;
 import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.categories.Category;
+import com.example.moveit.model.meals.Meal;
+import com.example.moveit.model.meals.ServingSize;
 import com.example.moveit.view.HomeActivity;
 import com.example.moveit.view.StartActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.Objects;
 import java.util.UUID;
 
@@ -43,6 +42,17 @@ public class RegisterActivity extends AppCompatActivity {
     private final String[][] defaultActivities = {{"Weightlifting", "Pull-ups", "Push-ups", "Planks", "Sit-ups"},
             {"Running", "Walking", "Swimming", "Skip Rope", "Cycling"}, {"Yoga", "Meditation", "Stretching"},
             {"High Knees", "Heel Taps", "Leg Raises", "Balance Walking"}};
+    private final Meal[] defaultMeals = {
+            new Meal(UUID.randomUUID().toString(), getString(R.string.chicken_name), 231,
+                    new ServingSize(140, "g"), getString(R.string.chicken_note), getString(R.string.chicken_url)),
+            new Meal(UUID.randomUUID().toString(), getString(R.string.rice_name), 130,
+                    new ServingSize(100, "g"), getString(R.string.rice_note), getString(R.string.rice_url)),
+            new Meal(UUID.randomUUID().toString(), getString(R.string.caesar_salad_name), 309,
+                    new ServingSize(192,"g"), getString(R.string.caesar_salad_note), getString(R.string.caesar_salad_url)),
+            new Meal(UUID.randomUUID().toString(), getString(R.string.california_roll_name), 28,
+                    new ServingSize(30, "g"), getString(R.string.california_roll_note), getString(R.string.california_roll_url)),
+            new Meal(UUID.randomUUID().toString(), getString(R.string.quarter_pounder_name), 530,
+                    new ServingSize(220, "g"), getString(R.string.quarter_pounder_note), getString(R.string.quarter_pounder_url))};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +123,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void initializeUser() {
         createDefaultCategories();
+        createDefaultMeals();
+    }
+
+    private void createDefaultMeals() {
+        for (Meal currentMeal : defaultMeals) {
+            db.collection("meals").document(currentUser.getUid()).collection("mealList")
+                    .document(currentMeal.getId()).set(currentMeal);
+        }
     }
 
     private void createDefaultCategories() {
