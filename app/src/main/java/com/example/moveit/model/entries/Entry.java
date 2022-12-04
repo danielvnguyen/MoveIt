@@ -1,10 +1,7 @@
 package com.example.moveit.model.entries;
 
-import android.media.Image;
-
 import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.meals.Meal;
-
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,33 +10,30 @@ public class Entry {
     private String mood;
     private ArrayList<Activity> activities;
     private ArrayList<Meal> meals;
-    private Integer calories;
     private Date date;
     private Time time;
     private String note;
-    private ArrayList<Image> images;
+    private String imageId;
 
-    public Entry(String mood, ArrayList<Activity> activities, ArrayList<Meal> meals, Integer calories,
-                 Date date, Time time, String note, ArrayList<Image> images) {
+    public Entry(String mood, ArrayList<Activity> activities, ArrayList<Meal> meals,
+                 Date date, Time time, String note, String imageId) {
         this.mood = mood;
         this.activities = activities;
         this.meals = meals;
-        this.calories = calories;
         this.date = date;
         this.time = time;
         this.note = note;
-        this.images = images;
+        this.imageId = imageId;
     }
 
     public Entry() {
         this.mood = "";
         this.activities = null;
         this.meals = null;
-        this.calories = 0;
         this.date = null;
         this.time = null;
         this.note = "";
-        this.images = null;
+        this.imageId = "";
     }
 
     public String getMood() {
@@ -66,14 +60,6 @@ public class Entry {
         this.meals = meals;
     }
 
-    public Integer getCalories() {
-        return calories;
-    }
-
-    public void setCalories(Integer calories) {
-        this.calories = calories;
-    }
-
     public Date getDate() {
         return date;
     }
@@ -90,12 +76,12 @@ public class Entry {
         this.note = note;
     }
 
-    public ArrayList<Image> getImages() {
-        return images;
+    public String getImageId() {
+        return imageId;
     }
 
-    public void setImages(ArrayList<Image> images) {
-        this.images = images;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
     }
 
     public Time getTime() {

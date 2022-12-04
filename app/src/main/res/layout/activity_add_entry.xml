@@ -7,83 +7,119 @@
     tools:context=".view.entries.AddEntry"
     tools:ignore="Autofill, LabelFor, ContentDescription">
 
-    <TextView
-        android:id="@+id/entryPromptTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/raleway"
-        android:text="@string/entry_prompt"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dateTimeLayout">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/entryPromptTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/raleway"
+            android:layout_gravity="center"
+            android:text="@string/entry_prompt"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/dateTimeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
             android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/amazingMoodBtn"
+            <EditText
+                android:id="@+id/entryDateInput"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/amazing"
-                app:drawableTopCompat="@drawable/amazing_icon"
-                app:drawableTint="@color/amazingColour" />
+                android:ems="7"
+                android:hint="@string/date"
+                android:inputType="date"
+                tools:layout_editor_absoluteX="34dp"
+                tools:layout_editor_absoluteY="287dp" />
 
-            <TextView
-                android:id="@+id/greatMoodBtn"
+            <EditText
+                android:id="@+id/entryTimeInput"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/great"
-                app:drawableTopCompat="@drawable/great_icon"
-                app:drawableTint="@color/greatColour" />
-
-            <TextView
-                android:id="@+id/goodMoodBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/good"
-                app:drawableTopCompat="@drawable/good_icon"
-                app:drawableTint="@color/goodColour" />
-
-            <TextView
-                android:id="@+id/mehMoodBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/meh"
-                app:drawableTopCompat="@drawable/meh_icon"
-                app:drawableTint="@color/mehColour" />
-
-            <TextView
-                android:id="@+id/badMoodBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/bad"
-                app:drawableTopCompat="@drawable/bad_icon"
-                app:drawableTint="@color/badColour" />
+                android:ems="5"
+                android:hint="@string/time"
+                android:inputType="time"
+                tools:layout_editor_absoluteX="128dp"
+                tools:layout_editor_absoluteY="371dp" />
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/amazingMoodBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/amazing"
+                    app:drawableTopCompat="@drawable/amazing_icon"
+                    app:drawableTint="@color/amazingColour" />
+
+                <TextView
+                    android:id="@+id/greatMoodBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/great"
+                    app:drawableTopCompat="@drawable/great_icon"
+                    app:drawableTint="@color/greatColour" />
+
+                <TextView
+                    android:id="@+id/goodMoodBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/good"
+                    app:drawableTopCompat="@drawable/good_icon"
+                    app:drawableTint="@color/goodColour" />
+
+                <TextView
+                    android:id="@+id/mehMoodBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/meh"
+                    app:drawableTopCompat="@drawable/meh_icon"
+                    app:drawableTint="@color/mehColour" />
+
+                <TextView
+                    android:id="@+id/badMoodBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/bad"
+                    app:drawableTopCompat="@drawable/bad_icon"
+                    app:drawableTint="@color/badColour" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/save"
@@ -97,36 +133,5 @@
         app:strokeColor="@color/dark_green"
         app:strokeWidth="2dp"
         tools:ignore="TextContrastCheck" />
-
-    <LinearLayout
-        android:id="@+id/dateTimeLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/entryPromptTV">
-
-        <EditText
-            android:id="@+id/entryDateInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="7"
-            android:hint="@string/date"
-            android:inputType="date"
-            tools:layout_editor_absoluteX="34dp"
-            tools:layout_editor_absoluteY="287dp" />
-
-        <EditText
-            android:id="@+id/entryTimeInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="5"
-            android:hint="@string/time"
-            android:inputType="time"
-            tools:layout_editor_absoluteX="128dp"
-            tools:layout_editor_absoluteY="371dp" />
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

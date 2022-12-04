@@ -94,6 +94,6 @@
     <string name="good">Good</string>
     <string name="meh">Meh</string>
     <string name="bad">Bad</string>
-    <string name="date">Today's Date</string>
+    <string name="date">Date</string>
     <string name="time">Time</string>
 </resources>

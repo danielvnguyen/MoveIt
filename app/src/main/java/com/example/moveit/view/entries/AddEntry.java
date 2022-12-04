@@ -5,18 +5,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.moveit.R;
 import com.example.moveit.model.entries.Entry;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 public class AddEntry extends AppCompatActivity {
 
     private Button saveBtn;
     private Entry currentEntry;
+
+    private EditText dateInput;
+    private EditText timeInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +33,23 @@ public class AddEntry extends AppCompatActivity {
         currentEntry = new Entry();
 
         setUpMoods();
+        setUpInterface();
         //setUpSaveBtn();
-        setUpEntriesList();
     }
 
-    private void setUpEntriesList() {
+    private void setUpInterface() {
+        dateInput = findViewById(R.id.entryDateInput);
+        timeInput = findViewById(R.id.entryTimeInput);
 
+        long currentTime = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
+        Date resultDate = new Date(currentTime);
+        String dateTimeText = sdf.format(resultDate);
+
+        String dateText = dateTimeText.substring(0, dateTimeText.length() - 9);
+        String timeText = dateTimeText.substring(dateTimeText.length() - 9);
+        dateInput.setText(dateText);
+        timeInput.setText(timeText);
     }
 
     private void setUpMoods() {
