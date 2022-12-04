@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.example.moveit.R;
 import com.example.moveit.model.entries.Entry;
 
@@ -27,16 +29,25 @@ public class AddEntry extends AppCompatActivity {
 
         setUpMoods();
         //setUpSaveBtn();
+        setUpEntriesList();
+    }
+
+    private void setUpEntriesList() {
+
     }
 
     private void setUpMoods() {
-        ImageView green = findViewById(R.id.green_circle);
-        ImageView yellow = findViewById(R.id.yellow_circle);
-        ImageView red = findViewById(R.id.red_circle);
+        TextView amazingMoodBtn = findViewById(R.id.amazingMoodBtn);
+        TextView greatMoodBtn = findViewById(R.id.greatMoodBtn);
+        TextView goodMoodBtn = findViewById(R.id.goodMoodBtn);
+        TextView mehMoodBtn = findViewById(R.id.mehMoodBtn);
+        TextView badMoodBtn = findViewById(R.id.badMoodBtn);
 
-        green.setOnClickListener(v -> currentEntry.setMood("GOOD"));
-        yellow.setOnClickListener(v -> currentEntry.setMood("OK"));
-        red.setOnClickListener(v -> currentEntry.setMood("BAD"));
+        amazingMoodBtn.setOnClickListener(v -> currentEntry.setMood("AMAZING"));
+        greatMoodBtn.setOnClickListener(v -> currentEntry.setMood("GREAT"));
+        goodMoodBtn.setOnClickListener(v -> currentEntry.setMood("GOOD"));
+        mehMoodBtn.setOnClickListener(v -> currentEntry.setMood("MEH"));
+        badMoodBtn.setOnClickListener(v -> currentEntry.setMood("BAD"));
     }
 
     @Override

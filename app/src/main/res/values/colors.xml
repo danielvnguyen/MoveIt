@@ -16,4 +16,9 @@
     <color name="darkest_gray">#222222</color>
     <color name="red">#DC4F4F</color>
     <color name="dark_red">#D0312D</color>
+    <color name="amazingColour">#68BB59</color>
+    <color name="greatColour">#C7EA46</color>
+    <color name="goodColour">#FA8128</color>
+    <color name="mehColour">#F94449</color>
+    <color name="badColour">#F01E2C</color>
 </resources>

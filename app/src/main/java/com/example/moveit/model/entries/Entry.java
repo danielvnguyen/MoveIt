@@ -5,6 +5,7 @@ import android.media.Image;
 import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.meals.Meal;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -14,16 +15,18 @@ public class Entry {
     private ArrayList<Meal> meals;
     private Integer calories;
     private Date date;
+    private Time time;
     private String note;
     private ArrayList<Image> images;
 
     public Entry(String mood, ArrayList<Activity> activities, ArrayList<Meal> meals, Integer calories,
-                 Date date, String note, ArrayList<Image> images) {
+                 Date date, Time time, String note, ArrayList<Image> images) {
         this.mood = mood;
         this.activities = activities;
         this.meals = meals;
         this.calories = calories;
         this.date = date;
+        this.time = time;
         this.note = note;
         this.images = images;
     }
@@ -34,6 +37,7 @@ public class Entry {
         this.meals = null;
         this.calories = 0;
         this.date = null;
+        this.time = null;
         this.note = "";
         this.images = null;
     }
@@ -92,5 +96,13 @@ public class Entry {
 
     public void setImages(ArrayList<Image> images) {
         this.images = images;
+    }
+
+    public Time getTime() {
+        return time;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
     }
 }

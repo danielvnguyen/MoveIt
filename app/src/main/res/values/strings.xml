@@ -7,7 +7,7 @@
     <string name="password">Password</string>
     <string name="logout">Log Out</string>
     <string name="save">Save</string>
-    <string name="entry_prompt">How did your day go?</string>
+    <string name="entry_prompt">How are you?</string>
     <string name="meal_name">Meal Name</string>
     <string name="calories">Calories</string>
     <string name="note">Notes</string>
@@ -89,4 +89,11 @@
     <string name="number_hint">#</string>
     <string name="meal_calories">Meal Calories</string>
     <string name="_0">0</string>
+    <string name="amazing">Amazing</string>
+    <string name="great">Great</string>
+    <string name="good">Good</string>
+    <string name="meh">Meh</string>
+    <string name="bad">Bad</string>
+    <string name="date">Today's Date</string>
+    <string name="time">Time</string>
 </resources>
