@@ -2,10 +2,11 @@ package com.example.moveit.view.entries;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
+import android.app.TimePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -23,6 +25,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.moveit.R;
+import com.example.moveit.model.TimePickerFragment;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.google.android.material.chip.Chip;
@@ -35,11 +38,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.sql.Time;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
-public class AddEntry extends AppCompatActivity {
+@SuppressLint("SimpleDateFormat")
+public class AddEntry extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
@@ -49,6 +55,7 @@ public class AddEntry extends AppCompatActivity {
 
     private EditText dateInput;
     private EditText timeInput;
+    private int hour, minute;
     private TextView[] moodButtons;
 
     @Override
@@ -137,7 +144,7 @@ public class AddEntry extends AppCompatActivity {
         timeInput = findViewById(R.id.entryTimeInput);
 
         long currentTime = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
         Date resultDate = new Date(currentTime);
         String dateTimeText = sdf.format(resultDate);
 
@@ -185,10 +192,15 @@ public class AddEntry extends AppCompatActivity {
     private void clearMoodSelections(TextView currentButton) {
         for (TextView moodButton : moodButtons) {
             if (!moodButton.equals(currentButton)) {
-                int color = MaterialColors.getColor(this, R.attr.colorOnPrimary, Color.WHITE);
+                int color = MaterialColors.getColor(this, android.R.attr.textColor, Color.WHITE);
                 moodButton.setTextColor(color);
             }
         }
+    }
+
+    public void showTimePickerDialog(View v) {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
     }
 
     @Override
@@ -201,5 +213,18 @@ public class AddEntry extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        String timeText = getTime(hourOfDay, minute);
+        timeInput.setText(timeText);
+        currentEntry.setTime(timeText);
+    }
+
+    private String getTime(int hr,int min) {
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+        Date resultDate = new Date(0, 0, 0, hr, min);
+        return sdf.format(resultDate);
     }
 }

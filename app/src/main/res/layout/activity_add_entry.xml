@@ -40,10 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="7"
-                android:hint="@string/date"
-                android:inputType="date"
-                tools:layout_editor_absoluteX="34dp"
-                tools:layout_editor_absoluteY="287dp" />
+                android:hint="@string/date" />
 
             <EditText
                 android:id="@+id/entryTimeInput"
@@ -51,9 +48,10 @@
                 android:layout_height="wrap_content"
                 android:ems="5"
                 android:hint="@string/time"
-                android:inputType="time"
-                tools:layout_editor_absoluteX="128dp"
-                tools:layout_editor_absoluteY="371dp" />
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="true"
+                android:onClick="showTimePickerDialog" />
         </LinearLayout>
 
         <androidx.cardview.widget.CardView

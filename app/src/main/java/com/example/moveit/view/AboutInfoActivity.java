@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.moveit.BuildConfig;
 import com.example.moveit.R;
+import com.example.moveit.view.meals.AddMeal;
 
 import java.util.Objects;
 
@@ -43,6 +46,9 @@ public class AboutInfoActivity extends AppCompatActivity {
         Button attributionsBtn = findViewById(R.id.attributionsBtn);
         ImageView gitHubBtn = findViewById(R.id.gitHubImageView);
         ImageView linkedInBtn = findViewById(R.id.linkedInImageView);
+        
+        viewChangeLogsBtn.setOnClickListener(v ->
+                Toast.makeText(AboutInfoActivity.this, "There is currently no change log", Toast.LENGTH_SHORT).show());
 
         linkedInBtn.setOnClickListener(v -> {
             Uri uri = Uri.parse(getString(R.string.linked_in_url));
