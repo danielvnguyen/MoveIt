@@ -10,16 +10,18 @@ public class Entry {
     private String mood;
     private ArrayList<Activity> activities;
     private ArrayList<Meal> meals;
+    private Integer caloriesEaten;
     private Date date;
     private Time time;
     private String note;
     private String imageId;
 
     public Entry(String mood, ArrayList<Activity> activities, ArrayList<Meal> meals,
-                 Date date, Time time, String note, String imageId) {
+                 Integer calories, Date date, Time time, String note, String imageId) {
         this.mood = mood;
         this.activities = activities;
         this.meals = meals;
+        this.caloriesEaten = calories;
         this.date = date;
         this.time = time;
         this.note = note;
@@ -30,6 +32,7 @@ public class Entry {
         this.mood = "";
         this.activities = null;
         this.meals = null;
+        this.caloriesEaten = 0;
         this.date = null;
         this.time = null;
         this.note = "";
@@ -90,5 +93,13 @@ public class Entry {
 
     public void setTime(Time time) {
         this.time = time;
+    }
+
+    public Integer getCaloriesEaten() {
+        return caloriesEaten;
+    }
+
+    public void setCaloriesEaten(Integer caloriesEaten) {
+        this.caloriesEaten = caloriesEaten;
     }
 }
