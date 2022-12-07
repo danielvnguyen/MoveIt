@@ -57,7 +57,7 @@ public class AddEntry extends AppCompatActivity implements
 
     private EditText dateInput;
     private EditText timeInput;
-    private int selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
+    private Integer selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +100,6 @@ public class AddEntry extends AppCompatActivity implements
                                             .child("uploads").child(currentMeal.getImageId());
                                     fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                                         loadChipIcon(currentChip, uri);
-                                        progressDialog.dismiss();
                                     });
                                 }
                             }
@@ -190,7 +189,9 @@ public class AddEntry extends AppCompatActivity implements
 
         TimePickerDialog.OnTimeSetListener timeSetListener = this;
         TimePickerDialog dialog = new TimePickerDialog(this, timeSetListener, hour, minute, false);
-        dialog.updateTime(selectedHour, selectedMinute);
+        if (selectedHour != null) {
+            dialog.updateTime(selectedHour, selectedMinute);
+        }
         dialog.show();
     }
 
@@ -218,7 +219,7 @@ public class AddEntry extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener dateSetListener = this;
         DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, year, month, day);
         dialog.getDatePicker().setMaxDate(new Date().getTime());
-        if (selectedYear >= 1900) {
+        if (selectedYear != null) {
             dialog.updateDate(selectedYear, selectedMonth, selectedDay);
         }
         dialog.show();
