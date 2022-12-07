@@ -2,9 +2,9 @@ package com.example.moveit.view.entries;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.graphics.Color;
@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -25,7 +26,6 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.moveit.R;
-import com.example.moveit.model.TimePickerFragment;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.google.android.material.chip.Chip;
@@ -38,14 +38,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.sql.Time;
-import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
 @SuppressLint("SimpleDateFormat")
-public class AddEntry extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
+public class AddEntry extends AppCompatActivity implements
+        TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
@@ -53,10 +53,11 @@ public class AddEntry extends AppCompatActivity implements TimePickerDialog.OnTi
     private Button saveBtn;
     private Entry currentEntry;
 
+    private TextView[] moodButtons;
+
     private EditText dateInput;
     private EditText timeInput;
-    private int hour, minute;
-    private TextView[] moodButtons;
+    private int selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class AddEntry extends AppCompatActivity implements TimePickerDialog.OnTi
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot mealDoc : Objects.requireNonNull(task.getResult())) {
                             Meal currentMeal = mealDoc.toObject(Meal.class);
-                            Chip currentChip = buildChip(currentMeal.getName());
+                            Chip currentChip = buildMealChip(currentMeal.getName());
                             if (!currentMeal.getImageId().equals("")) {
                                 if (currentMeal.getImageId().contains("https")) {
                                     loadChipIcon(currentChip, Uri.parse(currentMeal.getImageId()));
@@ -114,7 +115,7 @@ public class AddEntry extends AppCompatActivity implements TimePickerDialog.OnTi
                 });
     }
 
-    private Chip buildChip(String text) {
+    private Chip buildMealChip(String text) {
         Chip newChip = new Chip(this);
         newChip.setText(text);
         newChip.setChipBackgroundColorResource(R.color.light_green);
@@ -162,31 +163,14 @@ public class AddEntry extends AppCompatActivity implements TimePickerDialog.OnTi
         TextView badMoodBtn = findViewById(R.id.badMoodBtn);
         moodButtons = new TextView[]{amazingMoodBtn, greatMoodBtn, goodMoodBtn, mehMoodBtn, badMoodBtn};
 
-        amazingMoodBtn.setOnClickListener(v -> {
-            currentEntry.setMood("AMAZING");
-            amazingMoodBtn.setTextColor(getResources().getColor(R.color.light_green));
-            clearMoodSelections(amazingMoodBtn);
-        });
-        greatMoodBtn.setOnClickListener(v -> {
-            currentEntry.setMood("GREAT");
-            greatMoodBtn.setTextColor(getResources().getColor(R.color.light_green));
-            clearMoodSelections(greatMoodBtn);
-        });
-        goodMoodBtn.setOnClickListener(v -> {
-            currentEntry.setMood("GOOD");
-            goodMoodBtn.setTextColor(getResources().getColor(R.color.light_green));
-            clearMoodSelections(goodMoodBtn);
-        });
-        mehMoodBtn.setOnClickListener(v -> {
-            currentEntry.setMood("MEH");
-            mehMoodBtn.setTextColor(getResources().getColor(R.color.light_green));
-            clearMoodSelections(mehMoodBtn);
-        });
-        badMoodBtn.setOnClickListener(v -> {
-            currentEntry.setMood("BAD");
-            badMoodBtn.setTextColor(getResources().getColor(R.color.light_green));
-            clearMoodSelections(badMoodBtn);
-        });
+        for (TextView moodButton : moodButtons) {
+            moodButton.setOnClickListener(v -> {
+                currentEntry.setMood((String) moodButton.getText());
+                moodButton.setTextColor(getResources().getColor(R.color.light_green));
+                moodButton.setBackgroundResource(R.drawable.on_item_select);
+                clearMoodSelections(moodButton);
+            });
+        }
     }
 
     private void clearMoodSelections(TextView currentButton) {
@@ -194,13 +178,67 @@ public class AddEntry extends AppCompatActivity implements TimePickerDialog.OnTi
             if (!moodButton.equals(currentButton)) {
                 int color = MaterialColors.getColor(this, android.R.attr.textColor, Color.WHITE);
                 moodButton.setTextColor(color);
+                moodButton.setBackgroundResource(0);
             }
         }
     }
 
     public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "timePicker");
+        final Calendar c = Calendar.getInstance();
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+
+        TimePickerDialog.OnTimeSetListener timeSetListener = this;
+        TimePickerDialog dialog = new TimePickerDialog(this, timeSetListener, hour, minute, false);
+        dialog.updateTime(selectedHour, selectedMinute);
+        dialog.show();
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        selectedHour = hourOfDay;
+        selectedMinute = minute;
+        String timeText = getTime(hourOfDay, minute);
+        timeInput.setText(timeText);
+        currentEntry.setTime(timeText);
+    }
+
+    private String getTime(int hr,int min) {
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+        Date resultDate = new Date(0, 0, 0, hr, min);
+        return sdf.format(resultDate);
+    }
+
+    public void showDatePickerDialog(View v) {
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog.OnDateSetListener dateSetListener = this;
+        DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, year, month, day);
+        dialog.getDatePicker().setMaxDate(new Date().getTime());
+        if (selectedYear >= 1900) {
+            dialog.updateDate(selectedYear, selectedMonth, selectedDay);
+        }
+        dialog.show();
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+        selectedYear = year;
+        selectedMonth = month;
+        selectedDay = day;
+        String dateText = getDate(year, month, day);
+        dateInput.setText(dateText);
+        currentEntry.setDate(dateText);
+    }
+
+    private String getDate(int year, int month, int day) {
+        Calendar c = Calendar.getInstance();
+        c.set(year, month, day);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
+        return sdf.format(c.getTimeInMillis());
     }
 
     @Override
@@ -213,18 +251,5 @@ public class AddEntry extends AppCompatActivity implements TimePickerDialog.OnTi
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        String timeText = getTime(hourOfDay, minute);
-        timeInput.setText(timeText);
-        currentEntry.setTime(timeText);
-    }
-
-    private String getTime(int hr,int min) {
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
-        Date resultDate = new Date(0, 0, 0, hr, min);
-        return sdf.format(resultDate);
     }
 }
