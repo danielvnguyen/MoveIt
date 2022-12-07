@@ -189,6 +189,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private void setUpGallery() {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         StorageReference ref = storage.getReference().child(currentUser.getUid()).child("uploads");

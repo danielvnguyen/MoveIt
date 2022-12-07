@@ -4,6 +4,7 @@ import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.meals.Meal;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Entry {
@@ -11,13 +12,13 @@ public class Entry {
     private ArrayList<Activity> activities;
     private ArrayList<Meal> meals;
     private Integer caloriesEaten;
-    private String date;
-    private String time;
+    private Calendar date;
+    private Calendar time;
     private String note;
     private String imageId;
 
     public Entry(String mood, ArrayList<Activity> activities, ArrayList<Meal> meals,
-                 Integer calories, String date, String time, String note, String imageId) {
+                 Integer calories, Calendar date, Calendar time, String note, String imageId) {
         this.mood = mood;
         this.activities = activities;
         this.meals = meals;
@@ -63,11 +64,11 @@ public class Entry {
         this.meals = meals;
     }
 
-    public String getDate() {
+    public Calendar getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Calendar date) {
         this.date = date;
     }
 
@@ -87,11 +88,11 @@ public class Entry {
         this.imageId = imageId;
     }
 
-    public String getTime() {
+    public Calendar getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Calendar time) {
         this.time = time;
     }
 

@@ -58,6 +58,7 @@ public class ActivitiesList extends AppCompatActivity {
 
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         adapter = new ActivityListAdapter(ActivitiesList.this, R.layout.item_activity);

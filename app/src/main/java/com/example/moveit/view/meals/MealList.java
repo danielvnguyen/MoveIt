@@ -61,6 +61,7 @@ public class MealList extends AppCompatActivity {
 
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         adapter = new MealListAdapter(MealList.this, R.layout.item_meal);

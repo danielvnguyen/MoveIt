@@ -1,13 +1,15 @@
 package com.example.moveit.view.entries;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,12 +21,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.moveit.R;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
@@ -37,7 +36,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -83,6 +81,7 @@ public class AddEntry extends AppCompatActivity implements
 
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         db.collection("meals").document(currentUser.getUid()).collection("mealList").get()
@@ -108,6 +107,7 @@ public class AddEntry extends AppCompatActivity implements
                             mealChipGroup.setOnCheckedChangeListener((group, checkedId)
                                     -> group.check(checkedId));
                         }
+                        progressDialog.dismiss();
                     } else {
                         Log.d("MealList", "Error retrieving documents: ", task.getException());
                     }
@@ -125,18 +125,17 @@ public class AddEntry extends AppCompatActivity implements
     }
 
     private void loadChipIcon(Chip chip, Uri uri) {
-        Glide.with(this).load(uri).circleCrop().listener(new RequestListener<Drawable>() {
+        Glide.with(this).asBitmap().load(uri).circleCrop().into(new CustomTarget<Bitmap>() {
             @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                return false;
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                Drawable d = new BitmapDrawable(getResources(), resource);
+                chip.setChipIcon(d);
             }
 
             @Override
-            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                chip.setChipIcon(resource);
-                return false;
+            public void onLoadCleared(@Nullable Drawable placeholder) {
             }
-        }).preload();
+        });
     }
 
     private void setUpInterface() {
@@ -201,13 +200,14 @@ public class AddEntry extends AppCompatActivity implements
         selectedMinute = minute;
         String timeText = getTime(hourOfDay, minute);
         timeInput.setText(timeText);
-        currentEntry.setTime(timeText);
     }
 
     private String getTime(int hr,int min) {
+        Calendar c = Calendar.getInstance();
+        c.set(0, 0, 0, selectedHour ,selectedMinute);
+        currentEntry.setTime(c);
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
-        Date resultDate = new Date(0, 0, 0, hr, min);
-        return sdf.format(resultDate);
+        return sdf.format(c.getTimeInMillis());
     }
 
     public void showDatePickerDialog(View v) {
@@ -232,12 +232,12 @@ public class AddEntry extends AppCompatActivity implements
         selectedDay = day;
         String dateText = getDate(year, month, day);
         dateInput.setText(dateText);
-        currentEntry.setDate(dateText);
     }
 
     private String getDate(int year, int month, int day) {
         Calendar c = Calendar.getInstance();
         c.set(year, month, day);
+        currentEntry.setDate(c);
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
         return sdf.format(c.getTimeInMillis());
     }

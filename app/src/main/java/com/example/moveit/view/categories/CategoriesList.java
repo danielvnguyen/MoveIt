@@ -46,6 +46,7 @@ public class CategoriesList extends AppCompatActivity {
 
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         adapter = new CategoryListAdapter(CategoriesList.this, R.layout.item_category);
