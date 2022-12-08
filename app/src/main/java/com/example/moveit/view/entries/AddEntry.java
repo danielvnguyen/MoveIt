@@ -3,6 +3,8 @@ package com.example.moveit.view.entries;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -28,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.moveit.R;
+import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.google.android.material.chip.Chip;
@@ -40,6 +43,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -77,7 +81,18 @@ public class AddEntry extends AppCompatActivity implements
         setUpMoods();
         setUpInterface();
         setUpMealChips();
+        //setUpCategories();
         //setUpSaveBtn();
+    }
+
+    private Chip buildChip(String text) {
+        Chip newChip = new Chip(this);
+        newChip.setText(text);
+        newChip.setChipBackgroundColorResource(R.color.light_green);
+        newChip.setCheckable(true);
+        newChip.setChipIconVisible(true);
+
+        return newChip;
     }
 
     @SuppressWarnings("Convert2MethodRef")
@@ -94,7 +109,7 @@ public class AddEntry extends AppCompatActivity implements
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot mealDoc : Objects.requireNonNull(task.getResult())) {
                             Meal currentMeal = mealDoc.toObject(Meal.class);
-                            Chip currentChip = buildMealChip(currentMeal.getName());
+                            Chip currentChip = buildChip(currentMeal.getName());
                             if (!currentMeal.getImageId().equals("")) {
                                 if (currentMeal.getImageId().contains("https")) {
                                     loadChipIcon(currentChip, Uri.parse(currentMeal.getImageId()));
@@ -114,19 +129,9 @@ public class AddEntry extends AppCompatActivity implements
                         }
                         progressDialog.dismiss();
                     } else {
-                        Log.d("MealList", "Error retrieving documents: ", task.getException());
+                        Log.d("AddEntry", "Error retrieving meal documents: ", task.getException());
                     }
                 });
-    }
-
-    private Chip buildMealChip(String text) {
-        Chip newChip = new Chip(this);
-        newChip.setText(text);
-        newChip.setChipBackgroundColorResource(R.color.light_green);
-        newChip.setCheckable(true);
-        newChip.setChipIconVisible(true);
-
-        return newChip;
     }
 
     private void loadChipIcon(Chip chip, Uri uri) {

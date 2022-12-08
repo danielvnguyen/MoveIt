@@ -53,21 +53,21 @@ public class CategoriesList extends AppCompatActivity {
         categoryListView.setAdapter(adapter);
 
         db.collection("categories").document(currentUser.getUid()).collection("categoryList")
-                .get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ArrayList<Category> categoryList = new ArrayList<>();
-                        for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
-                            Category currentCategory = categoryDoc.toObject(Category.class);
-                            categoryList.add(currentCategory);
-                        }
-
-                        adapter.clear();
-                        adapter.addAll(categoryList);
-                        progressDialog.dismiss();
-                    } else {
-                            Log.d("CategoriesList", "Error retrieving documents: ", task.getException());
+            .get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    ArrayList<Category> categoryList = new ArrayList<>();
+                    for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
+                        Category currentCategory = categoryDoc.toObject(Category.class);
+                        categoryList.add(currentCategory);
                     }
-                });
+
+                    adapter.clear();
+                    adapter.addAll(categoryList);
+                    progressDialog.dismiss();
+                } else {
+                    Log.d("CategoriesList", "Error retrieving documents: ", task.getException());
+                }
+            });
     }
 
     private void setUpAddCategoryBtn() {
