@@ -13,12 +13,15 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import com.bumptech.glide.Glide;
@@ -53,6 +56,8 @@ public class AddEntry extends AppCompatActivity implements
 
     private TextView[] moodButtons;
 
+    ChipGroup mealChipGroup;
+
     private EditText dateInput;
     private EditText timeInput;
     private Integer selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
@@ -77,7 +82,7 @@ public class AddEntry extends AppCompatActivity implements
 
     @SuppressWarnings("Convert2MethodRef")
     private void setUpMealChips() {
-        ChipGroup mealChipGroup = findViewById(R.id.mealChipGroup);
+        mealChipGroup = findViewById(R.id.mealChipGroup);
 
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Loading...");
@@ -136,6 +141,13 @@ public class AddEntry extends AppCompatActivity implements
             public void onLoadCleared(@Nullable Drawable placeholder) {
             }
         });
+    }
+
+    public void showMealChipGroup(View v) {
+        LinearLayout mealChipLayout = findViewById(R.id.mealChipLayout);
+        int visibility = (mealChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
+        TransitionManager.beginDelayedTransition(mealChipLayout, new AutoTransition());
+        mealChipGroup.setVisibility(visibility);
     }
 
     private void setUpInterface() {
