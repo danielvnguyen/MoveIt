@@ -3,8 +3,6 @@ package com.example.moveit.view.entries;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -30,7 +28,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.moveit.R;
-import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.google.android.material.chip.Chip;
@@ -43,9 +40,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @SuppressLint("SimpleDateFormat")
@@ -61,6 +60,8 @@ public class AddEntry extends AppCompatActivity implements
     private TextView[] moodButtons;
 
     ChipGroup mealChipGroup;
+    private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
+    private Integer calorieSum;
 
     private EditText dateInput;
     private EditText timeInput;
@@ -81,9 +82,9 @@ public class AddEntry extends AppCompatActivity implements
         setUpMoods();
         setUpInterface();
         setUpMealChips();
-        //setUpCategories();
         //setUpSaveBtn();
     }
+
 
     private Chip buildChip(String text) {
         Chip newChip = new Chip(this);
@@ -95,7 +96,7 @@ public class AddEntry extends AppCompatActivity implements
         return newChip;
     }
 
-    @SuppressWarnings("Convert2MethodRef")
+    @SuppressLint("SetTextI18n")
     private void setUpMealChips() {
         mealChipGroup = findViewById(R.id.mealChipGroup);
 
@@ -109,6 +110,8 @@ public class AddEntry extends AppCompatActivity implements
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot mealDoc : Objects.requireNonNull(task.getResult())) {
                             Meal currentMeal = mealDoc.toObject(Meal.class);
+                            mealCaloriesMap.put(currentMeal.getName(), currentMeal.getCalories());
+
                             Chip currentChip = buildChip(currentMeal.getName());
                             if (!currentMeal.getImageId().equals("")) {
                                 if (currentMeal.getImageId().contains("https")) {
@@ -123,15 +126,29 @@ public class AddEntry extends AppCompatActivity implements
                                 }
                             }
 
+                            currentChip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                                calorieSum = getCalorieSum();
+                                currentEntry.setCaloriesEaten(calorieSum);
+                                EditText calorieSumInput = findViewById(R.id.calorieSumInput);
+                                calorieSumInput.setText(calorieSum.toString());
+                            });
                             mealChipGroup.addView(currentChip);
-                            mealChipGroup.setOnCheckedChangeListener((group, checkedId)
-                                    -> group.check(checkedId));
                         }
                         progressDialog.dismiss();
                     } else {
                         Log.d("AddEntry", "Error retrieving meal documents: ", task.getException());
                     }
                 });
+    }
+
+    private Integer getCalorieSum() {
+        List<Integer> ids = mealChipGroup.getCheckedChipIds();
+        Integer calories = 0;
+        for (Integer id: ids){
+            Chip currentChip = mealChipGroup.findViewById(id);
+            calories += mealCaloriesMap.get(currentChip.getText().toString());
+        }
+        return calories;
     }
 
     private void loadChipIcon(Chip chip, Uri uri) {

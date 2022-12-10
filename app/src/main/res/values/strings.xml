@@ -98,4 +98,5 @@
     <string name="time">Time</string>
     <string name="meals_header">Meals</string>
     <string name="activities_header">Activities</string>
+    <string name="calorie_sum">Calories Today:</string>
 </resources>

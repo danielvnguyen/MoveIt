@@ -60,6 +60,33 @@
                 android:clickable="true"
                 android:onClick="showTimePickerDialog"
                 tools:ignore="TextFields" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/raleway"
+                android:text="@string/calorie_sum"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/calorieSumInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/calories"
+                android:ems="3"
+                android:inputType="number"
+                android:maxLength="4"
+                android:text="@string/_0"
+                android:fontFamily="@font/raleway"/>
+
         </LinearLayout>
 
         <androidx.cardview.widget.CardView
@@ -159,6 +186,33 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone">
                 </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/categoriesCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="10dp"
+            app:contentPadding="15dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/raleway"
+                android:text="@string/activities_header"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/categoriesLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:animateLayoutChanges="true"
+                android:visibility="gone">
 
             </LinearLayout>
 
