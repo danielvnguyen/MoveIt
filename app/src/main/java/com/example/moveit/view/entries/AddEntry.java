@@ -28,6 +28,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.moveit.R;
+import com.example.moveit.model.activities.Activity;
+import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.google.android.material.chip.Chip;
@@ -35,6 +37,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.color.MaterialColors;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -59,13 +62,15 @@ public class AddEntry extends AppCompatActivity implements
 
     private TextView[] moodButtons;
 
-    ChipGroup mealChipGroup;
-    private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
-    private Integer calorieSum;
-
     private EditText dateInput;
     private EditText timeInput;
     private Integer selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
+
+    private ChipGroup mealChipGroup;
+    private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
+    private Integer calorieSum;
+
+    private ChipGroup activitiesChipGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,18 +87,8 @@ public class AddEntry extends AppCompatActivity implements
         setUpMoods();
         setUpInterface();
         setUpMealChips();
+        setUpActivities();
         //setUpSaveBtn();
-    }
-
-
-    private Chip buildChip(String text) {
-        Chip newChip = new Chip(this);
-        newChip.setText(text);
-        newChip.setChipBackgroundColorResource(R.color.light_green);
-        newChip.setCheckable(true);
-        newChip.setChipIconVisible(true);
-
-        return newChip;
     }
 
     @SuppressLint("SetTextI18n")
@@ -112,33 +107,71 @@ public class AddEntry extends AppCompatActivity implements
                             Meal currentMeal = mealDoc.toObject(Meal.class);
                             mealCaloriesMap.put(currentMeal.getName(), currentMeal.getCalories());
 
-                            Chip currentChip = buildChip(currentMeal.getName());
+                            Chip mealChip = buildChip(currentMeal.getName());
                             if (!currentMeal.getImageId().equals("")) {
                                 if (currentMeal.getImageId().contains("https")) {
-                                    loadChipIcon(currentChip, Uri.parse(currentMeal.getImageId()));
+                                    loadChipIcon(mealChip, Uri.parse(currentMeal.getImageId()));
                                 } else {
                                     final StorageReference fileRef = FirebaseStorage.getInstance()
                                             .getReference().child(currentUser.getUid())
                                             .child("uploads").child(currentMeal.getImageId());
                                     fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                        loadChipIcon(currentChip, uri);
+                                        loadChipIcon(mealChip, uri);
                                     });
                                 }
                             }
 
-                            currentChip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                            mealChip.setOnCheckedChangeListener((buttonView, isChecked) -> {
                                 calorieSum = getCalorieSum();
                                 currentEntry.setCaloriesEaten(calorieSum);
                                 EditText calorieSumInput = findViewById(R.id.calorieSumInput);
                                 calorieSumInput.setText(calorieSum.toString());
                             });
-                            mealChipGroup.addView(currentChip);
+                            mealChipGroup.addView(mealChip);
                         }
                         progressDialog.dismiss();
                     } else {
                         Log.d("AddEntry", "Error retrieving meal documents: ", task.getException());
                     }
                 });
+    }
+
+    private void setUpActivities() {
+        activitiesChipGroup = findViewById(R.id.activitiesChipGroup);
+
+        CollectionReference categoriesRef = db.collection("categories")
+                .document(currentUser.getUid()).collection("categoryList");
+        categoriesRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
+                    Category currentCategory = categoryDoc.toObject(Category.class);
+                    categoriesRef.document(currentCategory.getCategoryId())
+                            .collection("activityList").get().addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
+                                        Activity currentActivity = activityDoc.toObject(Activity.class);
+                                        Chip activityChip = buildChip(currentActivity.getName());
+                                        activitiesChipGroup.addView(activityChip);
+                                    }
+                                } else {
+                                    Log.d("AddEntry", "Error retrieving activity documents: ", task1.getException());
+                                }
+                            });
+                }
+            } else {
+                Log.d("AddEntry", "Error retrieving category documents: ", task.getException());
+            }
+        });
+    }
+
+    private Chip buildChip(String text) {
+        Chip newChip = new Chip(this);
+        newChip.setText(text);
+        newChip.setChipBackgroundColorResource(R.color.light_green);
+        newChip.setCheckable(true);
+        newChip.setChipIconVisible(true);
+
+        return newChip;
     }
 
     private Integer getCalorieSum() {
@@ -170,6 +203,13 @@ public class AddEntry extends AppCompatActivity implements
         int visibility = (mealChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
         TransitionManager.beginDelayedTransition(mealChipLayout, new AutoTransition());
         mealChipGroup.setVisibility(visibility);
+    }
+
+    public void showActivitiesChipGroup(View v) {
+        LinearLayout activitiesChipLayout = findViewById(R.id.activitiesChipLayout);
+        int visibility = (activitiesChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
+        TransitionManager.beginDelayedTransition(activitiesChipLayout, new AutoTransition());
+        activitiesChipGroup.setVisibility(visibility);
     }
 
     private void setUpInterface() {

@@ -7,230 +7,244 @@
     tools:context=".view.entries.AddEntry"
     tools:ignore="Autofill, LabelFor, ContentDescription">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/entryPromptTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/raleway"
-            android:layout_gravity="center"
-            android:text="@string/entry_prompt"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:id="@+id/dateTimeLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/entryDateInput"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="7"
-                android:hint="@string/date"
-                android:focusable="false"
-                android:fontFamily="@font/raleway"
-                android:focusableInTouchMode="false"
-                android:clickable="true"
-                android:onClick="showDatePickerDialog"
-                tools:ignore="TextFields" />
-
-            <EditText
-                android:id="@+id/entryTimeInput"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="5"
-                android:hint="@string/time"
-                android:focusable="false"
-                android:fontFamily="@font/raleway"
-                android:focusableInTouchMode="false"
-                android:clickable="true"
-                android:onClick="showTimePickerDialog"
-                tools:ignore="TextFields" />
-
-        </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
+                android:id="@+id/entryPromptTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
                 android:fontFamily="@font/raleway"
-                android:text="@string/calorie_sum"
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/calorieSumInput"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/calories"
-                android:ems="3"
-                android:inputType="number"
-                android:maxLength="4"
-                android:text="@string/_0"
-                android:fontFamily="@font/raleway"/>
-
-        </LinearLayout>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="10dp">
+                android:text="@string/entry_prompt"
+                android:textSize="30sp"
+                android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/dateTimeLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/entryDateInput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:ems="7"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/raleway"
+                    android:hint="@string/date"
+                    android:onClick="showDatePickerDialog"
+                    tools:ignore="TextFields" />
+
+                <EditText
+                    android:id="@+id/entryTimeInput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:ems="5"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/raleway"
+                    android:hint="@string/time"
+                    android:onClick="showTimePickerDialog"
+                    tools:ignore="TextFields" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/amazingMoodBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/amazing"
                     android:fontFamily="@font/raleway"
-                    app:drawableTopCompat="@drawable/amazing_icon"
-                    app:drawableTint="@color/amazingColour" />
+                    android:text="@string/calorie_sum"
+                    android:textSize="18sp" />
 
-                <TextView
-                    android:id="@+id/greatMoodBtn"
+                <EditText
+                    android:id="@+id/calorieSumInput"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/great"
+                    android:ems="3"
                     android:fontFamily="@font/raleway"
-                    app:drawableTopCompat="@drawable/great_icon"
-                    app:drawableTint="@color/greatColour" />
-
-                <TextView
-                    android:id="@+id/goodMoodBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/good"
-                    android:fontFamily="@font/raleway"
-                    app:drawableTopCompat="@drawable/good_icon"
-                    app:drawableTint="@color/goodColour" />
-
-                <TextView
-                    android:id="@+id/mehMoodBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/meh"
-                    android:fontFamily="@font/raleway"
-                    app:drawableTopCompat="@drawable/meh_icon"
-                    app:drawableTint="@color/mehColour" />
-
-                <TextView
-                    android:id="@+id/badMoodBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/bad"
-                    android:fontFamily="@font/raleway"
-                    app:drawableTopCompat="@drawable/bad_icon"
-                    app:drawableTint="@color/badColour" />
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="10dp"
-            app:contentPadding="15dp"
-            android:onClick="showMealChipGroup">
-            <LinearLayout
-                android:id="@+id/mealChipLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:animateLayoutChanges="true">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/meals_header"
-                    android:fontFamily="@font/raleway"
-                    android:textSize="16sp" />
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/mealChipGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone">
-                </com.google.android.material.chip.ChipGroup>
+                    android:hint="@string/calories"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:text="@string/_0" />
 
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/categoriesCardView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="10dp"
-            app:contentPadding="15dp">
-            <TextView
+            <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/raleway"
-                android:text="@string/activities_header"
-                android:textSize="16sp" />
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="10dp">
 
-            <LinearLayout
-                android:id="@+id/categoriesLayout"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/amazingMoodBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway"
+                        android:gravity="center"
+                        android:text="@string/amazing"
+                        app:drawableTint="@color/amazingColour"
+                        app:drawableTopCompat="@drawable/amazing_icon" />
+
+                    <TextView
+                        android:id="@+id/greatMoodBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway"
+                        android:gravity="center"
+                        android:text="@string/great"
+                        app:drawableTint="@color/greatColour"
+                        app:drawableTopCompat="@drawable/great_icon" />
+
+                    <TextView
+                        android:id="@+id/goodMoodBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway"
+                        android:gravity="center"
+                        android:text="@string/good"
+                        app:drawableTint="@color/goodColour"
+                        app:drawableTopCompat="@drawable/good_icon" />
+
+                    <TextView
+                        android:id="@+id/mehMoodBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway"
+                        android:gravity="center"
+                        android:text="@string/meh"
+                        app:drawableTint="@color/mehColour"
+                        app:drawableTopCompat="@drawable/meh_icon" />
+
+                    <TextView
+                        android:id="@+id/badMoodBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway"
+                        android:gravity="center"
+                        android:text="@string/bad"
+                        app:drawableTint="@color/badColour"
+                        app:drawableTopCompat="@drawable/bad_icon" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:animateLayoutChanges="true"
-                android:visibility="gone">
+                android:layout_margin="10dp"
+                android:onClick="showMealChipGroup"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="10dp"
+                app:contentPadding="15dp">
 
-            </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/mealChipLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical">
 
-        </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway"
+                        android:text="@string/meals_header"
+                        android:textSize="16sp" />
 
-    </LinearLayout>
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/mealChipGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:visibility="gone" />
 
-    <Button
-        android:id="@+id/save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="@string/save"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/dark_green"
-        app:strokeWidth="2dp"
-        tools:ignore="TextContrastCheck" />
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/activitiesCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:onClick="showActivitiesChipGroup"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="10dp"
+                app:contentPadding="15dp">
+
+                <LinearLayout
+                    android:id="@+id/activitiesChipLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway"
+                        android:text="@string/activities_header"
+                        android:textSize="16sp" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/activitiesChipGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <Button
+                android:id="@+id/save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:layout_gravity="center"
+                android:text="@string/save"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                tools:ignore="TextContrastCheck" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
