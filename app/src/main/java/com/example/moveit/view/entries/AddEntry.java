@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -57,10 +58,16 @@ public class AddEntry extends AppCompatActivity implements
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
 
-    private Button saveBtn;
+    private Button saveEntryBtn;
+    private Button deleteEntryBtn;
     private Entry currentEntry;
 
     private TextView[] moodButtons;
+    private EditText entryNote;
+    private ImageView entryImageView;
+    private ImageView chooseImgBtn;
+    private ImageView deleteImgBtn;
+    private ImageView takeNewImgBtn;
 
     private EditText dateInput;
     private EditText timeInput;
@@ -84,11 +91,33 @@ public class AddEntry extends AppCompatActivity implements
 
         currentEntry = new Entry();
 
-        setUpMoods();
         setUpInterface();
+        setUpMoods();
         setUpMealChips();
         setUpActivities();
         //setUpSaveBtn();
+    }
+
+    private void setUpInterface() {
+        saveEntryBtn = findViewById(R.id.saveEntryBtn);
+        deleteEntryBtn = findViewById(R.id.deleteEntryBtn);
+        dateInput = findViewById(R.id.entryDateInput);
+        timeInput = findViewById(R.id.entryTimeInput);
+        entryNote = findViewById(R.id.entryNote);
+        entryImageView = findViewById(R.id.entryImageView);
+        chooseImgBtn = findViewById(R.id.chooseImageBtn);
+        deleteImgBtn = findViewById(R.id.deleteImgBtn);
+        takeNewImgBtn = findViewById(R.id.takeNewImageBtn);
+
+        long currentTime = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
+        Date resultDate = new Date(currentTime);
+        String dateTimeText = sdf.format(resultDate);
+
+        String dateText = dateTimeText.substring(0, 13);
+        String timeText = dateTimeText.substring(13);
+        dateInput.setText(dateText);
+        timeInput.setText(timeText);
     }
 
     @SuppressLint("SetTextI18n")
@@ -115,9 +144,7 @@ public class AddEntry extends AppCompatActivity implements
                                     final StorageReference fileRef = FirebaseStorage.getInstance()
                                             .getReference().child(currentUser.getUid())
                                             .child("uploads").child(currentMeal.getImageId());
-                                    fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                        loadChipIcon(mealChip, uri);
-                                    });
+                                    fileRef.getDownloadUrl().addOnSuccessListener(uri -> loadChipIcon(mealChip, uri));
                                 }
                             }
 
@@ -212,21 +239,6 @@ public class AddEntry extends AppCompatActivity implements
         activitiesChipGroup.setVisibility(visibility);
     }
 
-    private void setUpInterface() {
-        dateInput = findViewById(R.id.entryDateInput);
-        timeInput = findViewById(R.id.entryTimeInput);
-
-        long currentTime = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
-        Date resultDate = new Date(currentTime);
-        String dateTimeText = sdf.format(resultDate);
-
-        String dateText = dateTimeText.substring(0, 13);
-        String timeText = dateTimeText.substring(13);
-        dateInput.setText(dateText);
-        timeInput.setText(timeText);
-    }
-
     private void setUpMoods() {
         TextView amazingMoodBtn = findViewById(R.id.amazingMoodBtn);
         TextView greatMoodBtn = findViewById(R.id.greatMoodBtn);
@@ -272,11 +284,11 @@ public class AddEntry extends AppCompatActivity implements
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         selectedHour = hourOfDay;
         selectedMinute = minute;
-        String timeText = getTime(hourOfDay, minute);
+        String timeText = getTime();
         timeInput.setText(timeText);
     }
 
-    private String getTime(int hr,int min) {
+    private String getTime() {
         Calendar c = Calendar.getInstance();
         c.set(0, 0, 0, selectedHour ,selectedMinute);
         currentEntry.setTime(c);

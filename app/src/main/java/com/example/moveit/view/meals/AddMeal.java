@@ -18,7 +18,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -141,7 +140,7 @@ public class AddMeal extends AppCompatActivity {
         mealNameInput.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.required,0);
         caloriesInput = findViewById(R.id.caloriesInput);
         mealNoteInput = findViewById(R.id.mealNote);
-        deleteBtn = findViewById(R.id.deleteBtn);
+        deleteBtn = findViewById(R.id.deleteMealBtn);
         chooseImgBtn = findViewById(R.id.chooseImageBtn);
         deleteImgBtn = findViewById(R.id.deleteImgBtn);
         takeNewImgBtn = findViewById(R.id.takeNewImageBtn);
@@ -207,7 +206,7 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private void setUpSaveBtn() {
-        Button saveBtn = findViewById(R.id.saveBtn);
+        Button saveBtn = findViewById(R.id.saveMealBtn);
         saveBtn.setOnClickListener(v -> {
             String mealName = mealNameInput.getText().toString();
             String caloriesText = caloriesInput.getText().toString();

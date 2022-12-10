@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.meals.AddMeal"
-    tools:ignore="LabelFor, Autofill">
+    tools:ignore="LabelFor, Autofill, ContentDescription">
 
     <EditText
         android:id="@+id/mealName"
@@ -15,6 +15,7 @@
         android:ems="13"
         android:inputType="textPersonName"
         android:hint="@string/meal_name"
+        android:fontFamily="@font/raleway"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,6 +37,7 @@
             android:layout_gravity="bottom"
             android:layout_marginTop="24dp"
             android:hint="@string/calories"
+            android:fontFamily="@font/raleway"
             android:inputType="number"
             android:maxLength="10"/>
 
@@ -76,21 +78,18 @@
 
     <EditText
         android:id="@+id/mealNote"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_marginTop="16dp"
-        android:ems="10"
         android:gravity="start|top"
-        android:hint="@string/note"
+        android:hint="@string/meal_notes"
         android:fontFamily="@font/raleway"
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calorieServingSizeLayout" />
 
     <Button
-        android:id="@+id/saveBtn"
+        android:id="@+id/saveMealBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
@@ -103,13 +102,13 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/deleteBtn"
+        android:id="@+id/deleteMealBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="@string/delete"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/saveBtn"
+        app:layout_constraintBottom_toTopOf="@+id/saveMealBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="@color/dark_green"
@@ -122,7 +121,7 @@
         android:layout_height="50dp"
         android:background="@drawable/circle_button"
         android:scaleType="center"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/takeNewImageBtn"
         app:layout_constraintTop_toBottomOf="@+id/mealNote"
         app:srcCompat="@android:drawable/ic_menu_delete"
@@ -150,15 +149,13 @@
 
     <ImageView
         android:id="@+id/mealImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/deleteBtn"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/deleteMealBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mealNote"
-        app:layout_constraintVertical_bias="0.617"
+        app:layout_constraintTop_toBottomOf="@+id/chooseImageBtn"
         tools:srcCompat="@drawable/default_image"
         tools:visibility="visible" />
 
