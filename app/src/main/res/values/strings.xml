@@ -101,4 +101,6 @@
     <string name="calorie_sum">Calories Today:</string>
     <string name="entry_notes">Entry Notes</string>
     <string name="add_image">Add Image:</string>
+    <string name="mood">Mood</string>
+    <string name="date_and_time">Date and Time</string>
 </resources>
