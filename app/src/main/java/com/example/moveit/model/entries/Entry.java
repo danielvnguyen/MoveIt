@@ -1,24 +1,22 @@
 package com.example.moveit.model.entries;
 
-import com.example.moveit.model.activities.Activity;
-import com.example.moveit.model.meals.Meal;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Entry {
+    private String id;
     private String mood;
-    private ArrayList<Activity> activities;
-    private ArrayList<Meal> meals;
+    private ArrayList<String> activities;
+    private ArrayList<String> meals;
     private Integer caloriesEaten;
-    private Calendar date;
-    private Calendar time;
+    private long date;
+    private long time;
     private String note;
     private String imageId;
 
-    public Entry(String mood, ArrayList<Activity> activities, ArrayList<Meal> meals,
-                 Integer calories, Calendar date, Calendar time, String note, String imageId) {
+    public Entry(String id, String mood, ArrayList<String> activities, ArrayList<String> meals,
+                 Integer calories, long date, long time, String note, String imageId) {
+        this.id = id;
         this.mood = mood;
         this.activities = activities;
         this.meals = meals;
@@ -30,12 +28,13 @@ public class Entry {
     }
 
     public Entry() {
+        this.id = "";
         this.mood = "";
         this.activities = null;
         this.meals = null;
         this.caloriesEaten = 0;
-        this.date = null;
-        this.time = null;
+        this.date = 0;
+        this.time = 0;
         this.note = "";
         this.imageId = "";
     }
@@ -48,27 +47,27 @@ public class Entry {
         this.mood = mood;
     }
 
-    public ArrayList<Activity> getActivities() {
+    public ArrayList<String> getActivities() {
         return activities;
     }
 
-    public void setActivities(ArrayList<Activity> activities) {
+    public void setActivities(ArrayList<String> activities) {
         this.activities = activities;
     }
 
-    public ArrayList<Meal> getMeals() {
+    public ArrayList<String> getMeals() {
         return meals;
     }
 
-    public void setMeals(ArrayList<Meal> meals) {
+    public void setMeals(ArrayList<String> meals) {
         this.meals = meals;
     }
 
-    public Calendar getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(Calendar date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -88,11 +87,11 @@ public class Entry {
         this.imageId = imageId;
     }
 
-    public Calendar getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(Calendar time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -102,5 +101,13 @@ public class Entry {
 
     public void setCaloriesEaten(Integer caloriesEaten) {
         this.caloriesEaten = caloriesEaten;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
