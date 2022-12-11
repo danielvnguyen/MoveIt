@@ -67,7 +67,7 @@ public class AddMeal extends AppCompatActivity {
     private Uri imageUri;
     private static final int IMAGE_REQUEST = 1;
     private static final int CAMERA_REQUEST = 2;
-    private String currentPhotoPath;
+    private String mealImagePath;
 
     private ImageView chooseImgBtn;
     private ImageView deleteImgBtn;
@@ -171,6 +171,7 @@ public class AddMeal extends AppCompatActivity {
                 if (originalImageId.contains("https")) {
                     Glide.with(mealImageView.getContext()).load(originalImageId).centerInside().into(mealImageView);
                     mealImageView.setVisibility(View.VISIBLE);
+                    deleteImgBtn.setVisibility(View.VISIBLE);
                 } else {
                     final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
                             .child("uploads").child(originalImageId);
@@ -344,7 +345,7 @@ public class AddMeal extends AppCompatActivity {
             imageStateAltered = true;
         } else if (requestCode == CAMERA_REQUEST
                 && resultCode == RESULT_OK) {
-            File f = new File(currentPhotoPath);
+            File f = new File(mealImagePath);
             imageUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", f);
             Glide.with(mealImageView.getContext()).load(imageUri).centerInside().into(mealImageView);
             mealImageView.setVisibility(View.VISIBLE);
@@ -417,7 +418,7 @@ public class AddMeal extends AppCompatActivity {
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File imageFile = File.createTempFile(imageName, ".jpg", storageDir);
 
-        currentPhotoPath = imageFile.getAbsolutePath();
+        mealImagePath = imageFile.getAbsolutePath();
         return imageFile;
     }
 

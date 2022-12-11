@@ -100,4 +100,5 @@
     <string name="activities_header">Activities</string>
     <string name="calorie_sum">Calories Today:</string>
     <string name="entry_notes">Entry Notes</string>
+    <string name="add_image">Add Image:</string>
 </resources>

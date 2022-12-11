@@ -115,37 +115,50 @@
         app:strokeWidth="2dp"
         tools:visibility="visible" />
 
-    <ImageView
-        android:id="@+id/deleteImgBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/circle_button"
-        android:scaleType="center"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/takeNewImageBtn"
-        app:layout_constraintTop_toBottomOf="@+id/mealNote"
-        app:srcCompat="@android:drawable/ic_menu_delete"
-        tools:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/takeNewImageBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/circle_button"
-        android:scaleType="center"
-        app:layout_constraintStart_toEndOf="@+id/chooseImageBtn"
-        app:layout_constraintTop_toBottomOf="@+id/mealNote"
-        app:srcCompat="@android:drawable/ic_menu_camera" />
-
-    <ImageView
-        android:id="@+id/chooseImageBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/circle_button"
-        android:scaleType="center"
+    <LinearLayout
+        android:id="@+id/imageBtnLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mealNote"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
+        app:layout_constraintTop_toBottomOf="@+id/mealNote">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/raleway"
+            android:layout_gravity="center_vertical"
+            android:text="@string/add_image"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/chooseImageBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_button"
+            android:scaleType="center"
+            app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+        <ImageView
+            android:id="@+id/takeNewImageBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_button"
+            android:scaleType="center"
+            app:srcCompat="@android:drawable/ic_menu_camera" />
+
+        <ImageView
+            android:id="@+id/deleteImgBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_button"
+            android:scaleType="center"
+            android:visibility="gone"
+            app:srcCompat="@android:drawable/ic_menu_delete"
+            tools:visibility="visible" />
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/mealImageView"
@@ -155,7 +168,7 @@
         app:layout_constraintBottom_toTopOf="@+id/deleteMealBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chooseImageBtn"
+        app:layout_constraintTop_toBottomOf="@+id/imageBtnLayout"
         tools:srcCompat="@drawable/default_image"
         tools:visibility="visible" />
 

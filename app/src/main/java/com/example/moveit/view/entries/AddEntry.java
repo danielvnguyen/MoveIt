@@ -3,16 +3,24 @@ package com.example.moveit.view.entries;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -43,6 +51,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -65,9 +75,14 @@ public class AddEntry extends AppCompatActivity implements
     private TextView[] moodButtons;
     private EditText entryNote;
     private ImageView entryImageView;
+
     private ImageView chooseImgBtn;
     private ImageView deleteImgBtn;
     private ImageView takeNewImgBtn;
+    private static final int IMAGE_REQUEST = 1;
+    private static final int CAMERA_REQUEST = 2;
+    private String entryImagePath;
+    private Boolean imageStateAltered = false;
 
     private EditText dateInput;
     private EditText timeInput;
@@ -95,7 +110,9 @@ public class AddEntry extends AppCompatActivity implements
         setUpMoods();
         setUpMealChips();
         setUpActivities();
+        setUpImageOptions();
         //setUpSaveBtn();
+        //setUpDeleteBtn();
     }
 
     private void setUpInterface() {
@@ -118,6 +135,95 @@ public class AddEntry extends AppCompatActivity implements
         String timeText = dateTimeText.substring(13);
         dateInput.setText(dateText);
         timeInput.setText(timeText);
+    }
+
+    private void setUpImageOptions() {
+        chooseImgBtn.setOnClickListener(v -> selectImage());
+        takeNewImgBtn.setOnClickListener(v -> takeNewImage());
+        deleteImgBtn.setOnClickListener(v -> deleteImage());
+    }
+
+    private void takeNewImage() {
+        if (checkAndRequestPermissions()) {
+            startCameraIntent();
+        }
+    }
+
+    private void deleteImage() {
+        entryImageView.setVisibility(View.GONE);
+        deleteImgBtn.setVisibility(View.GONE);
+        imageStateAltered = true;
+    }
+
+    private void selectImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select image from here:"), IMAGE_REQUEST);
+    }
+
+    private void startCameraIntent() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            File imageFile = null;
+            try {
+                imageFile = createImageFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            if (imageFile != null) {
+                Uri imageUri = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider", imageFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String currentTimeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageName = "jpg_"+currentTimeStamp+"_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imageFile = File.createTempFile(imageName, ".jpg", storageDir);
+
+        entryImagePath = imageFile.getAbsolutePath();
+        return imageFile;
+    }
+
+    private boolean checkAndRequestPermissions() {
+        if (Build.VERSION.SDK_INT >= 27) {
+            int cameraPermission = ActivityCompat.checkSelfPermission(
+                    AddEntry.this, Manifest.permission.CAMERA);
+            if (cameraPermission == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(AddEntry.this,
+                        new String[]{Manifest.permission.CAMERA}, 20);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IMAGE_REQUEST
+                && resultCode == RESULT_OK
+                && data != null
+                && data.getData() != null) {
+            Uri imageUri = data.getData();
+            Glide.with(entryImageView.getContext()).load(imageUri).centerInside().into(entryImageView);
+            entryImageView.setVisibility(View.VISIBLE);
+            deleteImgBtn.setVisibility(View.VISIBLE);
+            imageStateAltered = true;
+        } else if (requestCode == CAMERA_REQUEST
+                && resultCode == RESULT_OK) {
+            File f = new File(entryImagePath);
+            Uri imageUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", f);
+            Glide.with(entryImageView.getContext()).load(imageUri).centerInside().into(entryImageView);
+            entryImageView.setVisibility(View.VISIBLE);
+            deleteImgBtn.setVisibility(View.VISIBLE);
+            imageStateAltered = true;
+        }
     }
 
     @SuppressLint("SetTextI18n")
