@@ -11,6 +11,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -44,6 +45,7 @@ import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
+import com.example.moveit.view.meals.AddMeal;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.color.MaterialColors;
@@ -162,6 +164,9 @@ public class AddEntry extends AppCompatActivity implements
                 .document(entry.getId()).set(entry).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(AddEntry.this, "Saved entry successfully!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        intent.putExtra("isChanged", true);
+                        setResult(RESULT_OK, intent);
                         finish();
                     } else {
                         Toast.makeText(AddEntry.this, "Error saving entry", Toast.LENGTH_SHORT).show();
@@ -527,5 +532,9 @@ public class AddEntry extends AppCompatActivity implements
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, AddEntry.class);
     }
 }
