@@ -42,6 +42,10 @@ public class ViewPhotoActivity extends AppCompatActivity {
     private ImageView currentImageView;
     private static final Integer REQUEST_CODE = 1;
 
+    private ImageView downloadImgBtn;
+    private ImageView deleteImgBtn;
+    private ImageView goToGalleryBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +61,6 @@ public class ViewPhotoActivity extends AppCompatActivity {
     }
 
     private void setUpButtons() {
-        ImageView downloadImgBtn = findViewById(R.id.downloadImgBtn);
-        ImageView deleteImgBtn = findViewById(R.id.deleteImgBtn);
-
         deleteImgBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setCancelable(true);
@@ -84,6 +85,8 @@ public class ViewPhotoActivity extends AppCompatActivity {
                 }
             });
         });
+
+        goToGalleryBtn.setOnClickListener(v -> startActivity(new Intent(this, PhotoGalleryActivity.class)));
     }
 
     private void handleDelete() {
@@ -162,9 +165,19 @@ public class ViewPhotoActivity extends AppCompatActivity {
     private void setUpInterface() {
         currentImageView = findViewById(R.id.currentImage);
         TextView dateTimeTV = findViewById(R.id.dateTimeTV);
+        downloadImgBtn = findViewById(R.id.downloadImgBtn);
+        deleteImgBtn = findViewById(R.id.deleteImgBtn);
+        goToGalleryBtn = findViewById(R.id.goToGalleryBtn);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            boolean showDeleteBtn = extras.getBoolean("showDelete");
+            if (showDeleteBtn) {
+                deleteImgBtn.setVisibility(View.VISIBLE);
+            } else {
+                goToGalleryBtn.setVisibility(View.VISIBLE);
+            }
+
             currentImageId = extras.getString("imageId");
             final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
                     .child("uploads").child(currentImageId);

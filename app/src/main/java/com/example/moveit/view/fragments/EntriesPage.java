@@ -1,5 +1,6 @@
 package com.example.moveit.view.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -49,6 +50,11 @@ public class EntriesPage extends Fragment {
     }
 
     private void setUpEntryList() {
+        ProgressDialog progressDialog = new ProgressDialog(requireActivity());
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         ListView entryListView = requireView().findViewById(R.id.entriesListView);
         entryListView.setEmptyView(requireView().findViewById(R.id.emptyTV));
 
@@ -66,6 +72,7 @@ public class EntriesPage extends Fragment {
 
                         adapter.clear();
                         adapter.addAll(entryList);
+                        progressDialog.dismiss();
                     } else {
                         Log.d("EntriesPage", "Error retrieving documents: ", task.getException());
                     }

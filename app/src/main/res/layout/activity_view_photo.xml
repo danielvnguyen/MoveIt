@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.photoGallery.ViewPhotoActivity">
+    tools:context=".view.photoGallery.ViewPhotoActivity"
+    tools:ignore="ContentDescription">
 
     <ImageView
         android:id="@+id/currentImage"
@@ -29,45 +30,43 @@
         app:layout_constraintTop_toBottomOf="@+id/currentImage"
         tools:visibility="visible" />
 
-    <ImageView
-        android:id="@+id/deleteImgBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="108dp"
-        android:background="@drawable/circle_button"
-        android:scaleType="center"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/dateTimeTV"
-        app:srcCompat="@android:drawable/ic_menu_delete"
-        tools:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/downloadImgBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/circle_button"
-        android:scaleType="center"
-        android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateTimeTV"
-        app:srcCompat="@android:drawable/stat_sys_download"
-        tools:visibility="visible" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintGuide_begin="202dp"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateTimeTV">
+
+        <ImageView
+            android:id="@+id/downloadImgBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_button"
+            android:scaleType="center"
+            app:srcCompat="@android:drawable/stat_sys_download" />
+
+        <ImageView
+            android:id="@+id/deleteImgBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_button"
+            android:scaleType="center"
+            android:visibility="gone"
+            app:srcCompat="@android:drawable/ic_menu_delete"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/goToGalleryBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_button"
+            android:scaleType="center"
+            android:visibility="gone"
+            app:srcCompat="@android:drawable/ic_menu_gallery"
+            tools:visibility="visible" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

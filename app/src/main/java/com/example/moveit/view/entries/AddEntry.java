@@ -45,7 +45,6 @@ import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
-import com.example.moveit.view.meals.AddMeal;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.color.MaterialColors;
@@ -366,6 +365,7 @@ public class AddEntry extends AppCompatActivity implements
     private Chip buildChip(String text) {
         Chip newChip = new Chip(this);
         newChip.setText(text);
+        newChip.setTextColor(getResources().getColor(R.color.white));
         newChip.setChipBackgroundColorResource(R.color.light_green);
         newChip.setCheckable(true);
         newChip.setChipIconVisible(true);

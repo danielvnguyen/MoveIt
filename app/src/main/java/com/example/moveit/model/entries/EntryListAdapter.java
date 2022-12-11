@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -33,7 +31,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,6 +122,7 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
             entryImageView.setOnClickListener(v -> {
                 Intent intent = ViewPhotoActivity.makeIntent(context);
                 intent.putExtra("imageId", currentEntry.getImageId());
+                intent.putExtra("showDelete", false);
                 context.startActivity(intent);
             });
         }
@@ -188,6 +186,7 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
     private Chip buildChip(String text) {
         Chip newChip = new Chip(context);
         newChip.setText(text);
+        newChip.setTextColor(context.getResources().getColor(R.color.white));
         newChip.setChipIconVisible(true);
         newChip.setChipBackgroundColorResource(R.color.light_green);
 

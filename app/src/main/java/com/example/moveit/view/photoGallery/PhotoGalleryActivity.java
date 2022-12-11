@@ -204,6 +204,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                 Object currentItem = binding.gridView.getItemAtPosition(position);
                 String imageId = currentItem.toString().substring(currentItem.toString().indexOf("uploads/") + 8);
                 intent.putExtra("imageId", imageId);
+                intent.putExtra("showDelete", true);
                 startActivity(intent);
             });
         });
