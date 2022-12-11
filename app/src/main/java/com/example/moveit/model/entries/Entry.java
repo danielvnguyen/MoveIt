@@ -1,37 +1,23 @@
 package com.example.moveit.model.entries;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class Entry {
     private String id;
     private String mood;
-    private ArrayList<String> activities;
     private ArrayList<String> meals;
+    private ArrayList<String> activities;
     private Integer caloriesEaten;
     private long date;
     private long time;
     private String note;
     private String imageId;
 
-    public Entry(String id, String mood, ArrayList<String> activities, ArrayList<String> meals,
-                 Integer calories, long date, long time, String note, String imageId) {
-        this.id = id;
-        this.mood = mood;
-        this.activities = activities;
-        this.meals = meals;
-        this.caloriesEaten = calories;
-        this.date = date;
-        this.time = time;
-        this.note = note;
-        this.imageId = imageId;
-    }
-
     public Entry() {
         this.id = "";
         this.mood = "";
-        this.activities = null;
         this.meals = null;
+        this.activities = null;
         this.caloriesEaten = 0;
         this.date = 0;
         this.time = 0;

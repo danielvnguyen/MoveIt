@@ -6,80 +6,159 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:ignore="ContentDescription">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="20dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/moodImageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                app:srcCompat="@drawable/good_icon" />
+            android:orientation="vertical"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/entryDateTimeTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/date_and_time" />
-
-                <TextView
-                    android:id="@+id/moodTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:text="@string/mood" />
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/mealChipGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/activitiesChipGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:id="@+id/entryNotesTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/entry_notes"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/entryImageView"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:visibility="gone"
-                    app:srcCompat="@drawable/default_image"
-                    tools:visibility="visible" />
+                    android:id="@+id/moodImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    app:srcCompat="@drawable/good_icon" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/entryDateTimeTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/raleway"
+                        android:text="@string/date_and_time" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/moodTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="24sp"
+                            android:layout_marginEnd="20dp"
+                            android:text="@string/mood" />
+
+                        <TextView
+                            android:id="@+id/caloriesHeaderTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/calories_header"
+                            android:textSize="16sp"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/caloriesValueTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/raleway"
+                            android:text="@string/_0"
+                            android:textSize="16sp"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/mealChipGroupHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/meal_chip_group_header"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/mealChipGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/activitiesChipGroupHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/activities_chip_group_header"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/activitiesChipGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/entryNoteHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/entry_note_header"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                        <TextView
+                            android:id="@+id/entryNotesTv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/entry_notes"
+                            android:visibility="gone"
+                            android:fontFamily="@font/raleway"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="10dp"
+                        android:layout_marginTop="10dp">
+
+                        <ImageView
+                            android:id="@+id/entryImageView"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:visibility="gone"
+                            app:srcCompat="@drawable/default_image"
+                            tools:visibility="visible" />
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-    </androidx.cardview.widget.CardView>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -84,11 +84,11 @@
                     android:id="@+id/calorieSumInput"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ems="3"
+                    android:ems="4"
                     android:fontFamily="@font/raleway"
                     android:hint="@string/calories"
                     android:inputType="number"
-                    android:maxLength="4"
+                    android:maxLength="5"
                     android:text="@string/_0" />
 
             </LinearLayout>
