@@ -48,7 +48,7 @@ import java.util.UUID;
 
 public class AddMeal extends AppCompatActivity {
 
-    private String mealId;
+    private String currentMealId;
     private Meal currentMeal;
     private Boolean imageStateAltered = false;
 
@@ -64,7 +64,7 @@ public class AddMeal extends AppCompatActivity {
     private FirebaseUser currentUser;
 
     private ImageView mealImageView;
-    private Uri imageUri;
+    private Uri mealImageUri;
     private static final int IMAGE_REQUEST = 1;
     private static final int CAMERA_REQUEST = 2;
     private String mealImagePath;
@@ -118,7 +118,7 @@ public class AddMeal extends AppCompatActivity {
 
     private void handleDelete() {
         DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                .document(mealId);
+                .document(currentMealId);
 
         if (!originalImageId.equals("")) {
             final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
@@ -156,7 +156,7 @@ public class AddMeal extends AppCompatActivity {
         if (extras != null) {
             deleteBtn.setVisibility(View.VISIBLE);
             editMode = (Boolean) extras.get("editMode");
-            mealId = extras.get("mealId").toString();
+            currentMealId = extras.get("mealId").toString();
             originalImageId = extras.get("mealImageId").toString();
 
             originalName = extras.get("mealName").toString();
@@ -244,11 +244,11 @@ public class AddMeal extends AppCompatActivity {
                 }
 
                 if (imageStateAltered) {
-                    if (imageUri != null) {
-                        String imageId = UUID.randomUUID() + "." + getFileExtension(imageUri);
+                    if (mealImageUri != null) {
+                        String imageId = UUID.randomUUID() + "." + getFileExtension(mealImageUri);
                         final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
                                 .child("uploads").child(imageId);
-                        fileRef.putFile(imageUri);
+                        fileRef.putFile(mealImageUri);
                         if (originalImageId.equals("")) {
                             handleUpdate(mealName, calories, servingSize, mealNote, imageId);
                         } else {
@@ -268,25 +268,25 @@ public class AddMeal extends AppCompatActivity {
                 }
             } else {
                 ProgressDialog progressDialog = new ProgressDialog(this);
-                progressDialog.setTitle("Saving...");
+                progressDialog.setTitle("Saving Meal...");
                 progressDialog.show();
 
                 String mealId = UUID.randomUUID().toString();
-                if (imageUri != null) {
-                    String imageId = UUID.randomUUID() + "." + getFileExtension(imageUri);
+                if (mealImageUri != null) {
+                    String imageId = UUID.randomUUID() + "." + getFileExtension(mealImageUri);
                     final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
                             .child("uploads").child(imageId);
                     Integer finalCalories = calories;
                     ServingSize finalServingSize = servingSize;
-                    fileRef.putFile(imageUri).addOnCompleteListener(task -> fileRef.getDownloadUrl()
+                    fileRef.putFile(mealImageUri).addOnCompleteListener(task -> fileRef.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
                         currentMeal = new Meal(mealId, mealName, finalCalories, finalServingSize, mealNote, imageId);
-                        handleUpload(currentMeal, mealId);
+                        handleUpload(currentMeal);
                         progressDialog.dismiss();
                     }));
                 } else {
                     currentMeal = new Meal(mealId, mealName, calories, servingSize, mealNote, "");
-                    handleUpload(currentMeal, mealId);
+                    handleUpload(currentMeal);
                     progressDialog.dismiss();
                 }
             }
@@ -338,16 +338,16 @@ public class AddMeal extends AppCompatActivity {
                 && resultCode == RESULT_OK
                 && data != null
                 && data.getData() != null) {
-            imageUri = data.getData();
-            Glide.with(mealImageView.getContext()).load(imageUri).centerInside().into(mealImageView);
+            mealImageUri = data.getData();
+            Glide.with(mealImageView.getContext()).load(mealImageUri).centerInside().into(mealImageView);
             mealImageView.setVisibility(View.VISIBLE);
             deleteImgBtn.setVisibility(View.VISIBLE);
             imageStateAltered = true;
         } else if (requestCode == CAMERA_REQUEST
                 && resultCode == RESULT_OK) {
             File f = new File(mealImagePath);
-            imageUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", f);
-            Glide.with(mealImageView.getContext()).load(imageUri).centerInside().into(mealImageView);
+            mealImageUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", f);
+            Glide.with(mealImageView.getContext()).load(mealImageUri).centerInside().into(mealImageView);
             mealImageView.setVisibility(View.VISIBLE);
             deleteImgBtn.setVisibility(View.VISIBLE);
             imageStateAltered = true;
@@ -356,7 +356,7 @@ public class AddMeal extends AppCompatActivity {
 
     private void handleUpdate(String mealName, Integer calories, ServingSize servingSize, String mealNote, String imageId) {
         db.collection("meals").document(currentUser.getUid())
-                .collection("mealList").document(mealId).update("name", mealName,
+                .collection("mealList").document(currentMealId).update("name", mealName,
                 "calories", calories, "servingSize", servingSize, "note", mealNote,
                         "imageId", imageId).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -375,9 +375,9 @@ public class AddMeal extends AppCompatActivity {
                 && originalServingSizeUnits.equals(servingSizeUnits);
     }
 
-    private void handleUpload(Meal meal, String mealId) {
+    private void handleUpload(Meal meal) {
         db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                .document(mealId).set(meal).addOnCompleteListener(task -> {
+                .document(meal.getId()).set(meal).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(AddMeal.this, "Saved meal successfully!", Toast.LENGTH_SHORT).show();
                 finish();

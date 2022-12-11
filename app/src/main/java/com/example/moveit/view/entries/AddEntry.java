@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -33,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -54,12 +57,14 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 @SuppressLint("SimpleDateFormat")
 public class AddEntry extends AppCompatActivity implements
@@ -67,6 +72,7 @@ public class AddEntry extends AppCompatActivity implements
 
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
+    private FirebaseStorage storage;
 
     private Button saveEntryBtn;
     private Button deleteEntryBtn;
@@ -74,8 +80,9 @@ public class AddEntry extends AppCompatActivity implements
 
     private TextView[] moodButtons;
     private EditText entryNote;
-    private ImageView entryImageView;
 
+    private ImageView entryImageView;
+    private Uri entryImageUri;
     private ImageView chooseImgBtn;
     private ImageView deleteImgBtn;
     private ImageView takeNewImgBtn;
@@ -87,10 +94,12 @@ public class AddEntry extends AppCompatActivity implements
     private EditText dateInput;
     private EditText timeInput;
     private Integer selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
+    private long dateValue;
+    private long timeValue;
 
     private ChipGroup mealChipGroup;
     private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
-    private Integer calorieSum;
+    private EditText caloriesInput;
 
     private ChipGroup activitiesChipGroup;
 
@@ -103,6 +112,7 @@ public class AddEntry extends AppCompatActivity implements
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        storage = FirebaseStorage.getInstance();
 
         currentEntry = new Entry();
 
@@ -111,8 +121,52 @@ public class AddEntry extends AppCompatActivity implements
         setUpMealChips();
         setUpActivities();
         setUpImageOptions();
-        //setUpSaveBtn();
+        setUpSaveBtn();
         //setUpDeleteBtn();
+    }
+
+    private void setUpSaveBtn() {
+        saveEntryBtn.setOnClickListener(v -> {
+            if (!currentEntry.getMood().equals("")) {
+                ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setTitle("Saving Entry...");
+                progressDialog.show();
+
+                String entryImageId = "";
+                if (entryImageUri != null) {
+                    entryImageId = UUID.randomUUID() + "." + getFileExtension(entryImageUri);
+                    storage.getReference().child(currentUser.getUid()).child("uploads")
+                            .child(entryImageId).putFile(entryImageUri);
+                }
+
+                currentEntry.setCaloriesEaten(Integer.valueOf(caloriesInput.getText().toString()));
+                currentEntry.setNote(entryNote.getText().toString());
+                currentEntry.setDate(dateValue);
+                currentEntry.setTime(timeValue);
+                currentEntry.setImageId(entryImageId);
+                currentEntry.setMeals(getSelectedMeals());
+                currentEntry.setActivities(getSelectedActivities());
+
+                String entryId = UUID.randomUUID().toString();
+                currentEntry.setId(entryId);
+                handleUpload(currentEntry);
+                progressDialog.dismiss();
+            } else {
+                Toast.makeText(AddEntry.this, "Please select a mood for the Entry", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void handleUpload(Entry entry) {
+        db.collection("entries").document(currentUser.getUid()).collection("entryList")
+                .document(entry.getId()).set(entry).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(AddEntry.this, "Saved entry successfully!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(AddEntry.this, "Error saving entry", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void setUpInterface() {
@@ -125,8 +179,11 @@ public class AddEntry extends AppCompatActivity implements
         chooseImgBtn = findViewById(R.id.chooseImageBtn);
         deleteImgBtn = findViewById(R.id.deleteImgBtn);
         takeNewImgBtn = findViewById(R.id.takeNewImageBtn);
+        caloriesInput = findViewById(R.id.calorieSumInput);
 
         long currentTime = System.currentTimeMillis();
+        dateValue = currentTime;
+        timeValue = currentTime;
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
         Date resultDate = new Date(currentTime);
         String dateTimeText = sdf.format(resultDate);
@@ -180,6 +237,12 @@ public class AddEntry extends AppCompatActivity implements
         }
     }
 
+    private String getFileExtension(Uri imageUri) {
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(imageUri));
+    }
+
     private File createImageFile() throws IOException {
         String currentTimeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageName = "jpg_"+currentTimeStamp+"_";
@@ -210,16 +273,16 @@ public class AddEntry extends AppCompatActivity implements
                 && resultCode == RESULT_OK
                 && data != null
                 && data.getData() != null) {
-            Uri imageUri = data.getData();
-            Glide.with(entryImageView.getContext()).load(imageUri).centerInside().into(entryImageView);
+            entryImageUri = data.getData();
+            Glide.with(entryImageView.getContext()).load(entryImageUri).centerInside().into(entryImageView);
             entryImageView.setVisibility(View.VISIBLE);
             deleteImgBtn.setVisibility(View.VISIBLE);
             imageStateAltered = true;
         } else if (requestCode == CAMERA_REQUEST
                 && resultCode == RESULT_OK) {
             File f = new File(entryImagePath);
-            Uri imageUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", f);
-            Glide.with(entryImageView.getContext()).load(imageUri).centerInside().into(entryImageView);
+            entryImageUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", f);
+            Glide.with(entryImageView.getContext()).load(entryImageUri).centerInside().into(entryImageView);
             entryImageView.setVisibility(View.VISIBLE);
             deleteImgBtn.setVisibility(View.VISIBLE);
             imageStateAltered = true;
@@ -255,10 +318,8 @@ public class AddEntry extends AppCompatActivity implements
                             }
 
                             mealChip.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                                calorieSum = getCalorieSum();
-                                currentEntry.setCaloriesEaten(calorieSum);
                                 EditText calorieSumInput = findViewById(R.id.calorieSumInput);
-                                calorieSumInput.setText(calorieSum.toString());
+                                calorieSumInput.setText(getCalorieSum().toString());
                             });
                             mealChipGroup.addView(mealChip);
                         }
@@ -315,6 +376,26 @@ public class AddEntry extends AppCompatActivity implements
             calories += mealCaloriesMap.get(currentChip.getText().toString());
         }
         return calories;
+    }
+
+    private ArrayList<String> getSelectedMeals() {
+        List<Integer> ids = mealChipGroup.getCheckedChipIds();
+        ArrayList<String> selectedMeals = new ArrayList<>();
+        for (Integer id: ids){
+            Chip currentChip = mealChipGroup.findViewById(id);
+            selectedMeals.add(currentChip.getText().toString());
+        }
+        return selectedMeals;
+    }
+
+    private ArrayList<String> getSelectedActivities() {
+        List<Integer> ids = activitiesChipGroup.getCheckedChipIds();
+        ArrayList<String> selectedActivities = new ArrayList<>();
+        for (Integer id: ids){
+            Chip currentChip = activitiesChipGroup.findViewById(id);
+            selectedActivities.add(currentChip.getText().toString());
+        }
+        return selectedActivities;
     }
 
     private void loadChipIcon(Chip chip, Uri uri) {
@@ -380,6 +461,7 @@ public class AddEntry extends AppCompatActivity implements
 
         TimePickerDialog.OnTimeSetListener timeSetListener = this;
         TimePickerDialog dialog = new TimePickerDialog(this, timeSetListener, hour, minute, false);
+        //Update with selected values rather than current time
         if (selectedHour != null) {
             dialog.updateTime(selectedHour, selectedMinute);
         }
@@ -390,14 +472,14 @@ public class AddEntry extends AppCompatActivity implements
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         selectedHour = hourOfDay;
         selectedMinute = minute;
-        String timeText = getTime();
+        String timeText = formatTime();
         timeInput.setText(timeText);
     }
 
-    private String getTime() {
+    private String formatTime() {
         Calendar c = Calendar.getInstance();
         c.set(0, 0, 0, selectedHour ,selectedMinute);
-        currentEntry.setTime(c);
+        timeValue = c.getTimeInMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
         return sdf.format(c.getTimeInMillis());
     }
@@ -411,6 +493,7 @@ public class AddEntry extends AppCompatActivity implements
         DatePickerDialog.OnDateSetListener dateSetListener = this;
         DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, year, month, day);
         dialog.getDatePicker().setMaxDate(new Date().getTime());
+        //Update with selected values rather than current date
         if (selectedYear != null) {
             dialog.updateDate(selectedYear, selectedMonth, selectedDay);
         }
@@ -422,14 +505,14 @@ public class AddEntry extends AppCompatActivity implements
         selectedYear = year;
         selectedMonth = month;
         selectedDay = day;
-        String dateText = getDate(year, month, day);
+        String dateText = formatDate(year, month, day);
         dateInput.setText(dateText);
     }
 
-    private String getDate(int year, int month, int day) {
+    private String formatDate(int year, int month, int day) {
         Calendar c = Calendar.getInstance();
         c.set(year, month, day);
-        currentEntry.setDate(c);
+        dateValue = c.getTimeInMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
         return sdf.format(c.getTimeInMillis());
     }
