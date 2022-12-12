@@ -95,8 +95,7 @@ public class AddEntry extends AppCompatActivity implements
     private EditText dateInput;
     private EditText timeInput;
     private Integer selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
-    private long dateValue;
-    private long timeValue;
+    private long dateTimeValue;
 
     private ChipGroup mealChipGroup;
     private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
@@ -142,8 +141,7 @@ public class AddEntry extends AppCompatActivity implements
 
                 currentEntry.setCaloriesEaten(Integer.valueOf(caloriesInput.getText().toString()));
                 currentEntry.setNote(entryNote.getText().toString());
-                currentEntry.setDate(dateValue);
-                currentEntry.setTime(timeValue);
+                currentEntry.setDateTime(dateTimeValue);
                 currentEntry.setImageId(entryImageId);
                 currentEntry.setMeals(getSelectedMeals());
                 currentEntry.setActivities(getSelectedActivities());
@@ -185,17 +183,27 @@ public class AddEntry extends AppCompatActivity implements
         takeNewImgBtn = findViewById(R.id.takeNewImageBtn);
         caloriesInput = findViewById(R.id.calorieSumInput);
 
-        long currentTime = System.currentTimeMillis();
-        dateValue = currentTime;
-        timeValue = currentTime;
+        setCurrentDateTime();
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
-        Date resultDate = new Date(currentTime);
+        Date resultDate = new Date(dateTimeValue);
         String dateTimeText = sdf.format(resultDate);
 
         String dateText = dateTimeText.substring(0, 13);
         String timeText = dateTimeText.substring(13);
         dateInput.setText(dateText);
         timeInput.setText(timeText);
+    }
+
+    private void setCurrentDateTime() {
+        Calendar currentCalendar = Calendar.getInstance();
+        selectedYear = currentCalendar.get(Calendar.YEAR);
+        selectedMonth = currentCalendar.get(Calendar.MONTH);
+        selectedDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
+        selectedHour = currentCalendar.get(Calendar.HOUR_OF_DAY);
+        selectedMinute = currentCalendar.get(Calendar.MINUTE);
+        currentCalendar.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute, 0);
+
+        dateTimeValue = currentCalendar.getTimeInMillis();
     }
 
     private void setUpImageOptions() {
@@ -460,16 +468,8 @@ public class AddEntry extends AppCompatActivity implements
     }
 
     public void showTimePickerDialog(View v) {
-        final Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
-
         TimePickerDialog.OnTimeSetListener timeSetListener = this;
-        TimePickerDialog dialog = new TimePickerDialog(this, timeSetListener, hour, minute, false);
-        //Update with selected values rather than current time
-        if (selectedHour != null) {
-            dialog.updateTime(selectedHour, selectedMinute);
-        }
+        TimePickerDialog dialog = new TimePickerDialog(this, timeSetListener, selectedHour, selectedMinute, false);
         dialog.show();
     }
 
@@ -483,25 +483,16 @@ public class AddEntry extends AppCompatActivity implements
 
     private String formatTime() {
         Calendar c = Calendar.getInstance();
-        c.set(0, 0, 0, selectedHour ,selectedMinute);
-        timeValue = c.getTimeInMillis();
+        c.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute, 0);
+        dateTimeValue = c.getTimeInMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
         return sdf.format(c.getTimeInMillis());
     }
 
     public void showDatePickerDialog(View v) {
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-
         DatePickerDialog.OnDateSetListener dateSetListener = this;
-        DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, year, month, day);
+        DatePickerDialog dialog = new DatePickerDialog(this, dateSetListener, selectedYear, selectedMonth, selectedDay);
         dialog.getDatePicker().setMaxDate(new Date().getTime());
-        //Update with selected values rather than current date
-        if (selectedYear != null) {
-            dialog.updateDate(selectedYear, selectedMonth, selectedDay);
-        }
         dialog.show();
     }
 
@@ -516,8 +507,8 @@ public class AddEntry extends AppCompatActivity implements
 
     private String formatDate(int year, int month, int day) {
         Calendar c = Calendar.getInstance();
-        c.set(year, month, day);
-        dateValue = c.getTimeInMillis();
+        c.set(year, month, day, selectedHour, selectedMinute, 0);
+        dateTimeValue = c.getTimeInMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
         return sdf.format(c.getTimeInMillis());
     }

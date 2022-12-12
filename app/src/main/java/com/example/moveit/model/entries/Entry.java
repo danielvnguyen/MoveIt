@@ -8,8 +8,7 @@ public class Entry {
     private ArrayList<String> meals;
     private ArrayList<String> activities;
     private Integer caloriesEaten;
-    private long date;
-    private long time;
+    private long dateTime;
     private String note;
     private String imageId;
 
@@ -19,8 +18,7 @@ public class Entry {
         this.meals = null;
         this.activities = null;
         this.caloriesEaten = 0;
-        this.date = 0;
-        this.time = 0;
+        this.dateTime = 0;
         this.note = "";
         this.imageId = "";
     }
@@ -49,12 +47,12 @@ public class Entry {
         this.meals = meals;
     }
 
-    public long getDate() {
-        return date;
+    public long getDateTime() {
+        return dateTime;
     }
 
-    public void setDate(long date) {
-        this.date = date;
+    public void setDateTime(long dateTime) {
+        this.dateTime = dateTime;
     }
 
     public String getNote() {
@@ -71,14 +69,6 @@ public class Entry {
 
     public void setImageId(String imageId) {
         this.imageId = imageId;
-    }
-
-    public long getTime() {
-        return time;
-    }
-
-    public void setTime(long time) {
-        this.time = time;
     }
 
     public Integer getCaloriesEaten() {

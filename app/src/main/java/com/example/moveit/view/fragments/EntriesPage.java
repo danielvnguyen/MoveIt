@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.example.moveit.R;
 import com.example.moveit.model.entries.Entry;
+import com.example.moveit.model.entries.EntryComparator;
 import com.example.moveit.model.entries.EntryListAdapter;
 import com.example.moveit.view.entries.AddEntry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -71,6 +72,7 @@ public class EntriesPage extends Fragment {
                         }
 
                         adapter.clear();
+                        entryList.sort(new EntryComparator());
                         adapter.addAll(entryList);
                         progressDialog.dismiss();
                     } else {

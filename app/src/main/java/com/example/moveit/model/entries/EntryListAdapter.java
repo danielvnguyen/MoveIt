@@ -89,16 +89,14 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
         TextView caloriesHeader = entryView.findViewById(R.id.caloriesHeaderTV);
         TextView caloriesValue = entryView.findViewById(R.id.caloriesValueTV);
 
-        SimpleDateFormat timeSdf = new SimpleDateFormat("h:mm a");
-        SimpleDateFormat dateSdf = new SimpleDateFormat("MMM dd, yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy, h:mm a");
 
         Entry currentEntry = getItem(position);
         String selectedMood = currentEntry.getMood();
         moodImage.setImageResource(Objects.requireNonNull(moodResourcesMap.get(selectedMood))[0]);
         moodImage.setColorFilter(ContextCompat.getColor(context,
                 Objects.requireNonNull(moodResourcesMap.get(selectedMood))[1]));
-        dateTimeText.setText(dateSdf.format(currentEntry.getDate()) +
-                ", " + timeSdf.format(currentEntry.getTime()));
+        dateTimeText.setText(sdf.format(currentEntry.getDateTime()));
         moodText.setText(currentEntry.getMood());
         moodText.setTextColor(context.getResources().getColor(Objects.requireNonNull(moodResourcesMap.get(selectedMood))[1]));
         if (!(currentEntry.getCaloriesEaten() == 0)) {
@@ -151,8 +149,7 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
             intent.putExtra("selectedMeals", getItem(position).getMeals());
             intent.putExtra("selectedActivities", getItem(position).getActivities());
             intent.putExtra("caloriesEaten", getItem(position).getCaloriesEaten());
-            intent.putExtra("dateValue", getItem(position).getDate());
-            intent.putExtra("timeValue", getItem(position).getTime());
+            intent.putExtra("dateTimeValue", getItem(position).getDateTime());
             intent.putExtra("entryNote", getItem(position).getNote());
             intent.putExtra("imageId", getItem(position).getImageId());
             context.startActivity(intent);
