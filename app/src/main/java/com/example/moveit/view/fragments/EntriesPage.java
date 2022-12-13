@@ -81,24 +81,19 @@ public class EntriesPage extends Fragment {
                 });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (data != null) {
-                Bundle extras = data.getExtras();
-                Boolean isChanged = (Boolean) extras.get("isChanged");
-                if (isChanged) {
-                    setUpEntryList();
-                }
-            }
-        }
-    }
-
     private void setUpAddEntryBtn() {
         addEntryBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AddEntry.class);
-            startActivityForResult(intent, 1);
+            startActivity(intent);
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(requireActivity().getIntent().getExtras() != null &&
+                requireActivity().getIntent().getExtras().getBoolean("isChanged")){
+            setUpEntryList();
+        }
     }
 }

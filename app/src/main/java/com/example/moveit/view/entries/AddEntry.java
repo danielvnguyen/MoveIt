@@ -2,6 +2,7 @@ package com.example.moveit.view.entries;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
@@ -45,6 +46,8 @@ import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
+import com.example.moveit.view.HomeActivity;
+import com.example.moveit.view.fragments.EntriesPage;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.color.MaterialColors;
@@ -79,7 +82,7 @@ public class AddEntry extends AppCompatActivity implements
     private Button deleteEntryBtn;
     private Entry currentEntry;
 
-    private TextView[] moodButtons;
+    private final Map<String, TextView> moodButtonsMap = new HashMap<>();
     private EditText entryNote;
 
     private ImageView entryImageView;
@@ -90,25 +93,29 @@ public class AddEntry extends AppCompatActivity implements
     private static final int IMAGE_REQUEST = 1;
     private static final int CAMERA_REQUEST = 2;
     private String entryImagePath;
-    private Boolean imageStateAltered = false;
 
     private EditText dateInput;
     private EditText timeInput;
     private Integer selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
     private long dateTimeValue;
 
+    private ChipGroup activitiesChipGroup;
     private ChipGroup mealChipGroup;
     private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
     private EditText caloriesInput;
 
-    private ChipGroup activitiesChipGroup;
+    private Boolean editMode = false;
+    private Boolean imageStateAltered = false;
+    private String originalEntryId, originalEntryImageId, originalEntryCalories,
+            originalEntryNote, originalMood;
+    private ArrayList<String> originalMeals, originalActivities;
+    private long originalDateTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_add_entry);
-        setTitle(getString(R.string.add_entry_title));
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -116,22 +123,26 @@ public class AddEntry extends AppCompatActivity implements
 
         currentEntry = new Entry();
 
-        setUpInterface();
         setUpMoods();
+        setUpInterface();
         setUpMealChips();
         setUpActivities();
         setUpImageOptions();
         setUpSaveBtn();
-        //setUpDeleteBtn();
+        setUpDeleteBtn();
     }
 
     private void setUpSaveBtn() {
         saveEntryBtn.setOnClickListener(v -> {
-            if (!currentEntry.getMood().equals("")) {
-                ProgressDialog progressDialog = new ProgressDialog(this);
-                progressDialog.setTitle("Saving Entry...");
-                progressDialog.show();
+            if (currentEntry.getMood().equals("")) {
+                Toast.makeText(AddEntry.this, "Please select a mood for the Entry", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Saving Entry...");
+            progressDialog.show();
 
+            if (!editMode) {
                 String entryImageId = "";
                 if (entryImageUri != null) {
                     entryImageId = UUID.randomUUID() + "." + getFileExtension(entryImageUri);
@@ -151,9 +162,23 @@ public class AddEntry extends AppCompatActivity implements
                 handleUpload(currentEntry);
                 progressDialog.dismiss();
             } else {
-                Toast.makeText(AddEntry.this, "Please select a mood for the Entry", Toast.LENGTH_SHORT).show();
+                if (compareChanges()) {
+                    Toast.makeText(AddEntry.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                progressDialog.dismiss();
             }
         });
+    }
+
+    private boolean compareChanges() {
+        return (currentEntry.getMood().equals(originalMood) &&
+                String.valueOf(currentEntry.getCaloriesEaten()).equals(originalEntryCalories)
+                && currentEntry.getNote().equals(originalEntryNote) && !imageStateAltered
+                && currentEntry.getDateTime() == originalDateTime
+                && currentEntry.getMeals().equals(originalMeals)
+                && currentEntry.getActivities().equals(originalActivities));
     }
 
     private void handleUpload(Entry entry) {
@@ -161,12 +186,46 @@ public class AddEntry extends AppCompatActivity implements
                 .document(entry.getId()).set(entry).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(AddEntry.this, "Saved entry successfully!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent();
+                        Intent intent = new Intent(this, HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         intent.putExtra("isChanged", true);
-                        setResult(RESULT_OK, intent);
-                        finish();
+                        startActivity(intent);
                     } else {
                         Toast.makeText(AddEntry.this, "Error saving entry", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void setUpDeleteBtn() {
+        deleteEntryBtn.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle(R.string.confirm_delete_entry);
+            builder.setMessage(R.string.no_takesies_backsies);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> handleDelete());
+            builder.setNegativeButton(R.string.no, (dialog, which) -> {});
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        });
+    }
+
+    private void handleDelete() {
+        if (!originalEntryImageId.equals("")) {
+            final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
+                    .child("uploads").child(originalEntryImageId);
+            fileRef.delete();
+        }
+
+        db.collection("entries").document(currentUser.getUid()).collection("entryList")
+                .document(originalEntryId).delete().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(AddEntry.this, "Deleted entry successfully!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        intent.putExtra("isChanged", true);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(AddEntry.this, "Error deleting entry", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -183,9 +242,54 @@ public class AddEntry extends AppCompatActivity implements
         takeNewImgBtn = findViewById(R.id.takeNewImageBtn);
         caloriesInput = findViewById(R.id.calorieSumInput);
 
-        setCurrentDateTime();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            setTitle(getString(R.string.editing_entry_title));
+            deleteEntryBtn.setVisibility(View.VISIBLE);
+            editMode = true;
+
+            originalEntryId = extras.get("entryId").toString();
+            originalEntryImageId = extras.get("imageId").toString();
+            originalEntryCalories = extras.get("caloriesEaten").toString();
+            originalDateTime = (long) extras.get("dateTimeValue");
+            originalEntryNote = extras.get("entryNote").toString();
+            originalMood = extras.get("entryMood").toString();
+            originalMeals = (ArrayList<String>) extras.get("selectedMeals");
+            originalActivities = (ArrayList<String>) extras.get("selectedActivities");
+
+            if (!originalEntryImageId.equals("")) {
+                final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
+                        .child("uploads").child(originalEntryImageId);
+                fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    Glide.with(entryImageView.getContext()).load(uri).centerInside().into(entryImageView);
+                    entryImageView.setVisibility(View.VISIBLE);
+                    deleteImgBtn.setVisibility(View.VISIBLE);
+                });
+            }
+
+            caloriesInput.setText(originalEntryCalories);
+            entryNote.setText(originalEntryNote);
+            dateTimeValue = originalDateTime;
+            setDateTime(dateTimeValue);
+            Calendar originalCalendar = Calendar.getInstance();
+            originalCalendar.setTimeInMillis(originalDateTime);
+            selectedYear = originalCalendar.get(Calendar.YEAR);
+            selectedMonth = originalCalendar.get(Calendar.MONTH);
+            selectedDay = originalCalendar.get(Calendar.DAY_OF_MONTH);
+            selectedHour = originalCalendar.get(Calendar.HOUR_OF_DAY);
+            selectedMinute = originalCalendar.get(Calendar.MINUTE);
+            selectMood(Objects.requireNonNull(moodButtonsMap.get(originalMood)));
+
+        } else {
+            setTitle(getString(R.string.add_entry_title));
+            getCurrentDateTime();
+            setDateTime(dateTimeValue);
+        }
+    }
+
+    private void setDateTime(long dateTimeMilliseconds) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
-        Date resultDate = new Date(dateTimeValue);
+        Date resultDate = new Date(dateTimeMilliseconds);
         String dateTimeText = sdf.format(resultDate);
 
         String dateText = dateTimeText.substring(0, 13);
@@ -194,7 +298,7 @@ public class AddEntry extends AppCompatActivity implements
         timeInput.setText(timeText);
     }
 
-    private void setCurrentDateTime() {
+    private void getCurrentDateTime() {
         Calendar currentCalendar = Calendar.getInstance();
         selectedYear = currentCalendar.get(Calendar.YEAR);
         selectedMonth = currentCalendar.get(Calendar.MONTH);
@@ -445,20 +549,23 @@ public class AddEntry extends AppCompatActivity implements
         TextView goodMoodBtn = findViewById(R.id.goodMoodBtn);
         TextView mehMoodBtn = findViewById(R.id.mehMoodBtn);
         TextView badMoodBtn = findViewById(R.id.badMoodBtn);
-        moodButtons = new TextView[]{amazingMoodBtn, greatMoodBtn, goodMoodBtn, mehMoodBtn, badMoodBtn};
+        TextView[] moodButtonTextViews = new TextView[]{amazingMoodBtn, greatMoodBtn, goodMoodBtn, mehMoodBtn, badMoodBtn};
 
-        for (TextView moodButton : moodButtons) {
-            moodButton.setOnClickListener(v -> {
-                currentEntry.setMood((String) moodButton.getText());
-                moodButton.setTextColor(getResources().getColor(R.color.light_green));
-                moodButton.setBackgroundResource(R.drawable.on_item_select);
-                clearMoodSelections(moodButton);
-            });
+        for (TextView moodButton : moodButtonTextViews) {
+            moodButtonsMap.put(String.valueOf(moodButton.getText()), moodButton);
+            moodButton.setOnClickListener(v -> selectMood(moodButton));
         }
     }
 
+    private void selectMood(TextView moodButton) {
+        currentEntry.setMood((String) moodButton.getText());
+        moodButton.setTextColor(getResources().getColor(R.color.light_green));
+        moodButton.setBackgroundResource(R.drawable.on_item_select);
+        clearMoodSelections(moodButton);
+    }
+
     private void clearMoodSelections(TextView currentButton) {
-        for (TextView moodButton : moodButtons) {
+        for (TextView moodButton : moodButtonsMap.values()) {
             if (!moodButton.equals(currentButton)) {
                 int color = MaterialColors.getColor(this, android.R.attr.textColor, Color.WHITE);
                 moodButton.setTextColor(color);

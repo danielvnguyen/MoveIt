@@ -48,16 +48,16 @@ import java.util.UUID;
 
 public class AddMeal extends AppCompatActivity {
 
-    private String currentMealId;
     private Meal currentMeal;
-    private Boolean imageStateAltered = false;
 
-    private String originalImageId;
-    private String originalName;
-    private String originalCalories;
-    private String originalNote;
+    private String originalMealId;
+    private String originalMealImageId;
+    private String originalMealName;
+    private String originalMealCalories;
+    private String originalMealNote;
     private String originalServingSizeNum;
     private String originalServingSizeUnits;
+    private Boolean imageStateAltered = false;
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -118,11 +118,11 @@ public class AddMeal extends AppCompatActivity {
 
     private void handleDelete() {
         DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                .document(currentMealId);
+                .document(originalMealId);
 
-        if (!originalImageId.equals("")) {
+        if (!originalMealImageId.equals("")) {
             final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
-                    .child("uploads").child(originalImageId);
+                    .child("uploads").child(originalMealImageId);
             fileRef.delete();
         }
         selectedMeal.delete().addOnCompleteListener(task -> {
@@ -154,27 +154,27 @@ public class AddMeal extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            deleteBtn.setVisibility(View.VISIBLE);
-            editMode = (Boolean) extras.get("editMode");
-            currentMealId = extras.get("mealId").toString();
-            originalImageId = extras.get("mealImageId").toString();
-
-            originalName = extras.get("mealName").toString();
             setTitle(getString(R.string.edit_meal_title));
-            originalCalories = extras.get("calories").toString();
-            originalNote = extras.get("mealNote").toString();
+            deleteBtn.setVisibility(View.VISIBLE);
+            editMode = true;
+
+            originalMealId = extras.get("mealId").toString();
+            originalMealImageId = extras.get("mealImageId").toString();
+            originalMealName = extras.get("mealName").toString();
+            originalMealCalories = extras.get("calories").toString();
+            originalMealNote = extras.get("mealNote").toString();
             originalServingSizeNum = extras.get("servingSizeNum").toString();
             originalServingSizeUnits = extras.get("servingSizeUnits").toString();
             selectedUnits = originalServingSizeUnits;
 
-            if (!originalImageId.equals("")) {
-                if (originalImageId.contains("https")) {
-                    Glide.with(mealImageView.getContext()).load(originalImageId).centerInside().into(mealImageView);
+            if (!originalMealImageId.equals("")) {
+                if (originalMealImageId.contains("https")) {
+                    Glide.with(mealImageView.getContext()).load(originalMealImageId).centerInside().into(mealImageView);
                     mealImageView.setVisibility(View.VISIBLE);
                     deleteImgBtn.setVisibility(View.VISIBLE);
                 } else {
                     final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
-                            .child("uploads").child(originalImageId);
+                            .child("uploads").child(originalMealImageId);
                     fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         Glide.with(mealImageView.getContext()).load(uri).centerInside().into(mealImageView);
                         mealImageView.setVisibility(View.VISIBLE);
@@ -182,9 +182,9 @@ public class AddMeal extends AppCompatActivity {
                     });
                 }
             }
-            mealNameInput.setText(originalName);
-            caloriesInput.setText(originalCalories);
-            mealNoteInput.setText(originalNote);
+            mealNameInput.setText(originalMealName);
+            caloriesInput.setText(originalMealCalories);
+            mealNoteInput.setText(originalMealNote);
             servingSizeInput.setText(originalServingSizeNum);
             int spinnerPosition = adapter.getPosition(originalServingSizeUnits);
             servingSizeUnitSpinner.setSelection(spinnerPosition);
@@ -237,8 +237,12 @@ public class AddMeal extends AppCompatActivity {
                     break;
             }
 
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Saving Meal...");
+            progressDialog.show();
+
             if (editMode) {
-                if (compareChanges(mealName, calories, mealNote, imageStateAltered, servingSizeNum, selectedUnits)) {
+                if (compareChanges(mealName, calories, mealNote, servingSizeNum, selectedUnits)) {
                     Toast.makeText(AddMeal.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -249,28 +253,25 @@ public class AddMeal extends AppCompatActivity {
                         final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
                                 .child("uploads").child(imageId);
                         fileRef.putFile(mealImageUri);
-                        if (originalImageId.equals("")) {
+                        if (originalMealImageId.equals("")) {
                             handleUpdate(mealName, calories, servingSize, mealNote, imageId);
                         } else {
                             final StorageReference oldImageRef = storage.getReference().child(currentUser.getUid())
-                                    .child("uploads").child(originalImageId);
+                                    .child("uploads").child(originalMealImageId);
                             oldImageRef.delete();
                             handleUpdate(mealName, calories, servingSize, mealNote, imageId);
                         }
                     } else {
                         final StorageReference imageRef = storage.getReference().child(currentUser.getUid())
-                                .child("uploads").child(originalImageId);
+                                .child("uploads").child(originalMealImageId);
                         imageRef.delete();
                         handleUpdate(mealName, calories, servingSize, mealNote, "");
                     }
                 } else {
-                    handleUpdate(mealName, calories, servingSize, mealNote, originalImageId);
+                    handleUpdate(mealName, calories, servingSize, mealNote, originalMealImageId);
                 }
+                progressDialog.dismiss();
             } else {
-                ProgressDialog progressDialog = new ProgressDialog(this);
-                progressDialog.setTitle("Saving Meal...");
-                progressDialog.show();
-
                 String mealId = UUID.randomUUID().toString();
                 if (mealImageUri != null) {
                     String imageId = UUID.randomUUID() + "." + getFileExtension(mealImageUri);
@@ -282,13 +283,12 @@ public class AddMeal extends AppCompatActivity {
                             .addOnSuccessListener(uri -> {
                         currentMeal = new Meal(mealId, mealName, finalCalories, finalServingSize, mealNote, imageId);
                         handleUpload(currentMeal);
-                        progressDialog.dismiss();
                     }));
                 } else {
                     currentMeal = new Meal(mealId, mealName, calories, servingSize, mealNote, "");
                     handleUpload(currentMeal);
-                    progressDialog.dismiss();
                 }
+                progressDialog.dismiss();
             }
         });
     }
@@ -356,7 +356,7 @@ public class AddMeal extends AppCompatActivity {
 
     private void handleUpdate(String mealName, Integer calories, ServingSize servingSize, String mealNote, String imageId) {
         db.collection("meals").document(currentUser.getUid())
-                .collection("mealList").document(currentMealId).update("name", mealName,
+                .collection("mealList").document(originalMealId).update("name", mealName,
                 "calories", calories, "servingSize", servingSize, "note", mealNote,
                         "imageId", imageId).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -369,9 +369,9 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private Boolean compareChanges(String mealName, Integer calories, String mealNote,
-                                   Boolean imageStateAltered, Integer servingSizeNum, String servingSizeUnits ) {
-        return originalName.equals(mealName) && originalCalories.equals(String.valueOf(calories))
-                && originalNote.equals(mealNote) && !imageStateAltered && originalServingSizeNum.equals(String.valueOf(servingSizeNum))
+                                   Integer servingSizeNum, String servingSizeUnits ) {
+        return originalMealName.equals(mealName) && originalMealCalories.equals(String.valueOf(calories))
+                && originalMealNote.equals(mealNote) && !imageStateAltered && originalServingSizeNum.equals(String.valueOf(servingSizeNum))
                 && originalServingSizeUnits.equals(servingSizeUnits);
     }
 

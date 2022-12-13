@@ -73,7 +73,6 @@ public class MealListAdapter extends ArrayAdapter<Meal> {
 
         mealView.setOnClickListener(v -> {
            Intent intent = AddMeal.makeIntent(context);
-           intent.putExtra("editMode", true);
            intent.putExtra("mealName", getItem(position).getName());
            intent.putExtra("calories", getItem(position).getCalories());
            intent.putExtra("servingSizeNum", getItem(position).getServingSize().getSize());

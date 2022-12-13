@@ -107,4 +107,6 @@
     <string name="meal_chip_group_header">Meals:</string>
     <string name="activities_chip_group_header">Activities:</string>
     <string name="calories_header">Calories:&#160;</string>
+    <string name="editing_entry_title">Editing Entry</string>
+    <string name="confirm_delete_entry">Are you sure you want to delete this Entry?</string>
 </resources>
