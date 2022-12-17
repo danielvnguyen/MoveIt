@@ -239,6 +239,7 @@ public class AddMeal extends AppCompatActivity {
 
             ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Saving Meal...");
+            progressDialog.setCancelable(false);
             progressDialog.show();
 
             if (editMode) {

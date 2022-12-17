@@ -140,6 +140,7 @@ public class AddEntry extends AppCompatActivity implements
             }
             ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Saving Entry...");
+            progressDialog.setCancelable(false);
             progressDialog.show();
 
             if (!editMode) {
@@ -242,6 +243,11 @@ public class AddEntry extends AppCompatActivity implements
         takeNewImgBtn = findViewById(R.id.takeNewImageBtn);
         caloriesInput = findViewById(R.id.calorieSumInput);
 
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             setTitle(getString(R.string.editing_entry_title));
@@ -285,6 +291,7 @@ public class AddEntry extends AppCompatActivity implements
             getCurrentDateTime();
             setDateTime(dateTimeValue);
         }
+        progressDialog.dismiss();
     }
 
     private void setDateTime(long dateTimeMilliseconds) {
@@ -481,6 +488,10 @@ public class AddEntry extends AppCompatActivity implements
         newChip.setChipBackgroundColorResource(R.color.light_green);
         newChip.setCheckable(true);
         newChip.setChipIconVisible(true);
+
+        if (originalMeals.contains(text) || originalActivities.contains(text)) {
+            newChip.setChecked(true);
+        }
 
         return newChip;
     }

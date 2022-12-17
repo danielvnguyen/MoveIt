@@ -140,8 +140,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:cardCornerRadius="20dp"
-                        app:cardElevation="10dp"
-                        android:layout_marginTop="10dp">
+                        app:cardElevation="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp">
 
                         <ImageView
                             android:id="@+id/entryImageView"
