@@ -144,6 +144,7 @@ public class AddEntry extends AppCompatActivity implements
             progressDialog.show();
 
             if (!editMode) {
+                //Creating new entry
                 String entryImageId = "";
                 if (entryImageUri != null) {
                     entryImageId = UUID.randomUUID() + "." + getFileExtension(entryImageUri);
@@ -163,8 +164,24 @@ public class AddEntry extends AppCompatActivity implements
                 handleUpload(currentEntry);
                 progressDialog.dismiss();
             } else {
+                String entryImageId = originalEntryImageId;
+                if (entryImageUri != null) {
+                    entryImageId = UUID.randomUUID() + "." + getFileExtension(entryImageUri);
+                    storage.getReference().child(currentUser.getUid()).child("uploads")
+                            .child(entryImageId).putFile(entryImageUri);
+                }
+
+                currentEntry.setCaloriesEaten(Integer.valueOf(caloriesInput.getText().toString()));
+                currentEntry.setNote(entryNote.getText().toString());
+                currentEntry.setDateTime(dateTimeValue);
+                currentEntry.setImageId(entryImageId);
+                currentEntry.setMeals(getSelectedMeals());
+                currentEntry.setActivities(getSelectedActivities());
+
+                //Updating existing entry
                 if (compareChanges()) {
                     Toast.makeText(AddEntry.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                     return;
                 }
 
@@ -489,8 +506,10 @@ public class AddEntry extends AppCompatActivity implements
         newChip.setCheckable(true);
         newChip.setChipIconVisible(true);
 
-        if (originalMeals.contains(text) || originalActivities.contains(text)) {
-            newChip.setChecked(true);
+        if (editMode) {
+            if (originalMeals.contains(text) || originalActivities.contains(text)) {
+                newChip.setChecked(true);
+            }
         }
 
         return newChip;

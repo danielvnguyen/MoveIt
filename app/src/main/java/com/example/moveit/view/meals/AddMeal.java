@@ -243,6 +243,7 @@ public class AddMeal extends AppCompatActivity {
             progressDialog.show();
 
             if (editMode) {
+                //Update existing entry
                 if (compareChanges(mealName, calories, mealNote, servingSizeNum, selectedUnits)) {
                     Toast.makeText(AddMeal.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
                     return;
@@ -273,6 +274,7 @@ public class AddMeal extends AppCompatActivity {
                 }
                 progressDialog.dismiss();
             } else {
+                //Creating new entry
                 String mealId = UUID.randomUUID().toString();
                 if (mealImageUri != null) {
                     String imageId = UUID.randomUUID() + "." + getFileExtension(mealImageUri);
