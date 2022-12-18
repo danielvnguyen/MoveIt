@@ -47,7 +47,7 @@ import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.example.moveit.view.HomeActivity;
-import com.example.moveit.view.fragments.EntriesPage;
+import com.example.moveit.view.meals.AddMeal;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.color.MaterialColors;
@@ -143,9 +143,10 @@ public class AddEntry extends AppCompatActivity implements
             progressDialog.setCancelable(false);
             progressDialog.show();
 
+            String entryImageId;
             if (!editMode) {
                 //Creating new entry
-                String entryImageId = "";
+                entryImageId = "";
                 if (entryImageUri != null) {
                     entryImageId = UUID.randomUUID() + "." + getFileExtension(entryImageUri);
                     storage.getReference().child(currentUser.getUid()).child("uploads")
@@ -162,19 +163,10 @@ public class AddEntry extends AppCompatActivity implements
                 String entryId = UUID.randomUUID().toString();
                 currentEntry.setId(entryId);
                 handleUpload(currentEntry);
-                progressDialog.dismiss();
             } else {
-                String entryImageId = originalEntryImageId;
-                if (entryImageUri != null) {
-                    entryImageId = UUID.randomUUID() + "." + getFileExtension(entryImageUri);
-                    storage.getReference().child(currentUser.getUid()).child("uploads")
-                            .child(entryImageId).putFile(entryImageUri);
-                }
-
                 currentEntry.setCaloriesEaten(Integer.valueOf(caloriesInput.getText().toString()));
                 currentEntry.setNote(entryNote.getText().toString());
                 currentEntry.setDateTime(dateTimeValue);
-                currentEntry.setImageId(entryImageId);
                 currentEntry.setMeals(getSelectedMeals());
                 currentEntry.setActivities(getSelectedActivities());
 
@@ -185,8 +177,48 @@ public class AddEntry extends AppCompatActivity implements
                     return;
                 }
 
-                progressDialog.dismiss();
+                entryImageId = originalEntryImageId;
+                currentEntry.setImageId(entryImageId);
+                if (imageStateAltered) {
+                    if (entryImageUri != null) {
+                        entryImageId = UUID.randomUUID() + "." + getFileExtension(entryImageUri);
+                        currentEntry.setImageId(entryImageId);
+
+                        storage.getReference().child(currentUser.getUid()).child("uploads")
+                                .child(entryImageId).putFile(entryImageUri);
+                        if (originalEntryImageId.equals("")) {
+                            handleUpdate(currentEntry, entryImageId);
+                        } else {
+                            final StorageReference oldEntryImageRef = storage.getReference().child(currentUser.getUid())
+                                    .child("uploads").child(originalEntryImageId);
+                            oldEntryImageRef.delete();
+                            handleUpdate(currentEntry, entryImageId);
+                        }
+                    } else {
+                        final StorageReference oldEntryImageRef = storage.getReference().child(currentUser.getUid())
+                                .child("uploads").child(originalEntryImageId);
+                        oldEntryImageRef.delete();
+                        handleUpdate(currentEntry, "");
+                    }
+                } else {
+                    handleUpdate(currentEntry, originalEntryImageId);
+                }
             }
+            progressDialog.dismiss();
+        });
+    }
+
+    private void handleUpdate(Entry entry, String imageId) {
+        db.collection("entries").document(currentUser.getUid()).collection("entryList").document(originalEntryId)
+                .update("mood", entry.getMood(), "meals", entry.getMeals(), "activities", entry.getActivities(),
+                        "caloriesEaten", entry.getCaloriesEaten(), "dateTime", entry.getDateTime(), "note", entry.getNote(),
+                        "imageId", imageId).addOnCompleteListener(task -> {
+           if (task.isSuccessful()) {
+               Toast.makeText(AddEntry.this, "Updated entry successfully!", Toast.LENGTH_SHORT).show();
+               finish();
+           } else {
+               Toast.makeText(AddEntry.this, "Error updating entry", Toast.LENGTH_SHORT).show();
+           }
         });
     }
 
