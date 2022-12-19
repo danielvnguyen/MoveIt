@@ -215,7 +215,10 @@ public class AddEntry extends AppCompatActivity implements
                         "imageId", imageId).addOnCompleteListener(task -> {
            if (task.isSuccessful()) {
                Toast.makeText(AddEntry.this, "Updated entry successfully!", Toast.LENGTH_SHORT).show();
-               finish();
+               Intent intent = new Intent(this, HomeActivity.class);
+               intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+               intent.putExtra("isChanged", true);
+               startActivity(intent);
            } else {
                Toast.makeText(AddEntry.this, "Error updating entry", Toast.LENGTH_SHORT).show();
            }
