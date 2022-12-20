@@ -121,6 +121,7 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
                 Intent intent = ViewPhotoActivity.makeIntent(context);
                 intent.putExtra("imageId", currentEntry.getImageId());
                 intent.putExtra("showDelete", false);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 context.startActivity(intent);
             });
         }

@@ -480,7 +480,7 @@ public class AddEntry extends AppCompatActivity implements
                             Meal currentMeal = mealDoc.toObject(Meal.class);
                             mealCaloriesMap.put(currentMeal.getName(), currentMeal.getCalories());
 
-                            Chip mealChip = buildChip(currentMeal.getName());
+                            Chip mealChip = buildChip(currentMeal.getName(), "Meal");
                             if (!currentMeal.getImageId().equals("")) {
                                 if (currentMeal.getImageId().contains("https")) {
                                     loadChipIcon(mealChip, Uri.parse(currentMeal.getImageId()));
@@ -519,7 +519,7 @@ public class AddEntry extends AppCompatActivity implements
                                 if (task1.isSuccessful()) {
                                     for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
                                         Activity currentActivity = activityDoc.toObject(Activity.class);
-                                        Chip activityChip = buildChip(currentActivity.getName());
+                                        Chip activityChip = buildChip(currentActivity.getName(), "Activity");
                                         activitiesChipGroup.addView(activityChip);
                                     }
                                 } else {
@@ -533,7 +533,7 @@ public class AddEntry extends AppCompatActivity implements
         });
     }
 
-    private Chip buildChip(String text) {
+    private Chip buildChip(String text, String type) {
         Chip newChip = new Chip(this);
         newChip.setText(text);
         newChip.setTextColor(getResources().getColor(R.color.white));
@@ -542,7 +542,9 @@ public class AddEntry extends AppCompatActivity implements
         newChip.setChipIconVisible(true);
 
         if (editMode) {
-            if (originalMeals.contains(text) || originalActivities.contains(text)) {
+            if (type.equals("Meal") && originalMeals.contains(text)) {
+                newChip.setChecked(true);
+            } else if (type.equals("Activity") && originalActivities.contains(text)) {
                 newChip.setChecked(true);
             }
         }

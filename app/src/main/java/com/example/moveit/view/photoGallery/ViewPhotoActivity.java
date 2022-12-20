@@ -91,17 +91,21 @@ public class ViewPhotoActivity extends AppCompatActivity {
 
     private void handleDelete() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("meals").document(currentUser.getUid())
-                .collection("mealList").get().addOnSuccessListener(queryDocumentSnapshots -> {
-                    for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
-                        String imageId = Objects.requireNonNull(queryDocumentSnapshots.getDocuments().get(i).get("imageId")).toString();
-                        if (imageId.equals(currentImageId)) {
-                            String mealId = queryDocumentSnapshots.getDocuments().get(i).getId();
-                            db.collection("meals").document(currentUser.getUid())
-                                    .collection("mealList").document(mealId).update("imageId", "");
+        String[] collections = {"meals", "entries"};
+        for (String collection : collections) {
+            String collectionList = collection.equals("meals") ? "mealList" : "entryList";
+            db.collection(collection).document(currentUser.getUid())
+                    .collection(collectionList).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                            String imageId = Objects.requireNonNull(queryDocumentSnapshots.getDocuments().get(i).get("imageId")).toString();
+                            if (imageId.equals(currentImageId)) {
+                                String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
+                                db.collection(collection).document(currentUser.getUid())
+                                        .collection(collectionList).document(documentId).update("imageId", "");
+                            }
                         }
-                    }
-                });
+                    });
+        }
 
         final StorageReference imageRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
                 .child("uploads").child(currentImageId);

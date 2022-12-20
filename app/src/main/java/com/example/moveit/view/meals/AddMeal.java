@@ -35,8 +35,10 @@ import com.example.moveit.model.meals.Meal;
 import com.example.moveit.model.meals.ServingSize;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import java.io.File;
@@ -246,6 +248,7 @@ public class AddMeal extends AppCompatActivity {
                 //Update existing entry
                 if (compareChanges(mealName, calories, mealNote, servingSizeNum, selectedUnits)) {
                     Toast.makeText(AddMeal.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                     return;
                 }
 
@@ -358,15 +361,27 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private void handleUpdate(String mealName, Integer calories, ServingSize servingSize, String mealNote, String imageId) {
-        db.collection("meals").document(currentUser.getUid())
-                .collection("mealList").document(originalMealId).update("name", mealName,
-                "calories", calories, "servingSize", servingSize, "note", mealNote,
-                        "imageId", imageId).addOnCompleteListener(task -> {
+        CollectionReference userMealsRef = db.collection("meals").document(currentUser.getUid()).collection("mealList");
+        Query queryMealsByName = userMealsRef.whereEqualTo("name", mealName);
+        queryMealsByName.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(AddMeal.this, "Updated meal successfully!", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(AddMeal.this, "Error updating meal", Toast.LENGTH_SHORT).show();
+                boolean condition = mealName.equals(originalMealName)? (Objects.requireNonNull(task.getResult()).size() > 1)
+                        : (!Objects.requireNonNull(task.getResult()).isEmpty());
+                if (condition) {
+                    Toast.makeText(AddMeal.this, "Another meal already has this name!", Toast.LENGTH_SHORT).show();
+                } else {
+                    db.collection("meals").document(currentUser.getUid())
+                            .collection("mealList").document(originalMealId).update("name", mealName,
+                                    "calories", calories, "servingSize", servingSize, "note", mealNote,
+                                    "imageId", imageId).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Toast.makeText(AddMeal.this, "Updated meal successfully!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                } else {
+                                    Toast.makeText(AddMeal.this, "Error updating meal", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
             }
         });
     }
@@ -379,13 +394,23 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private void handleUpload(Meal meal) {
-        db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                .document(meal.getId()).set(meal).addOnCompleteListener(task -> {
+        CollectionReference userMealsRef = db.collection("meals").document(currentUser.getUid()).collection("mealList");
+        Query queryMealsByName = userMealsRef.whereEqualTo("name", meal.getName());
+        queryMealsByName.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(AddMeal.this, "Saved meal successfully!", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(AddMeal.this, "Error saving meal", Toast.LENGTH_SHORT).show();
+                if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
+                    Toast.makeText(AddMeal.this, "Another meal already has this name!", Toast.LENGTH_SHORT).show();
+                } else {
+                    db.collection("meals").document(currentUser.getUid()).collection("mealList")
+                            .document(meal.getId()).set(meal).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Toast.makeText(AddMeal.this, "Saved meal successfully!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                } else {
+                                    Toast.makeText(AddMeal.this, "Error saving meal", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
             }
         });
     }
