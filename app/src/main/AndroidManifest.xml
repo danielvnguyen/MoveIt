@@ -4,7 +4,8 @@
     package="com.example.moveit">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -20,8 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
+            android:name=".view.NotificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.AboutInfoActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".view.photoGallery.ViewPhotoActivity"
             android:exported="false" />
@@ -85,6 +89,8 @@
         <activity
             android:name=".view.entries.AddEntry"
             android:exported="false" />
+
+        <receiver android:name=".alarm.NotificationReceiver" />
 
         <meta-data
             android:name="preloaded_fonts"
