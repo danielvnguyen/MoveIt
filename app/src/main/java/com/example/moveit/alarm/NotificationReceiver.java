@@ -9,7 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import com.example.moveit.R;
-import com.example.moveit.view.NotificationActivity;
 import com.example.moveit.view.entries.AddEntry;
 
 /*
@@ -32,6 +31,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         Notification notification = builder.setContentTitle("Daily Entry Reminder")
                 .setContentText("How was your day?")
                 .setSmallIcon(R.drawable.app_icon)
+                .setAutoCancel(true)
                 .setContentIntent(pendingIntent).build();
         builder.setChannelId(NOTIFICATION_CHANNEL_ID);
 

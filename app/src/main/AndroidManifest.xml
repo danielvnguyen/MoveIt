@@ -21,9 +21,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".view.NotificationActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.AboutInfoActivity"
             android:exported="false" />
         <activity
