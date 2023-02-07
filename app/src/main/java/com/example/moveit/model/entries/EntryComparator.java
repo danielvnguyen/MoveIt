@@ -2,6 +2,7 @@ package com.example.moveit.model.entries;
 
 import java.util.Comparator;
 
+//This class is used to sort the entries list in chronological order
 public class EntryComparator implements Comparator<Entry> {
     @Override
     public int compare(Entry o1, Entry o2) {

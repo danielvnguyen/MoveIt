@@ -1,5 +1,6 @@
 package com.example.moveit.view.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.example.moveit.R;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.entries.EntryComparator;
@@ -22,7 +26,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 
 public class EntriesPage extends Fragment {
@@ -30,6 +37,12 @@ public class EntriesPage extends Fragment {
     private ArrayAdapter<Entry> adapter;
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
+
+    private Calendar currentDate;
+    private Calendar realDate;
+    private Button nextMonthBtn;
+    private Button previousMonthBtn;
+    private TextView dateTextView;
 
     @Nullable
     @Override
@@ -48,6 +61,41 @@ public class EntriesPage extends Fragment {
 
         setUpAddEntryBtn();
         setUpEntryList();
+        setUpDateAndPageBtns();
+    }
+
+    private void setUpDateAndPageBtns() {
+        nextMonthBtn = requireView().findViewById(R.id.nextMonthBtn);
+        previousMonthBtn = requireView().findViewById(R.id.previousMonthBtn);
+        dateTextView = requireView().findViewById(R.id.entryMonthTV);
+        nextMonthBtn.setEnabled(false);
+
+        currentDate = Calendar.getInstance();
+        realDate = Calendar.getInstance();
+        setDateLabel(currentDate.getTimeInMillis());
+
+        nextMonthBtn.setOnClickListener(v -> {
+            currentDate.add(Calendar.MONTH, 1);
+            nextMonthBtn.setEnabled(currentDate.get(Calendar.MONTH) < realDate.get((Calendar.MONTH))
+                    || currentDate.get(Calendar.YEAR) < realDate.get((Calendar.YEAR)));
+            setDateLabel(currentDate.getTimeInMillis());
+            setUpEntryList();
+        });
+
+        previousMonthBtn.setOnClickListener(v -> {
+            currentDate.add(Calendar.MONTH, -1);
+            nextMonthBtn.setEnabled(currentDate.get(Calendar.MONTH) < realDate.get((Calendar.MONTH))
+                    || currentDate.get(Calendar.YEAR) < realDate.get((Calendar.YEAR)));
+            setDateLabel(currentDate.getTimeInMillis());
+            setUpEntryList();
+        });
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private void setDateLabel(long date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM, yyyy");
+        String dateText = (sdf.format(date));
+        dateTextView.setText(dateText);
     }
 
     private void setUpEntryList() {
@@ -68,7 +116,13 @@ public class EntriesPage extends Fragment {
                         ArrayList<Entry> entryList = new ArrayList<>();
                         for (QueryDocumentSnapshot entryDoc : Objects.requireNonNull(task.getResult())) {
                             Entry currentEntry = entryDoc.toObject(Entry.class);
-                            entryList.add(currentEntry);
+                            Calendar currentEntryDate = Calendar.getInstance();
+                            currentEntryDate.setTimeInMillis(currentEntry.getDateTime());
+                            //Only add current entry to entryList if within desired time period
+                            if (currentDate.get(Calendar.MONTH) == currentEntryDate.get((Calendar.MONTH))
+                            && currentDate.get(Calendar.YEAR) == currentEntryDate.get((Calendar.YEAR))) {
+                                entryList.add(currentEntry);
+                            }
                         }
 
                         adapter.clear();
