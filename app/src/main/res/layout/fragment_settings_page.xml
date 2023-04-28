@@ -83,7 +83,7 @@
             android:drawableLeft="@drawable/about_icon"
             app:strokeColor="@color/dark_green"
             app:strokeWidth="2dp"
-            android:text="@string/about" />
+            android:text="@string/attributions" />
 
     </LinearLayout>
 

@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".view.AboutInfoActivity"
+            android:name=".view.AttributionsActivity"
             android:exported="false" />
         <activity
             android:name=".view.photoGallery.ViewPhotoActivity"

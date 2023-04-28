@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.moveit.R;
-import com.example.moveit.view.AboutInfoActivity;
+import com.example.moveit.view.AttributionsActivity;
 import com.example.moveit.view.categories.CategoriesList;
 import com.example.moveit.view.photoGallery.PhotoGalleryActivity;
 import com.example.moveit.view.SetThemeActivity;
@@ -23,8 +23,6 @@ import com.example.moveit.view.StartActivity;
 import com.example.moveit.view.account.AccountSettingsActivity;
 import com.example.moveit.view.meals.MealList;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.Objects;
 
 public class SettingsPage extends Fragment {
 
@@ -46,7 +44,7 @@ public class SettingsPage extends Fragment {
         Button editActivitiesBtn = requireView().findViewById(R.id.editActivitiesBtn);
         Button logoutBtn = requireView().findViewById(R.id.logout);
         Button editThemeBtn = requireView().findViewById(R.id.setThemeBtn);
-        Button aboutBtn = requireView().findViewById(R.id.aboutBtn);
+        Button attributionsBtn = requireView().findViewById(R.id.aboutBtn);
         Button photoGalleryBtn = requireView().findViewById(R.id.photoGalleryBtn);
         Button editReminderBtn = requireView().findViewById(R.id.editReminderBtn);
         Button accountSettingsBtn = requireView().findViewById(R.id.accountSettingsBtn);
@@ -71,8 +69,8 @@ public class SettingsPage extends Fragment {
             Intent intent = new Intent(getActivity(), PhotoGalleryActivity.class);
             startActivity(intent);
         });
-        aboutBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AboutInfoActivity.class);
+        attributionsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AttributionsActivity.class);
             startActivity(intent);
         });
 
