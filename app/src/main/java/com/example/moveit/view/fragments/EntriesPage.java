@@ -43,6 +43,7 @@ public class EntriesPage extends Fragment {
     private Button nextMonthBtn;
     private Button previousMonthBtn;
     private TextView dateTextView;
+    private Button resetDateBtn;
 
     @Nullable
     @Override
@@ -62,6 +63,18 @@ public class EntriesPage extends Fragment {
         setUpAddEntryBtn();
         setUpEntryList();
         setUpDateAndPageBtns();
+        setUpResetBtn();
+    }
+
+    private void setUpResetBtn() {
+        resetDateBtn = requireView().findViewById(R.id.resetDateBtn);
+        resetDateBtn.setOnClickListener(v -> {
+            currentDate = Calendar.getInstance();
+            setDateLabel(currentDate.getTimeInMillis());
+            nextMonthBtn.setEnabled(false);
+            resetDateBtn.setVisibility(View.GONE);
+            setUpEntryList();
+        });
     }
 
     private void setUpDateAndPageBtns() {
@@ -76,17 +89,31 @@ public class EntriesPage extends Fragment {
 
         nextMonthBtn.setOnClickListener(v -> {
             currentDate.add(Calendar.MONTH, 1);
-            nextMonthBtn.setEnabled(currentDate.get(Calendar.MONTH) < realDate.get((Calendar.MONTH))
-                    || currentDate.get(Calendar.YEAR) < realDate.get((Calendar.YEAR)));
             setDateLabel(currentDate.getTimeInMillis());
+            if (currentDate.get(Calendar.MONTH) < realDate.get((Calendar.MONTH))
+                    || currentDate.get(Calendar.YEAR) < realDate.get((Calendar.YEAR))) {
+                nextMonthBtn.setEnabled(true);
+                resetDateBtn.setVisibility(View.VISIBLE);
+            } else {
+                nextMonthBtn.setEnabled(false);
+                resetDateBtn.setVisibility(View.GONE);
+            }
+
             setUpEntryList();
         });
 
         previousMonthBtn.setOnClickListener(v -> {
             currentDate.add(Calendar.MONTH, -1);
-            nextMonthBtn.setEnabled(currentDate.get(Calendar.MONTH) < realDate.get((Calendar.MONTH))
-                    || currentDate.get(Calendar.YEAR) < realDate.get((Calendar.YEAR)));
             setDateLabel(currentDate.getTimeInMillis());
+            if (currentDate.get(Calendar.MONTH) < realDate.get((Calendar.MONTH))
+                    || currentDate.get(Calendar.YEAR) < realDate.get((Calendar.YEAR))) {
+                nextMonthBtn.setEnabled(true);
+                resetDateBtn.setVisibility(View.VISIBLE);
+            } else {
+                nextMonthBtn.setEnabled(false);
+                resetDateBtn.setVisibility(View.GONE);
+            }
+
             setUpEntryList();
         });
     }
