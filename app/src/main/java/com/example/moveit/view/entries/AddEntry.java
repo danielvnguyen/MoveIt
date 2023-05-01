@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import android.Manifest;
@@ -17,6 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -29,6 +31,7 @@ import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -99,8 +102,9 @@ public class AddEntry extends AppCompatActivity implements
     private Integer selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
     private long dateTimeValue;
 
-    private ChipGroup activitiesChipGroup;
+    private LinearLayout categoryLinearLayout;
     private ChipGroup mealChipGroup;
+    private ArrayList<ChipGroup> activityChipGroups;
     private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
     private EditText caloriesInput;
 
@@ -126,7 +130,7 @@ public class AddEntry extends AppCompatActivity implements
         setUpMoods();
         setUpInterface();
         setUpMealChips();
-        setUpActivities();
+        setUpCategories();
         setUpImageOptions();
         setUpSaveBtn();
         setUpDeleteBtn();
@@ -505,32 +509,88 @@ public class AddEntry extends AppCompatActivity implements
                 });
     }
 
-    private void setUpActivities() {
-        activitiesChipGroup = findViewById(R.id.activitiesChipGroup);
+    private void setUpCategories() {
+        this.categoryLinearLayout = findViewById(R.id.categoryLinearLayout);
+        this.activityChipGroups = new ArrayList<>();
 
         CollectionReference categoriesRef = db.collection("categories")
                 .document(currentUser.getUid()).collection("categoryList");
         categoriesRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
-                    Category currentCategory = categoryDoc.toObject(Category.class);
-                    categoriesRef.document(currentCategory.getCategoryId())
-                            .collection("activityList").get().addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
-                                        Activity currentActivity = activityDoc.toObject(Activity.class);
-                                        Chip activityChip = buildChip(currentActivity.getName(), "Activity");
-                                        activitiesChipGroup.addView(activityChip);
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
+                        Category currentCategory = categoryDoc.toObject(Category.class);
+                        String currentCategoryId = currentCategory.getCategoryId();
+                        String currentCategoryName = currentCategory.getName();
+                        //Create CardView for each category with its name
+                        CardView cardView = new CardView(this);
+                        LinearLayout linearLayout = new LinearLayout(this);
+                        linearLayout.setOrientation(LinearLayout.VERTICAL);
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        linearLayout.setLayoutParams(layoutParams);
+
+                        //TextView styling
+                        TextView cardViewLabel = new TextView(this);
+                        Typeface ralewayTypeface = getResources().getFont(R.font.raleway);
+                        cardViewLabel.setTypeface(ralewayTypeface);
+                        cardViewLabel.setText(currentCategoryName);
+                        cardViewLabel.setTextSize(16);
+                        linearLayout.addView(cardViewLabel);
+
+                        //ChipGroup styling
+                        ChipGroup activityChipGroup = new ChipGroup(this);
+                        activityChipGroup.setPadding(0, dpToPx(20), 0, 0);
+                        activityChipGroup.setLayoutParams(layoutParams);
+                        activityChipGroup.setVisibility(View.GONE);
+                        activityChipGroups.add(activityChipGroup);
+                        cardView.addView(activityChipGroup);
+
+                        //CardView styling
+                        LinearLayout.LayoutParams cardViewLayoutParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        int cardViewMargin = dpToPx(10);
+                        int cardViewPadding = dpToPx(15);
+                        cardViewLayoutParams.setMargins(cardViewMargin, cardViewMargin, cardViewMargin, cardViewMargin);
+                        cardView.setLayoutParams(cardViewLayoutParams);
+                        cardView.setRadius(dpToPx(20));
+                        cardView.setCardElevation(dpToPx(10));
+                        cardView.setContentPadding(cardViewPadding, cardViewPadding, cardViewPadding, cardViewPadding);
+                        cardView.addView(linearLayout);
+                        cardView.setOnClickListener(v -> {
+                            int visibility = (activityChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
+                            TransitionManager.beginDelayedTransition(activityChipGroup, new AutoTransition());
+                            activityChipGroup.setVisibility(visibility);
+                        });
+
+                        //Add activity chip group for each category
+                        categoriesRef.document(currentCategoryId)
+                                .collection("activityList").get().addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
+                                            Activity currentActivity = activityDoc.toObject(Activity.class);
+                                            Chip activityChip = buildChip(currentActivity.getName(), "Activity");
+                                            activityChipGroup.addView(activityChip);
+                                        }
+                                    } else {
+                                        Log.d("AddEntry", "Error retrieving activity documents: ", task1.getException());
                                     }
-                                } else {
-                                    Log.d("AddEntry", "Error retrieving activity documents: ", task1.getException());
-                                }
-                            });
+                                });
+                        categoryLinearLayout.addView(cardView);
+                    }
+                } else {
+                    Log.d("AddEntry", "Error retrieving category documents: ", task.getException());
                 }
-            } else {
-                Log.d("AddEntry", "Error retrieving category documents: ", task.getException());
-            }
-        });
+            });
+
+    }
+
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 
     private Chip buildChip(String text, String type) {
@@ -573,11 +633,13 @@ public class AddEntry extends AppCompatActivity implements
     }
 
     private ArrayList<String> getSelectedActivities() {
-        List<Integer> ids = activitiesChipGroup.getCheckedChipIds();
         ArrayList<String> selectedActivities = new ArrayList<>();
-        for (Integer id: ids){
-            Chip currentChip = activitiesChipGroup.findViewById(id);
-            selectedActivities.add(currentChip.getText().toString());
+        for (ChipGroup group : activityChipGroups) {
+            List<Integer> ids = group.getCheckedChipIds();
+            for (Integer id: ids){
+                Chip currentChip = group.findViewById(id);
+                selectedActivities.add(currentChip.getText().toString());
+            }
         }
         return selectedActivities;
     }
@@ -601,13 +663,6 @@ public class AddEntry extends AppCompatActivity implements
         int visibility = (mealChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
         TransitionManager.beginDelayedTransition(mealChipLayout, new AutoTransition());
         mealChipGroup.setVisibility(visibility);
-    }
-
-    public void showActivitiesChipGroup(View v) {
-        LinearLayout activitiesChipLayout = findViewById(R.id.activitiesChipLayout);
-        int visibility = (activitiesChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
-        TransitionManager.beginDelayedTransition(activitiesChipLayout, new AutoTransition());
-        activitiesChipGroup.setVisibility(visibility);
     }
 
     private void setUpMoods() {
@@ -640,6 +695,8 @@ public class AddEntry extends AppCompatActivity implements
             }
         }
     }
+
+    //Time and date functions
 
     public void showTimePickerDialog(View v) {
         TimePickerDialog.OnTimeSetListener timeSetListener = this;
