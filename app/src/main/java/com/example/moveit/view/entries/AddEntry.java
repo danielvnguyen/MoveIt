@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import android.Manifest;
@@ -17,6 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -29,6 +31,7 @@ import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -99,7 +102,9 @@ public class AddEntry extends AppCompatActivity implements
     private Integer selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
     private long dateTimeValue;
 
-    private ChipGroup activitiesChipGroup;
+//    private ChipGroup activitiesChipGroup;
+    //list of Category (strings) that contain their own array of activities
+    private LinearLayout categoryLinearLayout;
     private ChipGroup mealChipGroup;
     private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
     private EditText caloriesInput;
@@ -126,10 +131,11 @@ public class AddEntry extends AppCompatActivity implements
         setUpMoods();
         setUpInterface();
         setUpMealChips();
-        setUpActivities();
+//        setUpActivities();
         setUpImageOptions();
         setUpSaveBtn();
         setUpDeleteBtn();
+        setUpCategories();
     }
 
     private void setUpSaveBtn() {
@@ -158,7 +164,7 @@ public class AddEntry extends AppCompatActivity implements
                 currentEntry.setDateTime(dateTimeValue);
                 currentEntry.setImageId(entryImageId);
                 currentEntry.setMeals(getSelectedMeals());
-                currentEntry.setActivities(getSelectedActivities());
+//                currentEntry.setActivities(getSelectedActivities());
 
                 String entryId = UUID.randomUUID().toString();
                 currentEntry.setId(entryId);
@@ -168,7 +174,7 @@ public class AddEntry extends AppCompatActivity implements
                 currentEntry.setNote(entryNote.getText().toString());
                 currentEntry.setDateTime(dateTimeValue);
                 currentEntry.setMeals(getSelectedMeals());
-                currentEntry.setActivities(getSelectedActivities());
+//                currentEntry.setActivities(getSelectedActivities());
 
                 //Updating existing entry
                 if (compareChanges()) {
@@ -505,33 +511,90 @@ public class AddEntry extends AppCompatActivity implements
                 });
     }
 
-    private void setUpActivities() {
-        activitiesChipGroup = findViewById(R.id.activitiesChipGroup);
+    private void setUpCategories() {
+        this.categoryLinearLayout = findViewById(R.id.categoryLinearLayout);
 
         CollectionReference categoriesRef = db.collection("categories")
                 .document(currentUser.getUid()).collection("categoryList");
         categoriesRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
-                    Category currentCategory = categoryDoc.toObject(Category.class);
-                    categoriesRef.document(currentCategory.getCategoryId())
-                            .collection("activityList").get().addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
-                                        Activity currentActivity = activityDoc.toObject(Activity.class);
-                                        Chip activityChip = buildChip(currentActivity.getName(), "Activity");
-                                        activitiesChipGroup.addView(activityChip);
-                                    }
-                                } else {
-                                    Log.d("AddEntry", "Error retrieving activity documents: ", task1.getException());
-                                }
-                            });
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
+                        Category currentCategory = categoryDoc.toObject(Category.class);
+                        String currentCategoryId = currentCategory.getCategoryId();
+                        String currentCategoryName = currentCategory.getName();
+                        //Create CardView for each category with its name
+                        CardView cardView = new CardView(this);
+                        LinearLayout linearLayout = new LinearLayout(this);
+                        linearLayout.setOrientation(LinearLayout.VERTICAL);
+                        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        ));
+
+                        //TextView styling
+                        TextView cardViewLabel = new TextView(this);
+                        Typeface ralewayTypeface = getResources().getFont(R.font.raleway);
+                        cardViewLabel.setTypeface(ralewayTypeface);
+                        cardViewLabel.setText(currentCategoryName);
+                        cardViewLabel.setTextSize(16);
+                        linearLayout.addView(cardViewLabel);
+
+                        //CardView styling
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        int cardViewMargin = dpToPx(10);
+                        layoutParams.setMargins(cardViewMargin, cardViewMargin, cardViewMargin, cardViewMargin);
+                        cardView.setLayoutParams(layoutParams);
+                        cardView.setRadius(dpToPx(20));
+                        cardView.setCardElevation(dpToPx(10));
+                        cardView.setContentPadding(dpToPx(15), dpToPx(15), dpToPx(15), dpToPx(15));
+                        cardView.addView(linearLayout);
+
+                        //set on click listener for card view
+
+                        categoryLinearLayout.addView(cardView);
+                    }
+                } else {
+                    Log.d("AddEntry", "Error retrieving category documents: ", task.getException());
                 }
-            } else {
-                Log.d("AddEntry", "Error retrieving category documents: ", task.getException());
-            }
-        });
+            });
+
     }
+
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
+
+//    private void setUpActivities() {
+//        activitiesChipGroup = findViewById(R.id.activitiesChipGroup);
+//
+//        CollectionReference categoriesRef = db.collection("categories")
+//                .document(currentUser.getUid()).collection("categoryList");
+//        categoriesRef.get().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
+//                    Category currentCategory = categoryDoc.toObject(Category.class);
+//                    categoriesRef.document(currentCategory.getCategoryId())
+//                            .collection("activityList").get().addOnCompleteListener(task1 -> {
+//                                if (task1.isSuccessful()) {
+//                                    for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
+//                                        Activity currentActivity = activityDoc.toObject(Activity.class);
+//                                        Chip activityChip = buildChip(currentActivity.getName(), "Activity");
+//                                        activitiesChipGroup.addView(activityChip);
+//                                    }
+//                                } else {
+//                                    Log.d("AddEntry", "Error retrieving activity documents: ", task1.getException());
+//                                }
+//                            });
+//                }
+//            } else {
+//                Log.d("AddEntry", "Error retrieving category documents: ", task.getException());
+//            }
+//        });
+//    }
 
     private Chip buildChip(String text, String type) {
         Chip newChip = new Chip(this);
@@ -572,15 +635,15 @@ public class AddEntry extends AppCompatActivity implements
         return selectedMeals;
     }
 
-    private ArrayList<String> getSelectedActivities() {
-        List<Integer> ids = activitiesChipGroup.getCheckedChipIds();
-        ArrayList<String> selectedActivities = new ArrayList<>();
-        for (Integer id: ids){
-            Chip currentChip = activitiesChipGroup.findViewById(id);
-            selectedActivities.add(currentChip.getText().toString());
-        }
-        return selectedActivities;
-    }
+//    private ArrayList<String> getSelectedActivities() {
+//        List<Integer> ids = activitiesChipGroup.getCheckedChipIds();
+//        ArrayList<String> selectedActivities = new ArrayList<>();
+//        for (Integer id: ids){
+//            Chip currentChip = activitiesChipGroup.findViewById(id);
+//            selectedActivities.add(currentChip.getText().toString());
+//        }
+//        return selectedActivities;
+//    }
 
     private void loadChipIcon(Chip chip, Uri uri) {
         Glide.with(this).asBitmap().load(uri).circleCrop().into(new CustomTarget<Bitmap>() {
@@ -603,12 +666,12 @@ public class AddEntry extends AppCompatActivity implements
         mealChipGroup.setVisibility(visibility);
     }
 
-    public void showActivitiesChipGroup(View v) {
-        LinearLayout activitiesChipLayout = findViewById(R.id.activitiesChipLayout);
-        int visibility = (activitiesChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
-        TransitionManager.beginDelayedTransition(activitiesChipLayout, new AutoTransition());
-        activitiesChipGroup.setVisibility(visibility);
-    }
+//    public void showActivitiesChipGroup(View v) {
+//        LinearLayout activitiesChipLayout = findViewById(R.id.activitiesChipLayout);
+//        int visibility = (activitiesChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
+//        TransitionManager.beginDelayedTransition(activitiesChipLayout, new AutoTransition());
+//        activitiesChipGroup.setVisibility(visibility);
+//    }
 
     private void setUpMoods() {
         TextView amazingMoodBtn = findViewById(R.id.amazingMoodBtn);
@@ -640,6 +703,8 @@ public class AddEntry extends AppCompatActivity implements
             }
         }
     }
+
+    //Time and date functions
 
     public void showTimePickerDialog(View v) {
         TimePickerDialog.OnTimeSetListener timeSetListener = this;
