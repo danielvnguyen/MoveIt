@@ -102,8 +102,6 @@ public class AddEntry extends AppCompatActivity implements
     private Integer selectedHour, selectedMinute, selectedYear, selectedMonth, selectedDay;
     private long dateTimeValue;
 
-//    private ChipGroup activitiesChipGroup;
-    //list of Category (strings) that contain their own array of activities
     private LinearLayout categoryLinearLayout;
     private ChipGroup mealChipGroup;
     private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
@@ -526,10 +524,11 @@ public class AddEntry extends AppCompatActivity implements
                         CardView cardView = new CardView(this);
                         LinearLayout linearLayout = new LinearLayout(this);
                         linearLayout.setOrientation(LinearLayout.VERTICAL);
-                        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
-                        ));
+                        );
+                        linearLayout.setLayoutParams(layoutParams);
 
                         //TextView styling
                         TextView cardViewLabel = new TextView(this);
@@ -539,21 +538,45 @@ public class AddEntry extends AppCompatActivity implements
                         cardViewLabel.setTextSize(16);
                         linearLayout.addView(cardViewLabel);
 
+                        //ChipGroup styling
+                        ChipGroup activityChipGroup = new ChipGroup(this);
+                        activityChipGroup.setPadding(0, dpToPx(20), 0, 0);
+                        activityChipGroup.setLayoutParams(layoutParams);
+                        activityChipGroup.setVisibility(View.GONE);
+                        cardView.addView(activityChipGroup);
+
                         //CardView styling
-                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams cardViewLayoutParams = new LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
                         );
                         int cardViewMargin = dpToPx(10);
-                        layoutParams.setMargins(cardViewMargin, cardViewMargin, cardViewMargin, cardViewMargin);
-                        cardView.setLayoutParams(layoutParams);
+                        int cardViewPadding = dpToPx(15);
+                        cardViewLayoutParams.setMargins(cardViewMargin, cardViewMargin, cardViewMargin, cardViewMargin);
+                        cardView.setLayoutParams(cardViewLayoutParams);
                         cardView.setRadius(dpToPx(20));
                         cardView.setCardElevation(dpToPx(10));
-                        cardView.setContentPadding(dpToPx(15), dpToPx(15), dpToPx(15), dpToPx(15));
+                        cardView.setContentPadding(cardViewPadding, cardViewPadding, cardViewPadding, cardViewPadding);
                         cardView.addView(linearLayout);
+                        cardView.setOnClickListener(v -> {
+                            int visibility = (activityChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
+                            TransitionManager.beginDelayedTransition(activityChipGroup, new AutoTransition());
+                            activityChipGroup.setVisibility(visibility);
+                        });
 
-                        //set on click listener for card view
-
+                        //Add activity chip group for each category
+                        categoriesRef.document(currentCategory.getCategoryId())
+                                .collection("activityList").get().addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
+                                            Activity currentActivity = activityDoc.toObject(Activity.class);
+                                            Chip activityChip = buildChip(currentActivity.getName(), "Activity");
+                                            activityChipGroup.addView(activityChip);
+                                        }
+                                    } else {
+                                        Log.d("AddEntry", "Error retrieving activity documents: ", task1.getException());
+                                    }
+                                });
                         categoryLinearLayout.addView(cardView);
                     }
                 } else {
@@ -567,34 +590,6 @@ public class AddEntry extends AppCompatActivity implements
         float density = getResources().getDisplayMetrics().density;
         return Math.round(dp * density);
     }
-
-//    private void setUpActivities() {
-//        activitiesChipGroup = findViewById(R.id.activitiesChipGroup);
-//
-//        CollectionReference categoriesRef = db.collection("categories")
-//                .document(currentUser.getUid()).collection("categoryList");
-//        categoriesRef.get().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
-//                    Category currentCategory = categoryDoc.toObject(Category.class);
-//                    categoriesRef.document(currentCategory.getCategoryId())
-//                            .collection("activityList").get().addOnCompleteListener(task1 -> {
-//                                if (task1.isSuccessful()) {
-//                                    for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
-//                                        Activity currentActivity = activityDoc.toObject(Activity.class);
-//                                        Chip activityChip = buildChip(currentActivity.getName(), "Activity");
-//                                        activitiesChipGroup.addView(activityChip);
-//                                    }
-//                                } else {
-//                                    Log.d("AddEntry", "Error retrieving activity documents: ", task1.getException());
-//                                }
-//                            });
-//                }
-//            } else {
-//                Log.d("AddEntry", "Error retrieving category documents: ", task.getException());
-//            }
-//        });
-//    }
 
     private Chip buildChip(String text, String type) {
         Chip newChip = new Chip(this);
@@ -665,13 +660,6 @@ public class AddEntry extends AppCompatActivity implements
         TransitionManager.beginDelayedTransition(mealChipLayout, new AutoTransition());
         mealChipGroup.setVisibility(visibility);
     }
-
-//    public void showActivitiesChipGroup(View v) {
-//        LinearLayout activitiesChipLayout = findViewById(R.id.activitiesChipLayout);
-//        int visibility = (activitiesChipGroup.getVisibility() == View.GONE)? View.VISIBLE : View.GONE;
-//        TransitionManager.beginDelayedTransition(activitiesChipLayout, new AutoTransition());
-//        activitiesChipGroup.setVisibility(visibility);
-//    }
 
     private void setUpMoods() {
         TextView amazingMoodBtn = findViewById(R.id.amazingMoodBtn);
