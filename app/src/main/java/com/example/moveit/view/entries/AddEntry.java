@@ -104,6 +104,7 @@ public class AddEntry extends AppCompatActivity implements
 
     private LinearLayout categoryLinearLayout;
     private ChipGroup mealChipGroup;
+    private ArrayList<ChipGroup> activityChipGroups;
     private final Map<String, Integer> mealCaloriesMap = new HashMap<>();
     private EditText caloriesInput;
 
@@ -129,11 +130,10 @@ public class AddEntry extends AppCompatActivity implements
         setUpMoods();
         setUpInterface();
         setUpMealChips();
-//        setUpActivities();
+        setUpCategories();
         setUpImageOptions();
         setUpSaveBtn();
         setUpDeleteBtn();
-        setUpCategories();
     }
 
     private void setUpSaveBtn() {
@@ -162,7 +162,7 @@ public class AddEntry extends AppCompatActivity implements
                 currentEntry.setDateTime(dateTimeValue);
                 currentEntry.setImageId(entryImageId);
                 currentEntry.setMeals(getSelectedMeals());
-//                currentEntry.setActivities(getSelectedActivities());
+                currentEntry.setActivities(getSelectedActivities());
 
                 String entryId = UUID.randomUUID().toString();
                 currentEntry.setId(entryId);
@@ -172,7 +172,7 @@ public class AddEntry extends AppCompatActivity implements
                 currentEntry.setNote(entryNote.getText().toString());
                 currentEntry.setDateTime(dateTimeValue);
                 currentEntry.setMeals(getSelectedMeals());
-//                currentEntry.setActivities(getSelectedActivities());
+                currentEntry.setActivities(getSelectedActivities());
 
                 //Updating existing entry
                 if (compareChanges()) {
@@ -511,6 +511,7 @@ public class AddEntry extends AppCompatActivity implements
 
     private void setUpCategories() {
         this.categoryLinearLayout = findViewById(R.id.categoryLinearLayout);
+        this.activityChipGroups = new ArrayList<>();
 
         CollectionReference categoriesRef = db.collection("categories")
                 .document(currentUser.getUid()).collection("categoryList");
@@ -543,6 +544,7 @@ public class AddEntry extends AppCompatActivity implements
                         activityChipGroup.setPadding(0, dpToPx(20), 0, 0);
                         activityChipGroup.setLayoutParams(layoutParams);
                         activityChipGroup.setVisibility(View.GONE);
+                        activityChipGroups.add(activityChipGroup);
                         cardView.addView(activityChipGroup);
 
                         //CardView styling
@@ -565,7 +567,7 @@ public class AddEntry extends AppCompatActivity implements
                         });
 
                         //Add activity chip group for each category
-                        categoriesRef.document(currentCategory.getCategoryId())
+                        categoriesRef.document(currentCategoryId)
                                 .collection("activityList").get().addOnCompleteListener(task1 -> {
                                     if (task1.isSuccessful()) {
                                         for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
@@ -630,15 +632,17 @@ public class AddEntry extends AppCompatActivity implements
         return selectedMeals;
     }
 
-//    private ArrayList<String> getSelectedActivities() {
-//        List<Integer> ids = activitiesChipGroup.getCheckedChipIds();
-//        ArrayList<String> selectedActivities = new ArrayList<>();
-//        for (Integer id: ids){
-//            Chip currentChip = activitiesChipGroup.findViewById(id);
-//            selectedActivities.add(currentChip.getText().toString());
-//        }
-//        return selectedActivities;
-//    }
+    private ArrayList<String> getSelectedActivities() {
+        ArrayList<String> selectedActivities = new ArrayList<>();
+        for (ChipGroup group : activityChipGroups) {
+            List<Integer> ids = group.getCheckedChipIds();
+            for (Integer id: ids){
+                Chip currentChip = group.findViewById(id);
+                selectedActivities.add(currentChip.getText().toString());
+            }
+        }
+        return selectedActivities;
+    }
 
     private void loadChipIcon(Chip chip, Uri uri) {
         Glide.with(this).asBitmap().load(uri).circleCrop().into(new CustomTarget<Bitmap>() {
