@@ -36,6 +36,7 @@ public class CalendarPage extends Fragment {
 
     private CalendarView calendarView;
     private Calendar calendar;
+    private Calendar realDate;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,7 +52,9 @@ public class CalendarPage extends Fragment {
         assert currentUser != null;
 
         calendar = Calendar.getInstance();
+        realDate = Calendar.getInstance();
         calendarView = requireView().findViewById(R.id.calendarView);
+        calendarView.setMaximumDate(realDate);
         calendarView.setOnPreviousPageChangeListener(() -> {
             calendar.add(Calendar.MONTH, -1);
             setUpCalendar();
