@@ -20,6 +20,10 @@
             @color/darkest_green
         </item>
         <item name="android:textAllCaps">false</item>
+        <item name="pagesColor">@color/beige</item>
+        <item name="abbreviationsBarColor">@color/beige</item>
+        <item name="abbreviationsLabelsColor">@color/black</item>
+        <item name="daysLabelsColor">@color/black</item>
     </style>
 
     <style name="CustomTextAppearance" parent="TextAppearance.Design.Tab">
