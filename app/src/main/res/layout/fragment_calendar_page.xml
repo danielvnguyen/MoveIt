@@ -8,8 +8,8 @@
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:headerColor="@color/light_green"
         app:todayLabelColor="@color/light_green"
+        app:anotherMonthsDaysLabelsColor="@color/gray"
         app:eventsEnabled="true"
         />
 

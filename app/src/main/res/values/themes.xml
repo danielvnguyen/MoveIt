@@ -24,6 +24,7 @@
         <item name="abbreviationsBarColor">@color/beige</item>
         <item name="abbreviationsLabelsColor">@color/black</item>
         <item name="daysLabelsColor">@color/black</item>
+        <item name="headerColor">@color/light_green</item>
     </style>
 
     <style name="CustomTextAppearance" parent="TextAppearance.Design.Tab">

@@ -1,9 +1,15 @@
 package com.example.moveit.view.fragments;
 
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -12,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.applandeo.materialcalendarview.CalendarView;
 
+import com.applandeo.materialcalendarview.EventDay;
 import com.example.moveit.R;
 import com.example.moveit.model.entries.Entry;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +35,7 @@ public class CalendarPage extends Fragment {
     private FirebaseUser currentUser;
 
     private CalendarView calendarView;
+    private Calendar calendar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,21 +50,28 @@ public class CalendarPage extends Fragment {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         assert currentUser != null;
 
+        calendar = Calendar.getInstance();
         calendarView = requireView().findViewById(R.id.calendarView);
+        calendarView.setOnPreviousPageChangeListener(() -> {
+            calendar.add(Calendar.MONTH, -1);
+            setUpCalendar();
+        });
+        calendarView.setOnForwardPageChangeListener(() -> {
+            calendar.add(Calendar.MONTH, 1);
+            setUpCalendar();
+        });
 
         setUpCalendar();
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @SuppressLint("ResourceAsColor")
     private void setUpCalendar() {
-        Calendar calendar = Calendar.getInstance();
-        ArrayList<Integer> daysWithEntries = getDaysWithEntriesForMonth(calendar);
-
-//        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> setUpCalendar());
-    }
-
-    // Retrieve the entries for the current month
-    private ArrayList<Integer> getDaysWithEntriesForMonth(Calendar calendar) {
-        ArrayList<Integer> daysWithEntries = new ArrayList<>();
+        ProgressDialog progressDialog = new ProgressDialog(requireActivity());
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        ArrayList<EventDay> daysWithEntries = new ArrayList<>();
 
         db.collection("entries").document(currentUser.getUid()).collection("entryList")
                 .get().addOnCompleteListener(task -> {
@@ -67,14 +82,45 @@ public class CalendarPage extends Fragment {
                             currentEntryDate.setTimeInMillis(currentEntry.getDateTime());
 
                             if (currentEntryDate.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)) {
-                                daysWithEntries.add(currentEntryDate.get(Calendar.DAY_OF_MONTH));
+                                Drawable unwrappedDrawable;
+                                Drawable wrappedDrawable = null;
+                                switch (currentEntry.getMood()) {
+                                    case "Bad":
+                                        unwrappedDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.bad_icon);
+                                        wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+                                        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(requireContext(), R.color.badColour));
+                                        break;
+                                    case "Meh":
+                                        unwrappedDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.meh_icon);
+                                        wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+                                        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(requireContext(), R.color.mehColour));
+                                        break;
+                                    case "Good":
+                                        unwrappedDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.good_icon);
+                                        wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+                                        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(requireContext(), R.color.goodColour));
+                                        break;
+                                    case "Great":
+                                        unwrappedDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.great_icon);
+                                        wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+                                        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(requireContext(), R.color.greatColour));
+                                        break;
+                                    case "Amazing":
+                                        unwrappedDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.amazing_icon);
+                                        wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
+                                        DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(requireContext(), R.color.amazingColour));
+                                        break;
+                                }
+
+                                EventDay currentDay = new EventDay(currentEntryDate, wrappedDrawable);
+                                daysWithEntries.add(currentDay);
                             }
                         }
+                        calendarView.setEvents(daysWithEntries);
+                        progressDialog.dismiss();
                     } else {
                         Log.d("CalendarPage", "Error retrieving documents: ", task.getException());
                     }
                 });
-
-        return daysWithEntries;
     }
 }
