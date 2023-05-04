@@ -24,7 +24,7 @@ import com.applandeo.materialcalendarview.CalendarView;
 
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.moveit.R;
-import com.example.moveit.model.ThemeUtils;
+import com.example.moveit.model.theme.ThemeUtils;
 import com.example.moveit.model.entries.Entry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +33,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -159,19 +160,18 @@ public class CalendarPage extends Fragment {
             for (int i = 0; i < entryDates.size(); i++) {
                 if (dayOfMonth == entryDates.get(i).get(Calendar.DAY_OF_MONTH)) {
                     if (count > 1) {
-                        //Add entry count text for days w/ multiple entries
-                        int newWidth = entryMoods.get(i).getIntrinsicWidth() + 100;
-                        Bitmap bitmap = Bitmap.createBitmap(newWidth, entryMoods.get(i).getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-                        Canvas canvas = new Canvas(bitmap);
-                        entryMoods.get(i).setBounds(0, 0, entryMoods.get(i).getIntrinsicWidth(), entryMoods.get(i).getIntrinsicHeight());
-                        entryMoods.get(i).draw(canvas);
-                        Paint paint = new Paint();
-                        paint.setColor(ThemeUtils.getTextColor(requireContext()));
-                        paint.setTextSize(100);
-                        canvas.drawText(("+"+(count-1)), canvas.getWidth() * 0.6f, canvas.getHeight() / 2f, paint);
+                        //Obtain most recent entry
+                        ArrayList<Calendar> matchingEntries = new ArrayList<>();
+                        for (Calendar date : entryDates) {
+                            if (date.get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
+                                matchingEntries.add(date);
+                            }
+                        }
+                        Calendar latestEntry = Collections.max(matchingEntries);
+                        int index = entryDates.indexOf(latestEntry);
 
-                        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-                        EventDay day = new EventDay(entryDates.get(i), drawable);
+                        Drawable drawable = createCountLabel(index, count);
+                        EventDay day = new EventDay(entryDates.get(index), drawable);
                         daysWithEntries.add(day);
                     } else {
                         EventDay day = new EventDay(entryDates.get(i), entryMoods.get(i));
@@ -181,5 +181,22 @@ public class CalendarPage extends Fragment {
             }
         }
         return daysWithEntries;
+    }
+
+    private Drawable createCountLabel(int i, int count) {
+        Drawable moodDrawable = entryMoods.get(i);
+        int newWidth = moodDrawable.getIntrinsicWidth() + 150;
+
+        Bitmap bitmap = Bitmap.createBitmap(newWidth, moodDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        moodDrawable.setBounds(0, 0, moodDrawable.getIntrinsicWidth(), moodDrawable.getIntrinsicHeight());
+        moodDrawable.draw(canvas);
+
+        Paint paint = new Paint();
+        paint.setColor(ThemeUtils.getTextColor(requireContext()));
+        paint.setTextSize(100);
+        canvas.drawText(("+"+(count-1)), canvas.getWidth() * 0.5f, canvas.getHeight() / 2f, paint);
+
+        return new BitmapDrawable(getResources(), bitmap);
     }
 }
