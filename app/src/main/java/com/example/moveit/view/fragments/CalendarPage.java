@@ -2,6 +2,10 @@ package com.example.moveit.view.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -20,6 +24,7 @@ import com.applandeo.materialcalendarview.CalendarView;
 
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.moveit.R;
+import com.example.moveit.model.ThemeUtils;
 import com.example.moveit.model.entries.Entry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +33,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class CalendarPage extends Fragment {
@@ -37,6 +44,9 @@ public class CalendarPage extends Fragment {
     private CalendarView calendarView;
     private Calendar calendar;
     private Calendar realDate;
+
+    private ArrayList<Calendar> entryDates;
+    private ArrayList<Drawable> entryMoods;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,7 +84,8 @@ public class CalendarPage extends Fragment {
         progressDialog.setTitle("Loading...");
         progressDialog.setCancelable(false);
         progressDialog.show();
-        ArrayList<EventDay> daysWithEntries = new ArrayList<>();
+        entryDates = new ArrayList<>();
+        entryMoods = new ArrayList<>();
 
         db.collection("entries").document(currentUser.getUid()).collection("entryList")
                 .get().addOnCompleteListener(task -> {
@@ -114,16 +125,61 @@ public class CalendarPage extends Fragment {
                                         DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(requireContext(), R.color.amazingColour));
                                         break;
                                 }
-
-                                EventDay currentDay = new EventDay(currentEntryDate, wrappedDrawable);
-                                daysWithEntries.add(currentDay);
+                                entryDates.add(currentEntryDate);
+                                entryMoods.add(wrappedDrawable);
                             }
                         }
+
+                        ArrayList<EventDay> daysWithEntries = createEventDays();
                         calendarView.setEvents(daysWithEntries);
                         progressDialog.dismiss();
                     } else {
                         Log.d("CalendarPage", "Error retrieving documents: ", task.getException());
                     }
                 });
+    }
+
+    //Detect multiple entries in the days of the current month and update accordingly
+    private ArrayList<EventDay> createEventDays() {
+        ArrayList<EventDay> daysWithEntries = new ArrayList<>();
+        HashMap<Integer, Integer> dayOfMonthCountMap = new HashMap<>();
+        for (Calendar day : entryDates) {
+            int dayOfMonth = day.get(Calendar.DAY_OF_MONTH);
+            if (dayOfMonthCountMap.containsKey(dayOfMonth)) {
+                int count = dayOfMonthCountMap.get(dayOfMonth);
+                dayOfMonthCountMap.put(dayOfMonth, count + 1);
+            } else {
+                dayOfMonthCountMap.put(dayOfMonth, 1);
+            }
+        }
+
+        for (Map.Entry<Integer, Integer> entry : dayOfMonthCountMap.entrySet()) {
+            int dayOfMonth = entry.getKey();
+            int count = entry.getValue();
+            for (int i = 0; i < entryDates.size(); i++) {
+                if (dayOfMonth == entryDates.get(i).get(Calendar.DAY_OF_MONTH)) {
+                    if (count > 1) {
+                        //Add entry count text for days w/ multiple entries
+                        int newWidth = entryMoods.get(i).getIntrinsicWidth() + 100;
+                        Bitmap bitmap = Bitmap.createBitmap(newWidth, entryMoods.get(i).getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        entryMoods.get(i).setBounds(0, 0, entryMoods.get(i).getIntrinsicWidth(), entryMoods.get(i).getIntrinsicHeight());
+                        entryMoods.get(i).draw(canvas);
+                        Paint paint = new Paint();
+                        paint.setColor(ThemeUtils.getTextColor(requireContext()));
+                        paint.setTextSize(100);
+                        canvas.drawText(("+"+(count-1)), canvas.getWidth() * 0.6f, canvas.getHeight() / 2f, paint);
+
+                        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+                        EventDay day = new EventDay(entryDates.get(i), drawable);
+                        daysWithEntries.add(day);
+                    } else {
+                        EventDay day = new EventDay(entryDates.get(i), entryMoods.get(i));
+                        daysWithEntries.add(day);
+                    }
+                }
+            }
+        }
+        return daysWithEntries;
     }
 }
