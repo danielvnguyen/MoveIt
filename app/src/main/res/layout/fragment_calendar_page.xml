@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:todayLabelColor="@color/light_green"
-        app:anotherMonthsDaysLabelsColor="@color/gray"
+        app:anotherMonthsDaysLabelsColor="@color/light_gray"
         app:eventsEnabled="true"
         app:type="one_day_picker"
         app:selectionColor="@color/light_green"

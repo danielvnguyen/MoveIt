@@ -46,9 +46,6 @@ public class CalendarPage extends Fragment {
     private Calendar calendar;
     private Calendar realDate;
 
-    private ArrayList<Calendar> entryDates;
-    private ArrayList<Drawable> entryMoods;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,8 +82,8 @@ public class CalendarPage extends Fragment {
         progressDialog.setTitle("Loading...");
         progressDialog.setCancelable(false);
         progressDialog.show();
-        entryDates = new ArrayList<>();
-        entryMoods = new ArrayList<>();
+        ArrayList<Calendar> entryDates = new ArrayList<>();
+        ArrayList<Drawable> entryMoods = new ArrayList<>();
 
         db.collection("entries").document(currentUser.getUid()).collection("entryList")
                 .get().addOnCompleteListener(task -> {
@@ -131,7 +128,7 @@ public class CalendarPage extends Fragment {
                             }
                         }
 
-                        ArrayList<EventDay> daysWithEntries = createEventDays();
+                        ArrayList<EventDay> daysWithEntries = createEventDays(entryDates, entryMoods);
                         calendarView.setEvents(daysWithEntries);
                         progressDialog.dismiss();
                     } else {
@@ -141,7 +138,7 @@ public class CalendarPage extends Fragment {
     }
 
     //Detect multiple entries in the days of the current month and update accordingly
-    private ArrayList<EventDay> createEventDays() {
+    private ArrayList<EventDay> createEventDays(ArrayList<Calendar> entryDates, ArrayList<Drawable> entryMoods) {
         ArrayList<EventDay> daysWithEntries = new ArrayList<>();
         HashMap<Integer, Integer> dayOfMonthCountMap = new HashMap<>();
         for (Calendar day : entryDates) {
@@ -170,7 +167,7 @@ public class CalendarPage extends Fragment {
                         Calendar latestEntry = Collections.max(matchingEntries);
                         int index = entryDates.indexOf(latestEntry);
 
-                        Drawable drawable = createCountLabel(index, count);
+                        Drawable drawable = createCountLabel(index, count, entryMoods);
                         EventDay day = new EventDay(entryDates.get(index), drawable);
                         daysWithEntries.add(day);
                     } else {
@@ -183,7 +180,7 @@ public class CalendarPage extends Fragment {
         return daysWithEntries;
     }
 
-    private Drawable createCountLabel(int i, int count) {
+    private Drawable createCountLabel(int i, int count, ArrayList<Drawable> entryMoods) {
         Drawable moodDrawable = entryMoods.get(i);
         int newWidth = moodDrawable.getIntrinsicWidth() + 150;
 
@@ -198,5 +195,10 @@ public class CalendarPage extends Fragment {
         canvas.drawText(("+"+(count-1)), canvas.getWidth() * 0.5f, canvas.getHeight() / 2f, paint);
 
         return new BitmapDrawable(getResources(), bitmap);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 }
