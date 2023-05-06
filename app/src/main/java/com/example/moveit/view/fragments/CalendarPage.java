@@ -20,6 +20,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.applandeo.materialcalendarview.CalendarView;
 
 import com.applandeo.materialcalendarview.EventDay;
@@ -75,6 +77,44 @@ public class CalendarPage extends Fragment {
         setUpCalendar();
     }
 
+    private void setUpMoodCount(ArrayList<Entry> entriesInMonth) {
+        TextView amazingCountTV = requireView().findViewById(R.id.amazingMoodCountTV);
+        TextView greatCountTV = requireView().findViewById(R.id.greatMoodCountTV);
+        TextView goodCountTV = requireView().findViewById(R.id.goodMoodCountTV);
+        TextView mehCountTV = requireView().findViewById(R.id.mehMoodCountTV);
+        TextView badCountTV = requireView().findViewById(R.id.badMoodCountTV);
+
+        int amazingCount, greatCount, goodCount, mehCount, badCount;
+        amazingCount = greatCount = goodCount = mehCount = badCount = 0;
+
+        if (!entriesInMonth.isEmpty()) {
+            for (Entry entry : entriesInMonth) {
+                switch (entry.getMood()) {
+                    case "Amazing":
+                        amazingCount += 1;
+                        break;
+                    case "Great":
+                        greatCount += 1;
+                        break;
+                    case "Good":
+                        goodCount += 1;
+                        break;
+                    case "Meh":
+                        mehCount += 1;
+                        break;
+                    case "Bad":
+                        badCount += 1;
+                        break;
+                }
+            }
+            amazingCountTV.setText(String.valueOf(amazingCount));
+            greatCountTV.setText(String.valueOf(greatCount));
+            goodCountTV.setText(String.valueOf(goodCount));
+            mehCountTV.setText(String.valueOf(mehCount));
+            badCountTV.setText(String.valueOf(badCount));
+        }
+    }
+
     @SuppressWarnings("ConstantConditions")
     @SuppressLint("ResourceAsColor")
     private void setUpCalendar() {
@@ -84,6 +124,7 @@ public class CalendarPage extends Fragment {
         progressDialog.show();
         ArrayList<Calendar> entryDates = new ArrayList<>();
         ArrayList<Drawable> entryMoods = new ArrayList<>();
+        ArrayList<Entry> entriesInMonth = new ArrayList<>();
 
         db.collection("entries").document(currentUser.getUid()).collection("entryList")
                 .get().addOnCompleteListener(task -> {
@@ -94,6 +135,7 @@ public class CalendarPage extends Fragment {
                             currentEntryDate.setTimeInMillis(currentEntry.getDateTime());
 
                             if (currentEntryDate.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)) {
+                                entriesInMonth.add(currentEntry);
                                 Drawable unwrappedDrawable;
                                 Drawable wrappedDrawable = null;
                                 switch (currentEntry.getMood()) {
@@ -130,6 +172,7 @@ public class CalendarPage extends Fragment {
 
                         ArrayList<EventDay> daysWithEntries = createEventDays(entryDates, entryMoods);
                         calendarView.setEvents(daysWithEntries);
+                        setUpMoodCount(entriesInMonth);
                         progressDialog.dismiss();
                     } else {
                         Log.d("CalendarPage", "Error retrieving documents: ", task.getException());
