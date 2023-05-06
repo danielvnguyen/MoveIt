@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -28,6 +30,11 @@ import com.applandeo.materialcalendarview.EventDay;
 import com.example.moveit.R;
 import com.example.moveit.model.theme.ThemeUtils;
 import com.example.moveit.model.entries.Entry;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -112,7 +119,46 @@ public class CalendarPage extends Fragment {
             goodCountTV.setText(String.valueOf(goodCount));
             mehCountTV.setText(String.valueOf(mehCount));
             badCountTV.setText(String.valueOf(badCount));
+
+            setUpPieChart(amazingCount, greatCount, goodCount, mehCount, badCount);
         }
+    }
+
+    private void setUpPieChart(int amazingCount, int greatCount, int goodCount, int mehCount, int badCount) {
+        PieChart pieChart = requireView().findViewById(R.id.pieChart);
+        pieChart.setRotationAngle(180f);
+        pieChart.setMaxAngle(180f);
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        entries.add(new PieEntry((float)amazingCount/5, ""));
+        entries.add(new PieEntry((float)greatCount/5, ""));
+        entries.add(new PieEntry((float)goodCount/5, ""));
+        entries.add(new PieEntry((float)mehCount/5, ""));
+        entries.add(new PieEntry((float)badCount/5, ""));
+
+        PieDataSet dataSet = new PieDataSet(entries, "");
+        dataSet.setColors(ContextCompat.getColor(requireContext(), R.color.amazingColour), ContextCompat.getColor(requireContext(), R.color.greatColour),
+                ContextCompat.getColor(requireContext(), R.color.goodColour), ContextCompat.getColor(requireContext(), R.color.mehColour),
+                ContextCompat.getColor(requireContext(), R.color.badColour));
+        PieData data = new PieData(dataSet);
+        data.setDrawValues(false);
+        pieChart.setData(data);
+
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setRotationEnabled(false);
+        pieChart.setDrawEntryLabels(false);
+        pieChart.setTransparentCircleRadius(1f);
+        pieChart.setTouchEnabled(false);
+        pieChart.getLegend().setEnabled(false);
+
+        Typeface ralewayTypeface = getResources().getFont(R.font.raleway);
+        pieChart.setCenterTextTypeface(ralewayTypeface);
+        pieChart.setCenterText(String.valueOf(amazingCount + greatCount + goodCount + mehCount + badCount));
+        pieChart.setCenterTextSize(35);
+        pieChart.setCenterTextOffset(0, -25);
+        pieChart.setCenterTextColor(ThemeUtils.getTextColor(requireContext()));
+        pieChart.setHoleColor(Color.TRANSPARENT);
+
+        pieChart.invalidate();
     }
 
     @SuppressWarnings("ConstantConditions")
