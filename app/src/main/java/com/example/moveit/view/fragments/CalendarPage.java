@@ -31,7 +31,6 @@ import com.example.moveit.R;
 import com.example.moveit.model.theme.ThemeUtils;
 import com.example.moveit.model.entries.Entry;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -292,6 +291,12 @@ public class CalendarPage extends Fragment {
         if (calendarView.getCurrentPageDate().get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
             calendar = calendarView.getCurrentPageDate();
             setUpCalendar();
+        }
+
+        if (requireActivity().getIntent().getExtras() != null &&
+                requireActivity().getIntent().getExtras().getBoolean("isChangedCalendar")){
+            setUpCalendar();
+            requireActivity().getIntent().removeExtra("isChangedCalendar");
         }
     }
 }

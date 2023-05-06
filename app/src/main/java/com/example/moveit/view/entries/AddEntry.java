@@ -221,7 +221,8 @@ public class AddEntry extends AppCompatActivity implements
                Toast.makeText(AddEntry.this, "Updated entry successfully!", Toast.LENGTH_SHORT).show();
                Intent intent = new Intent(this, HomeActivity.class);
                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-               intent.putExtra("isChanged", true);
+               intent.putExtra("isChangedEntries", true);
+               intent.putExtra("isChangedCalendar", true);
                startActivity(intent);
            } else {
                Toast.makeText(AddEntry.this, "Error updating entry", Toast.LENGTH_SHORT).show();
@@ -245,7 +246,8 @@ public class AddEntry extends AppCompatActivity implements
                         Toast.makeText(AddEntry.this, "Saved entry successfully!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(this, HomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        intent.putExtra("isChanged", true);
+                        intent.putExtra("isChangedEntries", true);
+                        intent.putExtra("isChangedCalendar", true);
                         startActivity(intent);
                     } else {
                         Toast.makeText(AddEntry.this, "Error saving entry", Toast.LENGTH_SHORT).show();
@@ -279,7 +281,8 @@ public class AddEntry extends AppCompatActivity implements
                         Toast.makeText(AddEntry.this, "Deleted entry successfully!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(this, HomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        intent.putExtra("isChanged", true);
+                        intent.putExtra("isChangedEntries", true);
+                        intent.putExtra("isChangedCalendar", true);
                         startActivity(intent);
                     } else {
                         Toast.makeText(AddEntry.this, "Error deleting entry", Toast.LENGTH_SHORT).show();

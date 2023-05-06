@@ -172,9 +172,10 @@ public class EntriesPage extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(requireActivity().getIntent().getExtras() != null &&
-                requireActivity().getIntent().getExtras().getBoolean("isChanged")){
+        if (requireActivity().getIntent().getExtras() != null &&
+                requireActivity().getIntent().getExtras().getBoolean("isChangedEntries")){
             setUpEntryList();
+            requireActivity().getIntent().removeExtra("isChangedEntries");
         }
     }
 }
