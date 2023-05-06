@@ -200,5 +200,9 @@ public class CalendarPage extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (calendarView.getCurrentPageDate().get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
+            calendar = calendarView.getCurrentPageDate();
+            setUpCalendar();
+        }
     }
 }
