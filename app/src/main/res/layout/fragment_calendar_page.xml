@@ -118,6 +118,23 @@
 
             </androidx.cardview.widget.CardView>
 
+            <TextView
+                android:id="@+id/entriesInDayLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                android:textSize="16sp"
+                android:text="@string/entries_made_on"/>
+
+            <ListView
+                android:id="@+id/entriesInDayLV"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:divider="@null"
+                android:dividerHeight="0dp" />
+
         </LinearLayout>
 
     </ScrollView>

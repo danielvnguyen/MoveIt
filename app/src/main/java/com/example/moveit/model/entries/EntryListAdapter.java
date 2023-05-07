@@ -89,7 +89,7 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
         TextView caloriesHeader = entryView.findViewById(R.id.caloriesHeaderTV);
         TextView caloriesValue = entryView.findViewById(R.id.caloriesValueTV);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy, h:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy, h:mm a");
 
         Entry currentEntry = getItem(position);
         String selectedMood = currentEntry.getMood();

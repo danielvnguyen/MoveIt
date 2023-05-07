@@ -22,12 +22,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.applandeo.materialcalendarview.CalendarView;
 
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.moveit.R;
+import com.example.moveit.model.entries.EntryComparator;
+import com.example.moveit.model.entries.EntryListAdapter;
 import com.example.moveit.model.theme.ThemeUtils;
 import com.example.moveit.model.entries.Entry;
 import com.github.mikephil.charting.charts.PieChart;
@@ -39,6 +43,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -73,14 +78,28 @@ public class CalendarPage extends Fragment {
         calendarView.setMaximumDate(realDate);
         calendarView.setOnPreviousPageChangeListener(() -> {
             calendar.add(Calendar.MONTH, -1);
-            setUpCalendar();
+            setUpInterface();
         });
         calendarView.setOnForwardPageChangeListener(() -> {
             calendar.add(Calendar.MONTH, 1);
-            setUpCalendar();
+            setUpInterface();
         });
+        calendarView.setOnDayClickListener(eventDay -> setUpInterface());
 
-        setUpCalendar();
+        setUpInterface();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void setUpDayStatistics(ArrayList<Entry> entriesInDay) {
+        ListView daysInEntriesLV = requireView().findViewById(R.id.entriesInDayLV);
+        TextView daysInEntriesLabel = requireView().findViewById(R.id.entriesInDayLabel);
+        ArrayAdapter<Entry> adapter = new EntryListAdapter(requireActivity(), R.layout.item_entry);
+        daysInEntriesLV.setAdapter(adapter);
+        adapter.clear();
+        entriesInDay.sort(new EntryComparator());
+        adapter.addAll(entriesInDay);
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy");
+        daysInEntriesLabel.setText("Entries made on " + sdf.format(calendarView.getSelectedDate().getTimeInMillis())+":");
     }
 
     private void setUpMoodCount(ArrayList<Entry> entriesInMonth) {
@@ -162,7 +181,7 @@ public class CalendarPage extends Fragment {
 
     @SuppressWarnings("ConstantConditions")
     @SuppressLint("ResourceAsColor")
-    private void setUpCalendar() {
+    private void setUpInterface() {
         ProgressDialog progressDialog = new ProgressDialog(requireActivity());
         progressDialog.setTitle("Loading...");
         progressDialog.setCancelable(false);
@@ -170,6 +189,7 @@ public class CalendarPage extends Fragment {
         ArrayList<Calendar> entryDates = new ArrayList<>();
         ArrayList<Drawable> entryMoods = new ArrayList<>();
         ArrayList<Entry> entriesInMonth = new ArrayList<>();
+        ArrayList<Entry> entriesInDay = new ArrayList<>();
 
         db.collection("entries").document(currentUser.getUid()).collection("entryList")
                 .get().addOnCompleteListener(task -> {
@@ -181,6 +201,9 @@ public class CalendarPage extends Fragment {
 
                             if (currentEntryDate.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)) {
                                 entriesInMonth.add(currentEntry);
+                                if (currentEntryDate.get(Calendar.DAY_OF_MONTH) == calendarView.getSelectedDate().get(Calendar.DAY_OF_MONTH)) {
+                                    entriesInDay.add(currentEntry);
+                                }
                                 Drawable unwrappedDrawable;
                                 Drawable wrappedDrawable = null;
                                 switch (currentEntry.getMood()) {
@@ -218,6 +241,7 @@ public class CalendarPage extends Fragment {
                         ArrayList<EventDay> daysWithEntries = createEventDays(entryDates, entryMoods);
                         calendarView.setEvents(daysWithEntries);
                         setUpMoodCount(entriesInMonth);
+                        setUpDayStatistics(entriesInDay);
                         progressDialog.dismiss();
                     } else {
                         Log.d("CalendarPage", "Error retrieving documents: ", task.getException());
@@ -290,12 +314,12 @@ public class CalendarPage extends Fragment {
         super.onResume();
         if (calendarView.getCurrentPageDate().get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
             calendar = calendarView.getCurrentPageDate();
-            setUpCalendar();
+            setUpInterface();
         }
 
         if (requireActivity().getIntent().getExtras() != null &&
                 requireActivity().getIntent().getExtras().getBoolean("isChangedCalendar")){
-            setUpCalendar();
+            setUpInterface();
             requireActivity().getIntent().removeExtra("isChangedCalendar");
         }
     }

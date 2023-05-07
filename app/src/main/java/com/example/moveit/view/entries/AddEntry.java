@@ -354,7 +354,7 @@ public class AddEntry extends AppCompatActivity implements
     }
 
     private void setDateTime(long dateTimeMilliseconds) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy h:mm a");
         Date resultDate = new Date(dateTimeMilliseconds);
         String dateTimeText = sdf.format(resultDate);
 
@@ -743,7 +743,7 @@ public class AddEntry extends AppCompatActivity implements
         Calendar c = Calendar.getInstance();
         c.set(year, month, day, selectedHour, selectedMinute, 0);
         dateTimeValue = c.getTimeInMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy");
         return sdf.format(c.getTimeInMillis());
     }
 
