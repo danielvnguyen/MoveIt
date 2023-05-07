@@ -23,7 +23,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.applandeo.materialcalendarview.CalendarView;
@@ -99,7 +101,31 @@ public class CalendarPage extends Fragment {
         entriesInDay.sort(new EntryComparator());
         adapter.addAll(entriesInDay);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy");
-        daysInEntriesLabel.setText("Entries made on " + sdf.format(calendarView.getSelectedDate().getTimeInMillis())+":");
+        daysInEntriesLabel.setText("Entries made on " + sdf.format(calendarView.getSelectedDate().getTimeInMillis())+": "+"("+entriesInDay.size()+")");
+
+        adjustListView(daysInEntriesLV);
+    }
+
+    //Dynamically adjust height of list view
+    private void adjustListView(ListView daysInEntriesLV) {
+        ListAdapter adapter = daysInEntriesLV.getAdapter();
+        if (adapter == null) {
+            return;
+        }
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(daysInEntriesLV.getWidth(), View.MeasureSpec.AT_MOST);
+        int totalHeight = daysInEntriesLV.getPaddingTop() + daysInEntriesLV.getPaddingBottom();
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View listItem = adapter.getView(i, null, daysInEntriesLV);
+            if (listItem != null) {
+                listItem.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                totalHeight += listItem.getMeasuredHeight();
+            }
+        }
+        ViewGroup.LayoutParams params = daysInEntriesLV.getLayoutParams();
+        params.height = totalHeight + (daysInEntriesLV.getDividerHeight() * (adapter.getCount() - 1));
+        daysInEntriesLV.setLayoutParams(params);
+        daysInEntriesLV.requestLayout();
     }
 
     private void setUpMoodCount(ArrayList<Entry> entriesInMonth) {
@@ -309,13 +335,17 @@ public class CalendarPage extends Fragment {
         return new BitmapDrawable(getResources(), bitmap);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void adjustCalendarDate() {
         if (calendarView.getCurrentPageDate().get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
             calendar = calendarView.getCurrentPageDate();
             setUpInterface();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        adjustCalendarDate();
 
         if (requireActivity().getIntent().getExtras() != null &&
                 requireActivity().getIntent().getExtras().getBoolean("isChangedCalendar")){
