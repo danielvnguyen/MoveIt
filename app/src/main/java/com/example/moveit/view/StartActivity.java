@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import com.example.moveit.R;
-import com.example.moveit.model.ThemeSharedPreferences;
+import com.example.moveit.model.theme.ThemeSharedPreferences;
 import com.example.moveit.view.account.LoginActivity;
 import com.example.moveit.view.account.RegisterActivity;
 import com.google.firebase.auth.FirebaseAuth;

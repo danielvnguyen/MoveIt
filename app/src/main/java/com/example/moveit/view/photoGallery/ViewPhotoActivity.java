@@ -191,7 +191,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
                     assert metadata != null;
                     long dateTime = metadata.getCreationTimeMillis();
                     Date date = new Date(dateTime);
-                    String dateTimePattern = "MMM dd, yyyy h:mm a";
+                    String dateTimePattern = "MMM d, yyyy h:mm a";
                     @SuppressLint("SimpleDateFormat") String dateText = new SimpleDateFormat(dateTimePattern).format(date);
                     dateTimeTV.setText(dateText);
                     dateTimeTV.setVisibility(View.VISIBLE);

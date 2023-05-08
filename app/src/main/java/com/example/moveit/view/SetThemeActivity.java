@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.moveit.R;
-import com.example.moveit.model.ThemeSharedPreferences;
+import com.example.moveit.model.theme.ThemeSharedPreferences;
 
 import java.util.Objects;
 

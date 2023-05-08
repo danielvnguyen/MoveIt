@@ -1,4 +1,4 @@
-package com.example.moveit.model;
+package com.example.moveit.model.theme;
 
 import android.content.Context;
 import android.content.SharedPreferences;

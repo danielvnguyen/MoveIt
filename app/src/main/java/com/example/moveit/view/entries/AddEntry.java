@@ -221,7 +221,8 @@ public class AddEntry extends AppCompatActivity implements
                Toast.makeText(AddEntry.this, "Updated entry successfully!", Toast.LENGTH_SHORT).show();
                Intent intent = new Intent(this, HomeActivity.class);
                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-               intent.putExtra("isChanged", true);
+               intent.putExtra("isChangedEntries", true);
+               intent.putExtra("isChangedCalendar", true);
                startActivity(intent);
            } else {
                Toast.makeText(AddEntry.this, "Error updating entry", Toast.LENGTH_SHORT).show();
@@ -245,7 +246,8 @@ public class AddEntry extends AppCompatActivity implements
                         Toast.makeText(AddEntry.this, "Saved entry successfully!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(this, HomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        intent.putExtra("isChanged", true);
+                        intent.putExtra("isChangedEntries", true);
+                        intent.putExtra("isChangedCalendar", true);
                         startActivity(intent);
                     } else {
                         Toast.makeText(AddEntry.this, "Error saving entry", Toast.LENGTH_SHORT).show();
@@ -279,7 +281,8 @@ public class AddEntry extends AppCompatActivity implements
                         Toast.makeText(AddEntry.this, "Deleted entry successfully!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(this, HomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        intent.putExtra("isChanged", true);
+                        intent.putExtra("isChangedEntries", true);
+                        intent.putExtra("isChangedCalendar", true);
                         startActivity(intent);
                     } else {
                         Toast.makeText(AddEntry.this, "Error deleting entry", Toast.LENGTH_SHORT).show();
@@ -351,12 +354,12 @@ public class AddEntry extends AppCompatActivity implements
     }
 
     private void setDateTime(long dateTimeMilliseconds) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy h:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy h:mm a");
         Date resultDate = new Date(dateTimeMilliseconds);
         String dateTimeText = sdf.format(resultDate);
 
-        String dateText = dateTimeText.substring(0, 13);
-        String timeText = dateTimeText.substring(13);
+        String dateText = dateTimeText.substring(0, 12);
+        String timeText = dateTimeText.substring(12);
         dateInput.setText(dateText);
         timeInput.setText(timeText);
     }
@@ -740,7 +743,7 @@ public class AddEntry extends AppCompatActivity implements
         Calendar c = Calendar.getInstance();
         c.set(year, month, day, selectedHour, selectedMinute, 0);
         dateTimeValue = c.getTimeInMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy");
         return sdf.format(c.getTimeInMillis());
     }
 

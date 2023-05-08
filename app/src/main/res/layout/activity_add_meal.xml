@@ -49,7 +49,7 @@
             android:paddingEnd="8dp"
             android:text="@string/per"
             android:textSize="18sp"
-            android:textColor="@color/gray"
+            android:textColor="@color/light_gray"
             tools:layout_editor_absoluteY="119dp" />
 
         <EditText

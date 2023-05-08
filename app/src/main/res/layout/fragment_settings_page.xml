@@ -5,98 +5,100 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.fragments.SettingsPage"
-    tools:ignore="RtlCompat, RtlHardcoded">
+    tools:ignore="RtlCompat, RtlHardcoded, UselessParent">
 
-    <LinearLayout
-        android:id="@+id/button_list"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:ignore="UselessParent">
-
-        <Button
-            android:id="@+id/editActivitiesBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textAlignment="viewStart"
-            android:drawableLeft="@drawable/activities_icon"
-            app:strokeColor="@color/dark_green"
-            app:strokeWidth="2dp"
-            android:text="@string/activities" />
-
-        <Button
-            android:id="@+id/editMealsBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
-            android:drawableLeft="@drawable/meal_icon"
-            app:strokeColor="@color/dark_green"
-            app:strokeWidth="2dp"
-            android:text="@string/meals" />
-
-        <Button
-            android:id="@+id/photoGalleryBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
-            android:drawableLeft="@drawable/img_icon"
-            app:strokeColor="@color/dark_green"
-            app:strokeWidth="2dp"
-            android:text="@string/photo_gallery" />
-
-        <Button
-            android:id="@+id/editReminderBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
-            android:drawableLeft="@drawable/time_icon"
-            app:strokeColor="@color/dark_green"
-            app:strokeWidth="2dp"
-            android:text="@string/reminder_time" />
-
-        <Button
-            android:id="@+id/accountSettingsBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
-            android:drawableLeft="@drawable/account_icon"
-            app:strokeColor="@color/dark_green"
-            app:strokeWidth="2dp"
-            android:text="@string/account_settings" />
-
-        <Button
-            android:id="@+id/setThemeBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
-            android:drawableLeft="@drawable/theme_icon"
-            app:strokeColor="@color/dark_green"
-            app:strokeWidth="2dp"
-            android:text="@string/select_theme" />
-
-        <Button
-            android:id="@+id/aboutBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
-            android:drawableLeft="@drawable/about_icon"
-            app:strokeColor="@color/dark_green"
-            app:strokeWidth="2dp"
-            android:text="@string/attributions" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/logout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="10dp"
-        android:textAlignment="viewStart"
-        android:drawableLeft="@drawable/logout_icon"
-        app:strokeColor="@color/dark_green"
-        app:strokeWidth="2dp"
-        android:text="@string/logout" />
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/button_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <Button
+                android:id="@+id/editActivitiesBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/activities_icon"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/activities" />
+
+            <Button
+                android:id="@+id/editMealsBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/meal_icon"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/meals" />
+
+            <Button
+                android:id="@+id/photoGalleryBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/img_icon"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/photo_gallery" />
+
+            <Button
+                android:id="@+id/editReminderBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/time_icon"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/reminder_time" />
+
+            <Button
+                android:id="@+id/accountSettingsBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/account_icon"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/account_settings" />
+
+            <Button
+                android:id="@+id/setThemeBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/theme_icon"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/select_theme" />
+
+            <Button
+                android:id="@+id/aboutBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/about_icon"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/attributions" />
+
+            <Button
+                android:id="@+id/logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/logout_icon"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/logout" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

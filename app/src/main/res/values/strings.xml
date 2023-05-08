@@ -11,8 +11,8 @@
     <string name="meal_name">Meal Name</string>
     <string name="calories">Calories</string>
     <string name="meal_notes">Meal Notes</string>
-    <string name="meals">Edit Meals</string>
-    <string name="activities">Edit Activities</string>
+    <string name="meals">Add/Edit Meals</string>
+    <string name="activities">Add/Edit Activities</string>
     <string name="show">Show</string>
     <string name="hide">Hide</string>
     <string name="meal_list_title">Your Meals</string>
@@ -113,4 +113,5 @@
     <string name="previous">Prev</string>
     <string name="next">Next</string>
     <string name="reset_button">Reset</string>
+    <string name="mood_count">Mood Count</string>
 </resources>
