@@ -358,8 +358,8 @@ public class AddEntry extends AppCompatActivity implements
         Date resultDate = new Date(dateTimeMilliseconds);
         String dateTimeText = sdf.format(resultDate);
 
-        String dateText = dateTimeText.substring(0, 13);
-        String timeText = dateTimeText.substring(13);
+        String dateText = dateTimeText.substring(0, 12);
+        String timeText = dateTimeText.substring(12);
         dateInput.setText(dateText);
         timeInput.setText(timeText);
     }

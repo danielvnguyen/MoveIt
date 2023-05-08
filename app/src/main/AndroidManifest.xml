@@ -21,6 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
+            android:name=".view.entries.DayEntryList"
+            android:exported="false">
+        </activity>
+        <activity
             android:name=".view.AttributionsActivity"
             android:exported="false" />
         <activity

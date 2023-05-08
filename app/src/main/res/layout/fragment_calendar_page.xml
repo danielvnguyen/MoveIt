@@ -21,8 +21,6 @@
                 app:todayLabelColor="@color/light_green"
                 app:anotherMonthsDaysLabelsColor="@color/light_gray"
                 app:eventsEnabled="true"
-                app:type="one_day_picker"
-                app:selectionColor="@color/light_green"
                 />
 
             <androidx.cardview.widget.CardView
@@ -118,29 +116,6 @@
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/entriesInDayLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="5dp"
-                    android:textSize="16sp"
-                    android:text="@string/entries_made_on"/>
-
-                <ListView
-                    android:id="@+id/entriesInDayLV"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginTop="10dp"
-                    android:divider="@null"
-                    android:dividerHeight="0dp" />
-            </LinearLayout>
 
         </LinearLayout>
 

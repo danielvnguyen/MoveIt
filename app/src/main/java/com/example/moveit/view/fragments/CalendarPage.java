@@ -2,6 +2,7 @@ package com.example.moveit.view.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -22,20 +23,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.applandeo.materialcalendarview.CalendarView;
 
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.moveit.R;
-import com.example.moveit.model.entries.EntryComparator;
-import com.example.moveit.model.entries.EntryListAdapter;
 import com.example.moveit.model.theme.ThemeUtils;
 import com.example.moveit.model.entries.Entry;
+import com.example.moveit.view.entries.DayEntryList;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -44,8 +41,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -78,54 +73,24 @@ public class CalendarPage extends Fragment {
         realDate = Calendar.getInstance();
         calendarView = requireView().findViewById(R.id.calendarView);
         calendarView.setMaximumDate(realDate);
-        calendarView.setOnPreviousPageChangeListener(() -> {
-            calendar.add(Calendar.MONTH, -1);
-            setUpInterface();
+        calendarView.setOnPreviousPageChangeListener(this::handlePageChange);
+        calendarView.setOnForwardPageChangeListener(this::handlePageChange);
+        calendarView.setOnDayClickListener(eventDay -> {
+            if (eventDay.getCalendar().getTimeInMillis() > realDate.getTimeInMillis()) {
+                Toast.makeText(requireActivity(), "This date has yet to come", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(requireActivity(), DayEntryList.class);
+                intent.putExtra("currentDate", eventDay.getCalendar().getTimeInMillis());
+                startActivity(intent);
+            }
         });
-        calendarView.setOnForwardPageChangeListener(() -> {
-            calendar.add(Calendar.MONTH, 1);
-            setUpInterface();
-        });
-        calendarView.setOnDayClickListener(eventDay -> setUpInterface());
 
         setUpInterface();
     }
 
-    @SuppressLint("SetTextI18n")
-    private void setUpDayStatistics(ArrayList<Entry> entriesInDay) {
-        ListView daysInEntriesLV = requireView().findViewById(R.id.entriesInDayLV);
-        TextView daysInEntriesLabel = requireView().findViewById(R.id.entriesInDayLabel);
-        ArrayAdapter<Entry> adapter = new EntryListAdapter(requireActivity(), R.layout.item_entry);
-        daysInEntriesLV.setAdapter(adapter);
-        adapter.clear();
-        entriesInDay.sort(new EntryComparator());
-        adapter.addAll(entriesInDay);
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy");
-        daysInEntriesLabel.setText("Entries made on " + sdf.format(calendarView.getSelectedDate().getTimeInMillis())+": "+"("+entriesInDay.size()+")");
-
-        adjustListView(daysInEntriesLV);
-    }
-
-    //Dynamically adjust height of list view
-    private void adjustListView(ListView daysInEntriesLV) {
-        ListAdapter adapter = daysInEntriesLV.getAdapter();
-        if (adapter == null) {
-            return;
-        }
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(daysInEntriesLV.getWidth(), View.MeasureSpec.AT_MOST);
-        int totalHeight = daysInEntriesLV.getPaddingTop() + daysInEntriesLV.getPaddingBottom();
-        for (int i = 0; i < adapter.getCount(); i++) {
-            View listItem = adapter.getView(i, null, daysInEntriesLV);
-            if (listItem != null) {
-                listItem.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
-                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                totalHeight += listItem.getMeasuredHeight();
-            }
-        }
-        ViewGroup.LayoutParams params = daysInEntriesLV.getLayoutParams();
-        params.height = totalHeight + (daysInEntriesLV.getDividerHeight() * (adapter.getCount() - 1));
-        daysInEntriesLV.setLayoutParams(params);
-        daysInEntriesLV.requestLayout();
+    private void handlePageChange() {
+        calendar = calendarView.getCurrentPageDate();
+        setUpInterface();
     }
 
     private void setUpMoodCount(ArrayList<Entry> entriesInMonth) {
@@ -215,7 +180,6 @@ public class CalendarPage extends Fragment {
         ArrayList<Calendar> entryDates = new ArrayList<>();
         ArrayList<Drawable> entryMoods = new ArrayList<>();
         ArrayList<Entry> entriesInMonth = new ArrayList<>();
-        ArrayList<Entry> entriesInDay = new ArrayList<>();
 
         db.collection("entries").document(currentUser.getUid()).collection("entryList")
                 .get().addOnCompleteListener(task -> {
@@ -225,11 +189,9 @@ public class CalendarPage extends Fragment {
                             Calendar currentEntryDate = Calendar.getInstance();
                             currentEntryDate.setTimeInMillis(currentEntry.getDateTime());
 
-                            if (currentEntryDate.get(Calendar.MONTH) == calendar.get(Calendar.MONTH)) {
+                            if (currentEntryDate.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) &&
+                                    currentEntryDate.get(Calendar.YEAR) == calendar.get(Calendar.YEAR)) {
                                 entriesInMonth.add(currentEntry);
-                                if (currentEntryDate.get(Calendar.DAY_OF_MONTH) == calendarView.getSelectedDate().get(Calendar.DAY_OF_MONTH)) {
-                                    entriesInDay.add(currentEntry);
-                                }
                                 Drawable unwrappedDrawable;
                                 Drawable wrappedDrawable = null;
                                 switch (currentEntry.getMood()) {
@@ -267,7 +229,6 @@ public class CalendarPage extends Fragment {
                         ArrayList<EventDay> daysWithEntries = createEventDays(entryDates, entryMoods);
                         calendarView.setEvents(daysWithEntries);
                         setUpMoodCount(entriesInMonth);
-                        setUpDayStatistics(entriesInDay);
                         progressDialog.dismiss();
                     } else {
                         Log.d("CalendarPage", "Error retrieving documents: ", task.getException());
@@ -335,17 +296,13 @@ public class CalendarPage extends Fragment {
         return new BitmapDrawable(getResources(), bitmap);
     }
 
-    private void adjustCalendarDate() {
+    @Override
+    public void onResume() {
+        super.onResume();
         if (calendarView.getCurrentPageDate().get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
             calendar = calendarView.getCurrentPageDate();
             setUpInterface();
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        adjustCalendarDate();
 
         if (requireActivity().getIntent().getExtras() != null &&
                 requireActivity().getIntent().getExtras().getBoolean("isChangedCalendar")){
