@@ -1,6 +1,9 @@
 package com.example.moveit.view.reminder;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,12 +15,14 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import com.example.moveit.R;
+import com.example.moveit.reminder.NotificationReceiver;
 import com.example.moveit.reminder.Reminder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 public class ReminderActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
@@ -91,6 +96,7 @@ public class ReminderActivity extends AppCompatActivity implements TimePickerDia
                         Toast.makeText(ReminderActivity.this, ("Successfully updated reminder time to " +
                                 sdf.format(currentTime.getReminderTime())), Toast.LENGTH_SHORT).show();
                         resetBtn.setVisibility(View.VISIBLE);
+                        setUpAlarm(currentTime);
                     } else {
                         Toast.makeText(ReminderActivity.this, "Failed to updated reminder time", Toast.LENGTH_SHORT).show();
                     }
@@ -101,6 +107,7 @@ public class ReminderActivity extends AppCompatActivity implements TimePickerDia
             c.set(Calendar.HOUR_OF_DAY, 20);
             c.set(Calendar.MINUTE, 0);
             c.set(Calendar.SECOND, 0);
+            currentTime.setReminderTime(c.getTimeInMillis());
             db.collection("reminders").document(currentUser.getUid())
                     .collection("reminderTime").document("reminder").delete().addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -108,11 +115,29 @@ public class ReminderActivity extends AppCompatActivity implements TimePickerDia
                             Toast.makeText(ReminderActivity.this, ("Successfully reset reminder time to "+
                                     sdf.format(c.getTimeInMillis())), Toast.LENGTH_SHORT).show();
                             resetBtn.setVisibility(View.GONE);
+                            setUpAlarm(currentTime);
                         } else {
                             Toast.makeText(ReminderActivity.this, "Failed to reset reminder time", Toast.LENGTH_SHORT).show();
                         }
                     });
         });
+    }
+
+    private void setUpAlarm(Reminder currentTime) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(currentTime.getReminderTime());
+
+        if (calendar.getTime().compareTo(new Date()) < 0) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        Intent intent = new Intent(getApplicationContext(), NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        if (alarmManager != null) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        }
     }
 
     private void setUpTime(Reminder currentTime) {
