@@ -7,7 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import com.example.moveit.R;
-import com.example.moveit.alarm.NotificationReceiver;
+import com.example.moveit.reminder.NotificationReceiver;
 import com.example.moveit.model.ViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import java.util.Calendar;

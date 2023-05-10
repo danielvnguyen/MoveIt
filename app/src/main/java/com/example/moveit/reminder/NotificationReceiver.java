@@ -1,4 +1,4 @@
-package com.example.moveit.alarm;
+package com.example.moveit.reminder;
 
 import android.app.Notification;
 import android.app.NotificationChannel;

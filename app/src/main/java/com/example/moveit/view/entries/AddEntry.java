@@ -123,6 +123,7 @@ public class AddEntry extends AppCompatActivity implements
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert currentUser != null;
         storage = FirebaseStorage.getInstance();
 
         currentEntry = new Entry();

@@ -21,9 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
+            android:name=".view.reminder.ReminderActivity"
+            android:exported="false"/>
+        <activity
             android:name=".view.entries.DayEntryList"
-            android:exported="false">
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".view.AttributionsActivity"
             android:exported="false" />
@@ -91,7 +93,7 @@
             android:name=".view.entries.AddEntry"
             android:exported="false" />
 
-        <receiver android:name=".alarm.NotificationReceiver" />
+        <receiver android:name=".reminder.NotificationReceiver" />
 
         <meta-data
             android:name="preloaded_fonts"

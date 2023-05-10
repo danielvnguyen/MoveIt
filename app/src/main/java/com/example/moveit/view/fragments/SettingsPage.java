@@ -22,6 +22,7 @@ import com.example.moveit.view.SetThemeActivity;
 import com.example.moveit.view.StartActivity;
 import com.example.moveit.view.account.AccountSettingsActivity;
 import com.example.moveit.view.meals.MealList;
+import com.example.moveit.view.reminder.ReminderActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsPage extends Fragment {
@@ -71,6 +72,10 @@ public class SettingsPage extends Fragment {
         });
         attributionsBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AttributionsActivity.class);
+            startActivity(intent);
+        });
+        editReminderBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ReminderActivity.class);
             startActivity(intent);
         });
 
