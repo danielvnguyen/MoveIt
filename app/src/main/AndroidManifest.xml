@@ -4,6 +4,7 @@
     package="com.example.moveit">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
@@ -21,9 +22,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
+            android:name=".view.reminder.ReminderActivity"
+            android:exported="false"/>
+        <activity
             android:name=".view.entries.DayEntryList"
-            android:exported="false">
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".view.AttributionsActivity"
             android:exported="false" />
@@ -91,7 +94,7 @@
             android:name=".view.entries.AddEntry"
             android:exported="false" />
 
-        <receiver android:name=".alarm.NotificationReceiver" />
+        <receiver android:name=".reminder.NotificationReceiver" />
 
         <meta-data
             android:name="preloaded_fonts"
