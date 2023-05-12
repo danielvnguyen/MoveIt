@@ -118,7 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
                 initializeUser();
                 currentUser.sendEmailVerification().addOnSuccessListener(unused -> {
                     auth.signOut();
-                    Toast.makeText(RegisterActivity.this, "Email verification has been sent", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Email verification has been sent", Toast.LENGTH_LONG).show();
                     startActivity(new Intent(this, LoginActivity.class));
                     finish();
                 });

@@ -50,7 +50,6 @@ import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.example.moveit.view.HomeActivity;
-import com.example.moveit.view.meals.AddMeal;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.color.MaterialColors;

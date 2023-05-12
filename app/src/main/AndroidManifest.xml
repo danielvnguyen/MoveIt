@@ -22,11 +22,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".view.reminder.ReminderActivity"
+            android:name=".view.account.DeleteAccountActivity"
             android:exported="false"/>
         <activity
+            android:name=".view.reminder.ReminderActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.entries.DayEntryList"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".view.AttributionsActivity"
             android:exported="false" />

@@ -3,6 +3,7 @@ package com.example.moveit.view;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import com.example.moveit.R;
 import com.example.moveit.model.theme.ThemeSharedPreferences;
 import com.example.moveit.view.account.LoginActivity;
 import com.example.moveit.view.account.RegisterActivity;
+import com.example.moveit.view.entries.AddEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -64,6 +66,10 @@ public class StartActivity extends AppCompatActivity {
             Intent intent = LoginActivity.makeIntent(this);
             startActivity(intent);
         });
+    }
+
+    public static Intent makeIntent(Context context) {
+        return new Intent(context, StartActivity.class);
     }
 
     @Override
