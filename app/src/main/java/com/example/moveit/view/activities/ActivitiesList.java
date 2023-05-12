@@ -2,7 +2,6 @@ package com.example.moveit.view.activities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.example.moveit.R;
 import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.activities.ActivityListAdapter;
@@ -24,7 +22,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -137,6 +134,14 @@ public class ActivitiesList extends AppCompatActivity {
     private void handleDelete() {
         DocumentReference selectedCategory = db.collection("categories")
                 .document(currentUser.getUid()).collection("categoryList").document(categoryId);
+        selectedCategory.collection("activityList").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task.getResult())) {
+                    Activity currentActivity = activityDoc.toObject(Activity.class);
+                    selectedCategory.collection("activityList").document(currentActivity.getActivityId()).delete();
+                }
+            }
+        });
 
         selectedCategory.delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
