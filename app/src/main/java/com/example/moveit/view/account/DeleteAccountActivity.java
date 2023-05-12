@@ -2,21 +2,33 @@ package com.example.moveit.view.account;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.example.moveit.R;
+import com.example.moveit.model.activities.Activity;
+import com.example.moveit.model.categories.Category;
+import com.example.moveit.model.entries.Entry;
+import com.example.moveit.model.meals.Meal;
+import com.example.moveit.view.StartActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class DeleteAccountActivity extends AppCompatActivity {
@@ -75,6 +87,110 @@ public class DeleteAccountActivity extends AppCompatActivity {
     }
 
     private void deleteUserData() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Deleting User...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        CollectionReference entriesRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
+        CollectionReference categoriesRef = db.collection("categories").document(currentUser.getUid()).collection("categoryList");
+        CollectionReference mealsRef = db.collection("meals").document(currentUser.getUid()).collection("mealList");
+        CollectionReference reminderRef = db.collection("reminders").document(currentUser.getUid()).collection("reminderTime");
+        StorageReference storageRef = storage.getReference().child(currentUser.getUid()).child("uploads");
+
+        reminderRef.document("reminder").delete();
+
+        //Entries:
+        entriesRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<String> entryIds = new ArrayList<>();
+                for (QueryDocumentSnapshot entryDoc : Objects.requireNonNull(task.getResult())) {
+                    Entry currentEntry = entryDoc.toObject(Entry.class);
+                    entryIds.add(currentEntry.getId());
+                }
+                WriteBatch batch = db.batch();
+                for (String entryId : entryIds) {
+                    batch.delete(entriesRef.document(entryId));
+                }
+                batch.commit()
+                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Selected items have been removed."))
+                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove selected items.", error));
+            }
+        });
+
+        //Meals:
+        mealsRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<String> mealIds = new ArrayList<>();
+                for (QueryDocumentSnapshot mealDoc : Objects.requireNonNull(task.getResult())) {
+                    Meal currentMeal = mealDoc.toObject(Meal.class);
+                    mealIds.add(currentMeal.getId());
+                }
+                WriteBatch batch = db.batch();
+                for (String mealId : mealIds) {
+                    batch.delete(mealsRef.document(mealId));
+                }
+                batch.commit()
+                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Selected items have been removed."))
+                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove selected items.", error));
+            }
+        });
+
+        //Images:
+        storageRef.listAll().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (int i = 0; i < Objects.requireNonNull(task.getResult()).getItems().size(); i++) {
+                    String fileName = task.getResult().getItems().get(i).getName();
+                    storageRef.child(fileName).delete();
+                }
+            }
+        });
+
+        //Categories:
+        categoriesRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<String> categoryIds = new ArrayList<>();
+                ArrayList<Activity> activities = new ArrayList<>();
+                for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
+                    Category currentCategory = categoryDoc.toObject(Category.class);
+                    categoryIds.add(currentCategory.getCategoryId());
+                    categoriesRef.document(currentCategory.getCategoryId()).collection("activityList").get().addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
+                                Activity currentActivity = activityDoc.toObject(Activity.class);
+                                activities.add(currentActivity);
+                            }
+                            WriteBatch batch = db.batch();
+                            for (Activity activity : activities) {
+                                if (activity.getCategoryId().equals(currentCategory.getCategoryId())) {
+                                    batch.delete(categoriesRef.document(currentCategory.getCategoryId()).collection("activityList").document(activity.getActivityId()));
+                                }
+                            }
+                            batch.commit()
+                                    .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Selected items have been removed."))
+                                    .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove selected items.", error));
+                        }
+                    });
+                }
+                WriteBatch batch1 = db.batch();
+                for (String categoryId : categoryIds) {
+                    batch1.delete(categoriesRef.document(categoryId));
+                }
+                batch1.commit()
+                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Selected items have been removed."))
+                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove selected items.", error));
+            }
+        });
+
+        currentUser.delete().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                progressDialog.dismiss();
+                Intent intent = StartActivity.makeIntent(DeleteAccountActivity.this);
+                finishAffinity();
+                startActivity(intent);
+                Toast.makeText(DeleteAccountActivity.this, "Your account has been deleted", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setUpShowHideBtn() {
