@@ -116,4 +116,7 @@
     <string name="mood_count">Mood Count</string>
     <string name="remind_me_at">Remind Me at</string>
     <string name="enter_your_password">Enter your password</string>
+    <string name="days_in_a_row">Days in a Row:</string>
+    <string name="of_entries"># of Entries</string>
+    <string name="add_today_s_entry">Add today\'s entry!</string>
 </resources>

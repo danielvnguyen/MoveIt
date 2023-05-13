@@ -88,6 +88,52 @@ public class CalendarPage extends Fragment {
         setUpInterface();
     }
 
+    private void setUpEntryStreak(ArrayList<Entry> allEntries) {
+        TextView entryStreakTV = requireView().findViewById(R.id.entryStreakTV);
+        TextView addTodayEntryTV = requireView().findViewById(R.id.addTodayEntryTV);
+        Calendar currentDay = Calendar.getInstance();
+        int streakCount = 0;
+
+        //Handle current day first
+        Entry foundEntryToday = allEntries.stream()
+                .filter(entry -> checkDate(entry.getDateTime(), currentDay))
+                .findFirst()
+                .orElse(null);
+        if (foundEntryToday != null) {
+            streakCount++;
+            currentDay.add(Calendar.DAY_OF_MONTH, -1);
+            addTodayEntryTV.setVisibility(View.GONE);
+        } else {
+            currentDay.add(Calendar.DAY_OF_MONTH, -1);
+            addTodayEntryTV.setVisibility(View.VISIBLE);
+        }
+
+        boolean streakGoing = true;
+        while (streakGoing) {
+            Entry foundEntry = allEntries.stream()
+                    .filter(entry -> checkDate(entry.getDateTime(), currentDay))
+                    .findFirst()
+                    .orElse(null);
+
+            if (foundEntry != null) {
+                streakCount++;
+                currentDay.add(Calendar.DAY_OF_MONTH, -1);
+            } else {
+                currentDay.add(Calendar.DAY_OF_MONTH, -1);
+                streakGoing = false;
+            }
+        }
+        entryStreakTV.setText(String.valueOf(streakCount));
+    }
+
+    private boolean checkDate(long entryDateTime, Calendar currentDay) {
+        Calendar entryDate = Calendar.getInstance();
+        entryDate.setTimeInMillis(entryDateTime);
+        return entryDate.get(Calendar.MONTH) == currentDay.get(Calendar.MONTH) &&
+                entryDate.get(Calendar.DAY_OF_MONTH) == currentDay.get(Calendar.DAY_OF_MONTH)
+                && entryDate.get(Calendar.YEAR) == currentDay.get(Calendar.YEAR);
+    }
+
     private void handlePageChange() {
         calendar = calendarView.getCurrentPageDate();
         setUpInterface();
@@ -180,12 +226,14 @@ public class CalendarPage extends Fragment {
         ArrayList<Calendar> entryDates = new ArrayList<>();
         ArrayList<Drawable> entryMoods = new ArrayList<>();
         ArrayList<Entry> entriesInMonth = new ArrayList<>();
+        ArrayList<Entry> allEntries = new ArrayList<>();
 
         db.collection("entries").document(currentUser.getUid()).collection("entryList")
                 .get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot entryDoc : Objects.requireNonNull(task.getResult())) {
                             Entry currentEntry = entryDoc.toObject(Entry.class);
+                            allEntries.add(currentEntry);
                             Calendar currentEntryDate = Calendar.getInstance();
                             currentEntryDate.setTimeInMillis(currentEntry.getDateTime());
 
@@ -229,6 +277,7 @@ public class CalendarPage extends Fragment {
                         ArrayList<EventDay> daysWithEntries = createEventDays(entryDates, entryMoods);
                         calendarView.setEvents(daysWithEntries);
                         setUpMoodCount(entriesInMonth);
+                        setUpEntryStreak(allEntries);
                         progressDialog.dismiss();
                     } else {
                         Log.d("CalendarPage", "Error retrieving documents: ", task.getException());
