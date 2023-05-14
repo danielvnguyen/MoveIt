@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import com.example.moveit.R;
+import com.example.moveit.model.IntroSlider;
 import com.example.moveit.reminder.NotificationReceiver;
 import com.example.moveit.model.ViewPagerAdapter;
 import com.example.moveit.reminder.Reminder;
@@ -67,6 +68,12 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         setUpAlarm();
+
+        //Show introduction slide show if new user
+        if (Objects.requireNonNull(currentUser.getMetadata()).getCreationTimestamp() == currentUser.getMetadata().getLastSignInTimestamp()) {
+            Intent i = new Intent(getApplicationContext(), IntroSlider.class);
+            startActivity(i);
+        }
     }
 
     private void setUpAlarm() {

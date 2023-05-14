@@ -71,7 +71,7 @@
     <string name="no_activities">You have no activities in this category</string>
     <string name="no_categories">You have no activity categories</string>
     <string name="no_meals">You have no meals</string>
-    <string name="no_entries">You have no entries. Create one by pressing the + button!</string>
+    <string name="no_entries">You have no entries. Create one by pressing the (+) button!</string>
     <string name="confirm_delete_account">Are you sure you want to delete your account?</string>
     <string name="no_takesies_backsies">This cannot be undone.</string>
     <string name="yes">Yes</string>
@@ -119,4 +119,9 @@
     <string name="days_in_a_row">Days in a Row:</string>
     <string name="of_entries"># of Entries</string>
     <string name="add_today_s_entry">Add today\'s entry!</string>
+    <string name="slide_one_text">MoveIt! is a fitness app for Android that helps users stay fit by allowing them to create daily entries, save custom meals and activities, and track their progress easily</string>
+    <string name="slide_two_text">You can create an entry by pressing the (+) button on the Entries page. After filling out the entry, you can save it by pressing the save button</string>
+    <string name="slide_three_text">In the Calendar tab, you can see a monthly view of your entries, along with your entry streak and mood count. Clicking on a day will pull up the entries made that day</string>
+    <string name="slide_four_text"><![CDATA[In the Settings tab, you can access your saved meals & activities, photos, reminder time, account settings, color theme, and other information]]></string>
+    <string name="slide_five_text">I hope you enjoy using MoveIt!</string>
 </resources>

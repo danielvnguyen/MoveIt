@@ -49,4 +49,5 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.applandeo:material-calendar-view:1.7.0'
+    implementation 'com.github.AppIntro:AppIntro:6.2.0'
 }
