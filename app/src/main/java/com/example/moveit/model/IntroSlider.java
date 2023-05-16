@@ -1,7 +1,10 @@
 package com.example.moveit.model;
 
+import android.Manifest;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.example.moveit.R;
@@ -11,6 +14,7 @@ import com.github.appintro.AppIntroFragment;
 
 public class IntroSlider extends AppIntro {
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +36,12 @@ public class IntroSlider extends AppIntro {
                 R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Thanks for reading!", getString(R.string.slide_five_text),
                 R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
+
+        String[] permissions = {
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.CAMERA,
+                Manifest.permission.POST_NOTIFICATIONS};
+        askForPermissions(permissions, 1, false);
     }
 
     @Override

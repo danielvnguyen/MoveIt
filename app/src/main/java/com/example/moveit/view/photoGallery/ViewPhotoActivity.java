@@ -1,6 +1,7 @@
 package com.example.moveit.view.photoGallery;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -60,6 +61,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
         setUpButtons();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void setUpButtons() {
         deleteImgBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -76,12 +78,12 @@ public class ViewPhotoActivity extends AppCompatActivity {
             final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
                     .child("uploads").child(currentImageId);
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                if (ContextCompat.checkSelfPermission(ViewPhotoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                if (ContextCompat.checkSelfPermission(ViewPhotoActivity.this, Manifest.permission.READ_MEDIA_IMAGES) ==
                         PackageManager.PERMISSION_GRANTED) {
                     saveImage();
                 } else {
                     ActivityCompat.requestPermissions(ViewPhotoActivity.this, new String[]{
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+                            Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_CODE);
                 }
             });
         });
