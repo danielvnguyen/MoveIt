@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.moveit.R;
+import com.example.moveit.model.IntroSlider;
 import com.example.moveit.view.AttributionsActivity;
 import com.example.moveit.view.categories.CategoriesList;
 import com.example.moveit.view.photoGallery.PhotoGalleryActivity;
@@ -49,6 +50,7 @@ public class SettingsPage extends Fragment {
         Button photoGalleryBtn = requireView().findViewById(R.id.photoGalleryBtn);
         Button editReminderBtn = requireView().findViewById(R.id.editReminderBtn);
         Button accountSettingsBtn = requireView().findViewById(R.id.accountSettingsBtn);
+        Button seeGuideBtn = requireView().findViewById(R.id.seeGuideBtn);
 
         editActivitiesBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CategoriesList.class);
@@ -76,6 +78,10 @@ public class SettingsPage extends Fragment {
         });
         editReminderBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ReminderActivity.class);
+            startActivity(intent);
+        });
+        seeGuideBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), IntroSlider.class);
             startActivity(intent);
         });
 

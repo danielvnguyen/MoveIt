@@ -16,22 +16,22 @@ public class IntroSlider extends AppIntro {
         super.onCreate(savedInstanceState);
 
         setSystemBackButtonLocked(true);
+        setNavBarColor(getResources().getColor(R.color.darkest_green));
+
+        int backgroundColour = R.color.light_green;
+        int textColour = ThemeUtils.getTextColor(getApplicationContext());
+        int fontFamily = R.font.raleway_bold;
 
         addSlide(AppIntroFragment.createInstance("Welcome!", getString(R.string.slide_one_text),
-                R.drawable.app_icon, R.color.dark_gray, ThemeUtils.getTextColor(getApplicationContext()),
-                ThemeUtils.getTextColor(getApplicationContext()), R.font.raleway, R.font.raleway));
+                R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Creating entries", getString(R.string.slide_two_text),
-                R.drawable.app_icon, R.color.dark_gray, ThemeUtils.getTextColor(getApplicationContext()),
-                ThemeUtils.getTextColor(getApplicationContext()), R.font.raleway, R.font.raleway));
+                R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Viewing your progress", getString(R.string.slide_three_text),
-                R.drawable.app_icon, R.color.dark_gray, ThemeUtils.getTextColor(getApplicationContext()),
-                ThemeUtils.getTextColor(getApplicationContext()), R.font.raleway, R.font.raleway));
+                R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Settings", getString(R.string.slide_four_text),
-                R.drawable.app_icon, R.color.dark_gray, ThemeUtils.getTextColor(getApplicationContext()),
-                ThemeUtils.getTextColor(getApplicationContext()), R.font.raleway, R.font.raleway));
+                R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Thanks for reading!", getString(R.string.slide_five_text),
-                R.drawable.app_icon, R.color.dark_gray, ThemeUtils.getTextColor(getApplicationContext()),
-                ThemeUtils.getTextColor(getApplicationContext()), R.font.raleway, R.font.raleway));
+                R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
     }
 
     @Override

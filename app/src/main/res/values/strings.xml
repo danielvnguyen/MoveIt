@@ -123,5 +123,6 @@
     <string name="slide_two_text">You can create an entry by pressing the (+) button on the Entries page. After filling out the entry, you can save it by pressing the save button</string>
     <string name="slide_three_text">In the Calendar tab, you can see a monthly view of your entries, along with your entry streak and mood count. Clicking on a day will pull up the entries made that day</string>
     <string name="slide_four_text"><![CDATA[In the Settings tab, you can access your saved meals & activities, photos, reminder time, account settings, color theme, and other information]]></string>
-    <string name="slide_five_text">I hope you enjoy using MoveIt!</string>
+    <string name="slide_five_text">If you ever need to refer back to this guide, simply visit the Settings tab. May your experience with MoveIt! be enjoyable!</string>
+    <string name="see_guide">See Guide</string>
 </resources>

@@ -79,6 +79,17 @@
                 android:text="@string/select_theme" />
 
             <Button
+                android:id="@+id/seeGuideBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/guide_icon"
+                android:drawableTint="@color/white"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/see_guide" />
+
+            <Button
                 android:id="@+id/aboutBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
