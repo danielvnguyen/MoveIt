@@ -82,6 +82,7 @@ public class EntriesPage extends Fragment {
         previousMonthBtn = requireView().findViewById(R.id.previousMonthBtn);
         dateTextView = requireView().findViewById(R.id.entryMonthTV);
         nextMonthBtn.setEnabled(false);
+        nextMonthBtn.setVisibility(View.INVISIBLE);
 
         currentDate = Calendar.getInstance(); // The current date that the user is on
         realDate = Calendar.getInstance(); // The real date in the world
