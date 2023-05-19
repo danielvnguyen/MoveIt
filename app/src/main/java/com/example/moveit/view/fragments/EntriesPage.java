@@ -72,6 +72,7 @@ public class EntriesPage extends Fragment {
             currentDate = Calendar.getInstance();
             setDateLabel(currentDate.getTimeInMillis());
             nextMonthBtn.setEnabled(false);
+            nextMonthBtn.setVisibility(View.INVISIBLE);
             resetDateBtn.setVisibility(View.GONE);
             setUpEntryList();
         });
