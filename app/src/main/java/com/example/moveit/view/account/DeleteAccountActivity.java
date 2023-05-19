@@ -113,8 +113,8 @@ public class DeleteAccountActivity extends AppCompatActivity {
                     batch.delete(entriesRef.document(entryId));
                 }
                 batch.commit()
-                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Selected items have been removed."))
-                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove selected items.", error));
+                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Entries have been removed."))
+                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove entries.", error));
             }
         });
 
@@ -131,8 +131,8 @@ public class DeleteAccountActivity extends AppCompatActivity {
                     batch.delete(mealsRef.document(mealId));
                 }
                 batch.commit()
-                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Selected items have been removed."))
-                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove selected items.", error));
+                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Meals have been removed."))
+                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove meals.", error));
             }
         });
 
@@ -150,45 +150,52 @@ public class DeleteAccountActivity extends AppCompatActivity {
         categoriesRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 ArrayList<String> categoryIds = new ArrayList<>();
-                ArrayList<Activity> activities = new ArrayList<>();
                 for (QueryDocumentSnapshot categoryDoc : Objects.requireNonNull(task.getResult())) {
                     Category currentCategory = categoryDoc.toObject(Category.class);
                     categoryIds.add(currentCategory.getCategoryId());
-                    categoriesRef.document(currentCategory.getCategoryId()).collection("activityList").get().addOnCompleteListener(task1 -> {
+                }
+
+                //Delete activities within each category
+                for (String categoryId : categoryIds) {
+                    categoriesRef.document(categoryId).collection("activityList").get().addOnCompleteListener(task1 -> {
                         if (task1.isSuccessful()) {
+                            ArrayList<Activity> activities = new ArrayList<>();
                             for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
                                 Activity currentActivity = activityDoc.toObject(Activity.class);
                                 activities.add(currentActivity);
                             }
                             WriteBatch batch = db.batch();
                             for (Activity activity : activities) {
-                                if (activity.getCategoryId().equals(currentCategory.getCategoryId())) {
-                                    batch.delete(categoriesRef.document(currentCategory.getCategoryId()).collection("activityList").document(activity.getActivityId()));
+                                if (activity.getCategoryId().equals(categoryId)) {
+                                    batch.delete(categoriesRef.document(categoryId).collection("activityList").document(activity.getActivityId()));
                                 }
                             }
                             batch.commit()
-                                    .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Selected items have been removed."))
-                                    .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove selected items.", error));
+                                    .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Activities have been removed for category: " + categoryId))
+                                    .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove activities for category: " + categoryId, error));
                         }
                     });
                 }
+
+                //Delete categories
                 WriteBatch batch1 = db.batch();
                 for (String categoryId : categoryIds) {
                     batch1.delete(categoriesRef.document(categoryId));
                 }
                 batch1.commit()
-                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Selected items have been removed."))
-                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove selected items.", error));
-            }
-        });
+                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Categories have been removed."))
+                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove categories.", error));
 
-        currentUser.delete().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                progressDialog.dismiss();
-                Intent intent = StartActivity.makeIntent(DeleteAccountActivity.this);
-                finishAffinity();
-                startActivity(intent);
-                Toast.makeText(DeleteAccountActivity.this, "Your account has been deleted", Toast.LENGTH_SHORT).show();
+                //Delete user
+                currentUser.delete().addOnCompleteListener(task2 -> {
+                    if (task2.isSuccessful()) {
+                        progressDialog.dismiss();
+                        Intent intent = StartActivity.makeIntent(DeleteAccountActivity.this);
+                        finishAffinity();
+                        startActivity(intent);
+                        Toast.makeText(DeleteAccountActivity.this, "Your account has been deleted", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
