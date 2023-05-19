@@ -93,9 +93,11 @@ public class EntriesPage extends Fragment {
             if (currentDate.get(Calendar.MONTH) < realDate.get((Calendar.MONTH))
                     || currentDate.get(Calendar.YEAR) < realDate.get((Calendar.YEAR))) {
                 nextMonthBtn.setEnabled(true);
+                nextMonthBtn.setVisibility(View.VISIBLE);
                 resetDateBtn.setVisibility(View.VISIBLE);
             } else {
                 nextMonthBtn.setEnabled(false);
+                nextMonthBtn.setVisibility(View.INVISIBLE);
                 resetDateBtn.setVisibility(View.GONE);
             }
 
@@ -108,9 +110,11 @@ public class EntriesPage extends Fragment {
             if (currentDate.get(Calendar.MONTH) < realDate.get((Calendar.MONTH))
                     || currentDate.get(Calendar.YEAR) < realDate.get((Calendar.YEAR))) {
                 nextMonthBtn.setEnabled(true);
+                nextMonthBtn.setVisibility(View.VISIBLE);
                 resetDateBtn.setVisibility(View.VISIBLE);
             } else {
                 nextMonthBtn.setEnabled(false);
+                nextMonthBtn.setVisibility(View.INVISIBLE);
                 resetDateBtn.setVisibility(View.GONE);
             }
 
