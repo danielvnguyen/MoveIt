@@ -76,16 +76,49 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void handleDelete() {
-        db.collection("categories").document(currentUser.getUid())
-                .collection("categoryList").document(categoryId)
-                .collection("activityList").document(activityId).delete().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(AddActivity.this, "Deleted activity successfully!", Toast.LENGTH_SHORT).show();
-                        finish();
+        //Handle propagation (to entry list)
+        CollectionReference entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
+        entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
+                assert currentEntry != null;
+                HashMap<String, ArrayList<String>> entryActivities = currentEntry.getActivities();
+
+                if (entryActivities.containsKey(originalActivityName) &&
+                        Objects.requireNonNull(entryActivities.get(originalActivityName)).contains(categoryId)) {
+                    ArrayList<String> currentCategoryIds = entryActivities.get(originalActivityName);
+                    assert currentCategoryIds != null;
+
+                    currentCategoryIds.remove(categoryId);
+                    if (currentCategoryIds.isEmpty()) {
+                        entryActivities.remove(originalActivityName);
                     } else {
-                        Toast.makeText(AddActivity.this, "Error deleting activity", Toast.LENGTH_SHORT).show();
+                        entryActivities.put(originalActivityName, currentCategoryIds);
                     }
-                });
+
+                    String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
+                    entryListRef.document(documentId).update("activities", entryActivities).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            db.collection("categories").document(currentUser.getUid())
+                                    .collection("categoryList").document(categoryId)
+                                    .collection("activityList").document(activityId).delete().addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            Toast.makeText(AddActivity.this, "Deleted activity successfully!", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(this, HomeActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                            intent.putExtra("isChangedEntries", true);
+                                            startActivity(intent);
+                                        } else {
+                                            Toast.makeText(AddActivity.this, "Error deleting activity", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        } else {
+                            Log.d("AddActivity", "Error updating entry activities: ", task.getException());
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private void handleUpdate() {
@@ -103,59 +136,58 @@ public class AddActivity extends AppCompatActivity {
                     if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
                         Toast.makeText(AddActivity.this, "An activity with this name already exists!", Toast.LENGTH_SHORT).show();
                     } else {
-                        CollectionReference entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
                         //Handle propagation (to entry list)
-                        entryListRef.get()
-                                .addOnSuccessListener(queryDocumentSnapshots -> {
-                                    for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
-                                        //For each entry, check if current activity is inside that entry's activities
-                                        Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
-                                        assert currentEntry != null;
-                                        HashMap<String, ArrayList<String>> entryActivities = currentEntry.getActivities();
+                        CollectionReference entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
+                        entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+                            for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                                //For each entry, check if current activity is inside that entry's activities
+                                Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
+                                assert currentEntry != null;
+                                HashMap<String, ArrayList<String>> entryActivities = currentEntry.getActivities();
 
-                                        if (entryActivities.containsKey(originalActivityName) &&
-                                                Objects.requireNonNull(
-                                                        entryActivities.get(originalActivityName)).contains(categoryId)) {
-                                            ArrayList<String> currentCategoryIds = entryActivities.get(originalActivityName);
-                                            ArrayList<String> newCategoryIds = new ArrayList<>();
-                                            assert currentCategoryIds != null;
+                                if (entryActivities.containsKey(originalActivityName) &&
+                                        Objects.requireNonNull(
+                                                entryActivities.get(originalActivityName)).contains(categoryId)) {
+                                    ArrayList<String> currentCategoryIds = entryActivities.get(originalActivityName);
+                                    ArrayList<String> newCategoryIds = new ArrayList<>();
+                                    assert currentCategoryIds != null;
 
-                                            currentCategoryIds.remove(categoryId);
-                                            newCategoryIds.add(categoryId);
-                                            //Account for duplicate activity names
-                                            if (currentCategoryIds.isEmpty()) {
-                                                entryActivities.remove(originalActivityName);
-                                            }
-                                            if (entryActivities.containsKey(newActivityName)) {
-                                                newCategoryIds.addAll(Objects.requireNonNull(entryActivities.get(newActivityName)));
-                                            }
-                                            entryActivities.put(newActivityName, newCategoryIds);
-
-                                            String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
-                                            entryListRef.document(documentId).update("activities", entryActivities).addOnCompleteListener(task1 -> {
-                                                if (task1.isSuccessful()) {
-                                                    //Now update the activity name in the activity list
-                                                    db.collection("categories").document(currentUser.getUid())
-                                                            .collection("categoryList").document(categoryId)
-                                                            .collection("activityList").document(activityId).update("name", newActivityName)
-                                                            .addOnCompleteListener(task2 -> {
-                                                                if (task2.isSuccessful()) {
-                                                                    Toast.makeText(AddActivity.this, "Updated activity successfully!", Toast.LENGTH_SHORT).show();
-                                                                    Intent intent = new Intent(this, HomeActivity.class);
-                                                                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                                                    intent.putExtra("isChangedEntries", true);
-                                                                    startActivity(intent);
-                                                                } else {
-                                                                    Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            });
-                                                } else {
-                                                    Log.d("AddActivity", "Error updating entry activities: ", task.getException());
-                                                }
-                                            });
-                                        }
+                                    currentCategoryIds.remove(categoryId);
+                                    newCategoryIds.add(categoryId);
+                                    //Account for duplicate activity names
+                                    if (currentCategoryIds.isEmpty()) {
+                                        entryActivities.remove(originalActivityName);
                                     }
-                                });
+                                    if (entryActivities.containsKey(newActivityName)) {
+                                        newCategoryIds.addAll(Objects.requireNonNull(entryActivities.get(newActivityName)));
+                                    }
+                                    entryActivities.put(newActivityName, newCategoryIds);
+
+                                    String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
+                                    entryListRef.document(documentId).update("activities", entryActivities).addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            //Now update the activity name in the activity list
+                                            db.collection("categories").document(currentUser.getUid())
+                                                    .collection("categoryList").document(categoryId)
+                                                    .collection("activityList").document(activityId).update("name", newActivityName)
+                                                    .addOnCompleteListener(task2 -> {
+                                                        if (task2.isSuccessful()) {
+                                                            Toast.makeText(AddActivity.this, "Updated activity successfully!", Toast.LENGTH_SHORT).show();
+                                                            Intent intent = new Intent(this, HomeActivity.class);
+                                                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                                            intent.putExtra("isChangedEntries", true);
+                                                            startActivity(intent);
+                                                        } else {
+                                                            Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                        } else {
+                                            Log.d("AddActivity", "Error updating entry activities: ", task.getException());
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
                 }
             });
