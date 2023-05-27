@@ -31,7 +31,6 @@ import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -111,7 +110,8 @@ public class AddEntry extends AppCompatActivity implements
     private Boolean imageStateAltered = false;
     private String originalEntryId, originalEntryImageId, originalEntryCalories,
             originalEntryNote, originalMood;
-    private ArrayList<String> originalMeals, originalActivities;
+    private ArrayList<String> originalMeals;
+    private HashMap<String, ArrayList<String>> originalActivities;
     private long originalDateTime;
 
     @Override
@@ -320,7 +320,7 @@ public class AddEntry extends AppCompatActivity implements
             originalEntryNote = extras.get("entryNote").toString();
             originalMood = extras.get("entryMood").toString();
             originalMeals = (ArrayList<String>) extras.get("selectedMeals");
-            originalActivities = (ArrayList<String>) extras.get("selectedActivities");
+            originalActivities = (HashMap<String, ArrayList<String>>) extras.getSerializable("selectedActivities");
 
             if (!originalEntryImageId.equals("")) {
                 final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
@@ -487,7 +487,7 @@ public class AddEntry extends AppCompatActivity implements
                             Meal currentMeal = mealDoc.toObject(Meal.class);
                             mealCaloriesMap.put(currentMeal.getName(), currentMeal.getCalories());
 
-                            Chip mealChip = buildChip(currentMeal.getName(), "Meal");
+                            Chip mealChip = buildMealChip(currentMeal.getName());
                             if (!currentMeal.getImageId().equals("")) {
                                 if (currentMeal.getImageId().contains("https")) {
                                     loadChipIcon(mealChip, Uri.parse(currentMeal.getImageId()));
@@ -575,7 +575,7 @@ public class AddEntry extends AppCompatActivity implements
                                     if (task1.isSuccessful()) {
                                         for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
                                             Activity currentActivity = activityDoc.toObject(Activity.class);
-                                            Chip activityChip = buildChip(currentActivity.getName(), "Activity");
+                                            Chip activityChip = buildActivityChip(currentActivity.getName(), currentActivity.getCategoryId());
                                             activityChipGroup.addView(activityChip);
                                         }
                                     } else {
@@ -596,18 +596,34 @@ public class AddEntry extends AppCompatActivity implements
         return Math.round(dp * density);
     }
 
-    private Chip buildChip(String text, String type) {
+    private Chip buildMealChip(String mealName) {
         Chip newChip = new Chip(this);
-        newChip.setText(text);
+        newChip.setText(mealName);
         newChip.setTextColor(getResources().getColor(R.color.white));
         newChip.setChipBackgroundColorResource(R.color.light_green);
         newChip.setCheckable(true);
         newChip.setChipIconVisible(true);
 
         if (editMode) {
-            if (type.equals("Meal") && originalMeals.contains(text)) {
+            if (originalMeals.contains(mealName)) {
                 newChip.setChecked(true);
-            } else if (type.equals("Activity") && originalActivities.contains(text)) {
+            }
+        }
+
+        return newChip;
+    }
+
+    private Chip buildActivityChip(String activityName, String categoryId) {
+        Chip newChip = new Chip(this);
+        newChip.setTag(categoryId);
+        newChip.setText(activityName);
+        newChip.setTextColor(getResources().getColor(R.color.white));
+        newChip.setChipBackgroundColorResource(R.color.light_green);
+        newChip.setCheckable(true);
+        newChip.setChipIconVisible(true);
+
+        if (editMode) {
+            if (originalActivities.containsKey(activityName) && Objects.requireNonNull(originalActivities.get(activityName)).contains(categoryId)) {
                 newChip.setChecked(true);
             }
         }
@@ -635,13 +651,27 @@ public class AddEntry extends AppCompatActivity implements
         return selectedMeals;
     }
 
-    private ArrayList<String> getSelectedActivities() {
-        ArrayList<String> selectedActivities = new ArrayList<>();
+    private HashMap<String, ArrayList<String>> getSelectedActivities() {
+        /*
+        handling selecting duplicates:
+        - change value from String to List<String>
+        - then, here, if a name ever appears more than once,
+        - you can take the current value(s), create list w/ new value, then
+        update the key with put().
+        - for keys with only (1) value (categoryId), operations will just check if desired categoryId in that list.
+         */
+
+        HashMap<String, ArrayList<String>> selectedActivities = new HashMap<>();
         for (ChipGroup group : activityChipGroups) {
             List<Integer> ids = group.getCheckedChipIds();
             for (Integer id: ids){
                 Chip currentChip = group.findViewById(id);
-                selectedActivities.add(currentChip.getText().toString());
+                ArrayList<String> currentChipCategoryIds = new ArrayList<>();
+                currentChipCategoryIds.add((String) currentChip.getTag());
+                if (selectedActivities.containsKey(currentChip.getText().toString())) {
+                    currentChipCategoryIds.addAll(Objects.requireNonNull(selectedActivities.get(currentChip.getText().toString())));
+                }
+                selectedActivities.put(currentChip.getText().toString(), currentChipCategoryIds);
             }
         }
         return selectedActivities;

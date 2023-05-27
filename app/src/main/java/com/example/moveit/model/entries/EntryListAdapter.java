@@ -129,16 +129,17 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
         if (!selectedMeals.isEmpty()) {
             mealChipGroupHeader.setVisibility(View.VISIBLE);
             for (String mealName : selectedMeals) {
-                Chip mealChip = buildChip(mealName);
+                Chip mealChip = buildMealChip(mealName);
                 getMealImageId(mealName, mealChip);
                 mealChipGroup.addView(mealChip);
             }
         }
-        ArrayList<String> selectedActivities = currentEntry.getActivities();
+        HashMap<String, ArrayList<String>> selectedActivities = currentEntry.getActivities();
         if (!selectedActivities.isEmpty()) {
             activitiesChipGroupHeader.setVisibility(View.VISIBLE);
-            for (String activityName : selectedActivities) {
-                Chip activityChip = buildChip(activityName);
+            for (String activityName : selectedActivities.keySet()) {
+                int count = Objects.requireNonNull(selectedActivities.get(activityName)).size();
+                Chip activityChip = buildActivityChip(activityName, count);
                 activitiesChipGroup.addView(activityChip);
             }
         }
@@ -181,9 +182,24 @@ public class EntryListAdapter extends ArrayAdapter<Entry> {
                 });
     }
 
-    private Chip buildChip(String text) {
+    private Chip buildMealChip(String mealName) {
         Chip newChip = new Chip(context);
-        newChip.setText(text);
+        newChip.setText(mealName);
+        newChip.setTextColor(context.getResources().getColor(R.color.white));
+        newChip.setChipIconVisible(true);
+        newChip.setChipBackgroundColorResource(R.color.light_green);
+
+        return newChip;
+    }
+
+    @SuppressLint("SetTextI18n")
+    private Chip buildActivityChip(String activityName, int count) {
+        Chip newChip = new Chip(context);
+        if (count > 1) {
+            newChip.setText(activityName + " (" + count + ")");
+        } else {
+            newChip.setText(activityName);
+        }
         newChip.setTextColor(context.getResources().getColor(R.color.white));
         newChip.setChipIconVisible(true);
         newChip.setChipBackgroundColorResource(R.color.light_green);

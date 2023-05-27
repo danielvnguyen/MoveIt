@@ -1,12 +1,13 @@
 package com.example.moveit.model.entries;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Entry {
     private String id;
     private String mood;
     private ArrayList<String> meals;
-    private ArrayList<String> activities;
+    private HashMap<String, ArrayList<String>> activities;
     private Integer caloriesEaten;
     private long dateTime;
     private String note;
@@ -31,11 +32,11 @@ public class Entry {
         this.mood = mood;
     }
 
-    public ArrayList<String> getActivities() {
+    public HashMap<String, ArrayList<String>> getActivities() {
         return activities;
     }
 
-    public void setActivities(ArrayList<String> activities) {
+    public void setActivities(HashMap<String, ArrayList<String>> activities) {
         this.activities = activities;
     }
 
