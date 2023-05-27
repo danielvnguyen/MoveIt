@@ -652,15 +652,6 @@ public class AddEntry extends AppCompatActivity implements
     }
 
     private HashMap<String, ArrayList<String>> getSelectedActivities() {
-        /*
-        handling selecting duplicates:
-        - change value from String to List<String>
-        - then, here, if a name ever appears more than once,
-        - you can take the current value(s), create list w/ new value, then
-        update the key with put().
-        - for keys with only (1) value (categoryId), operations will just check if desired categoryId in that list.
-         */
-
         HashMap<String, ArrayList<String>> selectedActivities = new HashMap<>();
         for (ChipGroup group : activityChipGroups) {
             List<Integer> ids = group.getCheckedChipIds();
