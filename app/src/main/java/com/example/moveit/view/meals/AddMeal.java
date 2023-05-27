@@ -368,7 +368,7 @@ public class AddMeal extends AppCompatActivity {
                 boolean condition = mealName.equals(originalMealName)? (Objects.requireNonNull(task.getResult()).size() > 1)
                         : (!Objects.requireNonNull(task.getResult()).isEmpty());
                 if (condition) {
-                    Toast.makeText(AddMeal.this, "Another meal already has this name!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddMeal.this, "A meal with this name already exists!", Toast.LENGTH_SHORT).show();
                 } else {
                     db.collection("meals").document(currentUser.getUid())
                             .collection("mealList").document(originalMealId).update("name", mealName,
@@ -399,7 +399,7 @@ public class AddMeal extends AppCompatActivity {
         queryMealsByName.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
-                    Toast.makeText(AddMeal.this, "Another meal already has this name!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddMeal.this, "A meal with this name already exists!", Toast.LENGTH_SHORT).show();
                 } else {
                     db.collection("meals").document(currentUser.getUid()).collection("mealList")
                             .document(meal.getId()).set(meal).addOnCompleteListener(task1 -> {

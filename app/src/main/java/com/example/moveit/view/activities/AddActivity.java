@@ -14,9 +14,12 @@ import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.model.activities.Activity;
+import com.example.moveit.view.meals.AddMeal;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -90,36 +93,58 @@ public class AddActivity extends AppCompatActivity {
         } else if (activityName.equals(originalActivityName)) {
             Toast.makeText(AddActivity.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
         } else {
-            db.collection("categories").document(currentUser.getUid())
-                    .collection("categoryList").document(categoryId)
-                    .collection("activityList").document(activityId).update("name", activityName)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(AddActivity.this, "Updated activity successfully!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            CollectionReference activitiesRef = db.collection("categories").document(currentUser.getUid()).collection("categoryList")
+                    .document(categoryId).collection("activityList");
+            Query queryActivitiesByName = activitiesRef.whereEqualTo("name", activityName);
+            queryActivitiesByName.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
+                        Toast.makeText(AddActivity.this, "An activity with this name already exists!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        db.collection("categories").document(currentUser.getUid())
+                                .collection("categoryList").document(categoryId)
+                                .collection("activityList").document(activityId).update("name", activityName)
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        Toast.makeText(AddActivity.this, "Updated activity successfully!", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    } else {
+                                        Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                }
+            });
         }
     }
 
     private void handleSave() {
         String activityName = activityNameInput.getText().toString();
         if (!activityName.isEmpty()) {
-            String activityId = UUID.randomUUID().toString();
-            Activity newActivity = new Activity(activityName, categoryId, activityId);
-            db.collection("categories").document(currentUser.getUid())
-                    .collection("categoryList").document(categoryId)
-                    .collection("activityList").document(activityId).set(newActivity)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(AddActivity.this, "Saved activity successfully!", Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-                            Toast.makeText(AddActivity.this, "Error saving activity", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            CollectionReference activitiesRef = db.collection("categories").document(currentUser.getUid()).collection("categoryList")
+                    .document(categoryId).collection("activityList");
+            Query queryActivitiesByName = activitiesRef.whereEqualTo("name", activityName);
+            queryActivitiesByName.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
+                        Toast.makeText(AddActivity.this, "An activity with this name already exists!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String activityId = UUID.randomUUID().toString();
+                        Activity newActivity = new Activity(activityName, categoryId, activityId);
+                        db.collection("categories").document(currentUser.getUid())
+                                .collection("categoryList").document(categoryId)
+                                .collection("activityList").document(activityId).set(newActivity)
+                                .addOnCompleteListener(task1 -> {
+                                    if (task1.isSuccessful()) {
+                                        Toast.makeText(AddActivity.this, "Saved activity successfully!", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    } else {
+                                        Toast.makeText(AddActivity.this, "Error saving activity", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                }
+            });
         } else {
             Toast.makeText(AddActivity.this, "Please fill out the activity name", Toast.LENGTH_SHORT).show();
         }
