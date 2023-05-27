@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.example.moveit.R;
 import com.example.moveit.model.activities.Activity;
-import com.example.moveit.view.meals.AddMeal;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
