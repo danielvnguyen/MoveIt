@@ -14,13 +14,11 @@ import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.entries.Entry;
-import com.example.moveit.view.HomeActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -99,19 +97,7 @@ public class AddActivity extends AppCompatActivity {
                     String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
                     entryListRef.document(documentId).update("activities", entryActivities).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            db.collection("categories").document(currentUser.getUid())
-                                    .collection("categoryList").document(categoryId)
-                                    .collection("activityList").document(activityId).delete().addOnCompleteListener(task1 -> {
-                                        if (task1.isSuccessful()) {
-                                            Toast.makeText(AddActivity.this, "Deleted activity successfully!", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(this, HomeActivity.class);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                            intent.putExtra("isChangedEntries", true);
-                                            startActivity(intent);
-                                        } else {
-                                            Toast.makeText(AddActivity.this, "Error deleting activity", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                            Log.d("AddActivity", "Successfully updated entry activities");
                         } else {
                             Log.d("AddActivity", "Error updating entry activities: ", task.getException());
                         }
@@ -119,6 +105,17 @@ public class AddActivity extends AppCompatActivity {
                 }
             }
         });
+
+        db.collection("categories").document(currentUser.getUid())
+                .collection("categoryList").document(categoryId)
+                .collection("activityList").document(activityId).delete().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        Toast.makeText(AddActivity.this, "Deleted activity successfully!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(AddActivity.this, "Error deleting activity", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void handleUpdate() {
@@ -166,21 +163,7 @@ public class AddActivity extends AppCompatActivity {
                                     String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
                                     entryListRef.document(documentId).update("activities", entryActivities).addOnCompleteListener(task1 -> {
                                         if (task1.isSuccessful()) {
-                                            //Now update the activity name in the activity list
-                                            db.collection("categories").document(currentUser.getUid())
-                                                    .collection("categoryList").document(categoryId)
-                                                    .collection("activityList").document(activityId).update("name", newActivityName)
-                                                    .addOnCompleteListener(task2 -> {
-                                                        if (task2.isSuccessful()) {
-                                                            Toast.makeText(AddActivity.this, "Updated activity successfully!", Toast.LENGTH_SHORT).show();
-                                                            Intent intent = new Intent(this, HomeActivity.class);
-                                                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                                            intent.putExtra("isChangedEntries", true);
-                                                            startActivity(intent);
-                                                        } else {
-                                                            Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
+                                            Log.d("AddActivity", "Successfully updated entry activities");
                                         } else {
                                             Log.d("AddActivity", "Error updating entry activities: ", task.getException());
                                         }
@@ -188,6 +171,18 @@ public class AddActivity extends AppCompatActivity {
                                 }
                             }
                         });
+
+                        db.collection("categories").document(currentUser.getUid())
+                                .collection("categoryList").document(categoryId)
+                                .collection("activityList").document(activityId).update("name", newActivityName)
+                                .addOnCompleteListener(task2 -> {
+                                    if (task2.isSuccessful()) {
+                                        Toast.makeText(AddActivity.this, "Updated activity successfully!", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    } else {
+                                        Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     }
                 }
             });
