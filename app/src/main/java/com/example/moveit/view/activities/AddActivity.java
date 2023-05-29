@@ -2,6 +2,8 @@ package com.example.moveit.view.activities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -76,6 +78,11 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void handleDelete() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         //Update related entries
         entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
             for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
@@ -105,6 +112,7 @@ public class AddActivity extends AppCompatActivity {
                 .collection("categoryList").document(categoryId)
                 .collection("activityList").document(activityId).delete().addOnCompleteListener(task1 -> {
                     if (task1.isSuccessful()) {
+                        progressDialog.dismiss();
                         Toast.makeText(AddActivity.this, "Deleted activity successfully!", Toast.LENGTH_SHORT).show();
                         GlobalUpdater.getInstance().setEntryListUpdated(true);
                         finish();
@@ -121,6 +129,11 @@ public class AddActivity extends AppCompatActivity {
         } else if (newActivityName.equals(originalActivityName)) {
             Toast.makeText(AddActivity.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
         } else {
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Loading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
             CollectionReference activitiesRef = db.collection("categories").document(currentUser.getUid()).collection("categoryList")
                     .document(categoryId).collection("activityList");
             Query queryActivitiesByName = activitiesRef.whereEqualTo("name", newActivityName);
@@ -163,6 +176,7 @@ public class AddActivity extends AppCompatActivity {
                                 .collection("activityList").document(activityId).update("name", newActivityName)
                                 .addOnCompleteListener(task2 -> {
                                     if (task2.isSuccessful()) {
+                                        progressDialog.dismiss();
                                         Toast.makeText(AddActivity.this, "Updated activity successfully!", Toast.LENGTH_SHORT).show();
                                         GlobalUpdater.getInstance().setEntryListUpdated(true);
                                         finish();

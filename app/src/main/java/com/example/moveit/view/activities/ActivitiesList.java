@@ -14,15 +14,19 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.example.moveit.R;
+import com.example.moveit.model.GlobalUpdater;
 import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.activities.ActivityListAdapter;
+import com.example.moveit.model.entries.Entry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class ActivitiesList extends AppCompatActivity {
@@ -132,20 +136,56 @@ public class ActivitiesList extends AppCompatActivity {
     }
 
     private void handleDelete() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         DocumentReference selectedCategory = db.collection("categories")
                 .document(currentUser.getUid()).collection("categoryList").document(categoryId);
         selectedCategory.collection("activityList").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task.getResult())) {
                     Activity currentActivity = activityDoc.toObject(Activity.class);
-                    selectedCategory.collection("activityList").document(currentActivity.getActivityId()).delete();
+
+                    //Update related entries
+                    CollectionReference entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
+                    entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                            Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
+                            assert currentEntry != null;
+                            HashMap<String, ArrayList<String>> entryActivities = currentEntry.getActivities();
+                            String activityName = currentActivity.getName();
+
+                            if (entryActivities.containsKey(activityName) &&
+                                    Objects.requireNonNull(entryActivities.get(activityName)).contains(categoryId)) {
+                                ArrayList<String> currentCategoryIds = entryActivities.get(activityName);
+                                assert currentCategoryIds != null;
+
+                                currentCategoryIds.remove(categoryId);
+                                if (currentCategoryIds.isEmpty()) {
+                                    entryActivities.remove(activityName);
+                                } else {
+                                    entryActivities.put(activityName, currentCategoryIds);
+                                }
+
+                                String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
+                                entryListRef.document(documentId).update("activities", entryActivities).addOnSuccessListener(unused -> {});
+                            }
+                        }
+                    });
+
+                    selectedCategory.collection("activityList").document(currentActivity.getActivityId())
+                            .delete().addOnSuccessListener(unused -> {});
                 }
             }
         });
 
         selectedCategory.delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                progressDialog.dismiss();
                 Toast.makeText(ActivitiesList.this, "Successfully deleted category & activities", Toast.LENGTH_SHORT).show();
+                GlobalUpdater.getInstance().setEntryListUpdated(true);
                 finish();
             } else {
                 Toast.makeText(ActivitiesList.this, "Error deleting category & activities", Toast.LENGTH_SHORT).show();

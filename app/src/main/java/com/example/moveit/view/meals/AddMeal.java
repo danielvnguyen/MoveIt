@@ -273,6 +273,11 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private void handleDelete() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
                 .document(originalMealId);
 
@@ -300,6 +305,7 @@ public class AddMeal extends AppCompatActivity {
 
         selectedMeal.delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                progressDialog.dismiss();
                 Toast.makeText(AddMeal.this, "Deleted meal successfully!", Toast.LENGTH_SHORT).show();
                 GlobalUpdater.getInstance().setEntryListUpdated(true);
                 finish();
@@ -310,6 +316,11 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private void handleUpdate(String mealName, Integer calories, ServingSize servingSize, String mealNote, String imageId) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         CollectionReference userMealsRef = db.collection("meals").document(currentUser.getUid()).collection("mealList");
         Query queryMealsByName = userMealsRef.whereEqualTo("name", mealName);
         queryMealsByName.get().addOnCompleteListener(task -> {
@@ -340,6 +351,7 @@ public class AddMeal extends AppCompatActivity {
                                     "calories", calories, "servingSize", servingSize, "note", mealNote,
                                     "imageId", imageId).addOnCompleteListener(task1 -> {
                                 if (task1.isSuccessful()) {
+                                    progressDialog.dismiss();
                                     Toast.makeText(AddMeal.this, "Updated meal successfully!", Toast.LENGTH_SHORT).show();
                                     GlobalUpdater.getInstance().setEntryListUpdated(true);
                                     finish();
