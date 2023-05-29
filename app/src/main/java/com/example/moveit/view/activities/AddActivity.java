@@ -2,10 +2,11 @@ package com.example.moveit.view.activities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.entries.Entry;
+import com.example.moveit.model.GlobalUpdater;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -36,6 +38,7 @@ public class AddActivity extends AppCompatActivity {
 
     private Button saveBtn;
     private Button deleteBtn;
+    private CollectionReference entryListRef;
 
     private boolean isNew = false;
 
@@ -47,6 +50,7 @@ public class AddActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
 
         setUpInterface();
         setUpButtons();
@@ -74,8 +78,12 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void handleDelete() {
-        //Handle propagation (to entry list)
-        CollectionReference entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        //Update related entries
         entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
             for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
                 Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
@@ -95,13 +103,7 @@ public class AddActivity extends AppCompatActivity {
                     }
 
                     String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
-                    entryListRef.document(documentId).update("activities", entryActivities).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("AddActivity", "Successfully updated entry activities");
-                        } else {
-                            Log.d("AddActivity", "Error updating entry activities: ", task.getException());
-                        }
-                    });
+                    entryListRef.document(documentId).update("activities", entryActivities).addOnSuccessListener(unused -> {});
                 }
             }
         });
@@ -110,7 +112,9 @@ public class AddActivity extends AppCompatActivity {
                 .collection("categoryList").document(categoryId)
                 .collection("activityList").document(activityId).delete().addOnCompleteListener(task1 -> {
                     if (task1.isSuccessful()) {
+                        progressDialog.dismiss();
                         Toast.makeText(AddActivity.this, "Deleted activity successfully!", Toast.LENGTH_SHORT).show();
+                        GlobalUpdater.getInstance().setEntryListUpdated(true);
                         finish();
                     } else {
                         Toast.makeText(AddActivity.this, "Error deleting activity", Toast.LENGTH_SHORT).show();
@@ -125,6 +129,11 @@ public class AddActivity extends AppCompatActivity {
         } else if (newActivityName.equals(originalActivityName)) {
             Toast.makeText(AddActivity.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
         } else {
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Loading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
             CollectionReference activitiesRef = db.collection("categories").document(currentUser.getUid()).collection("categoryList")
                     .document(categoryId).collection("activityList");
             Query queryActivitiesByName = activitiesRef.whereEqualTo("name", newActivityName);
@@ -133,17 +142,14 @@ public class AddActivity extends AppCompatActivity {
                     if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
                         Toast.makeText(AddActivity.this, "An activity with this name already exists!", Toast.LENGTH_SHORT).show();
                     } else {
-                        //Handle propagation (to entry list)
-                        CollectionReference entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
+                        //Updated related entries
                         entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
                             for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
-                                //For each entry, check if current activity is inside that entry's activities
                                 Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
                                 assert currentEntry != null;
                                 HashMap<String, ArrayList<String>> entryActivities = currentEntry.getActivities();
 
-                                if (entryActivities.containsKey(originalActivityName) &&
-                                        Objects.requireNonNull(
+                                if (entryActivities.containsKey(originalActivityName) && Objects.requireNonNull(
                                                 entryActivities.get(originalActivityName)).contains(categoryId)) {
                                     ArrayList<String> currentCategoryIds = entryActivities.get(originalActivityName);
                                     ArrayList<String> newCategoryIds = new ArrayList<>();
@@ -151,7 +157,6 @@ public class AddActivity extends AppCompatActivity {
 
                                     currentCategoryIds.remove(categoryId);
                                     newCategoryIds.add(categoryId);
-                                    //Account for duplicate activity names
                                     if (currentCategoryIds.isEmpty()) {
                                         entryActivities.remove(originalActivityName);
                                     }
@@ -161,13 +166,7 @@ public class AddActivity extends AppCompatActivity {
                                     entryActivities.put(newActivityName, newCategoryIds);
 
                                     String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
-                                    entryListRef.document(documentId).update("activities", entryActivities).addOnCompleteListener(task1 -> {
-                                        if (task1.isSuccessful()) {
-                                            Log.d("AddActivity", "Successfully updated entry activities");
-                                        } else {
-                                            Log.d("AddActivity", "Error updating entry activities: ", task.getException());
-                                        }
-                                    });
+                                    entryListRef.document(documentId).update("activities", entryActivities).addOnSuccessListener(unused -> {});
                                 }
                             }
                         });
@@ -177,7 +176,9 @@ public class AddActivity extends AppCompatActivity {
                                 .collection("activityList").document(activityId).update("name", newActivityName)
                                 .addOnCompleteListener(task2 -> {
                                     if (task2.isSuccessful()) {
+                                        progressDialog.dismiss();
                                         Toast.makeText(AddActivity.this, "Updated activity successfully!", Toast.LENGTH_SHORT).show();
+                                        GlobalUpdater.getInstance().setEntryListUpdated(true);
                                         finish();
                                     } else {
                                         Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();

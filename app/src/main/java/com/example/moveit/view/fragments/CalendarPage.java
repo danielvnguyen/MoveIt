@@ -11,25 +11,22 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.applandeo.materialcalendarview.CalendarView;
-
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.moveit.R;
+import com.example.moveit.model.GlobalUpdater;
 import com.example.moveit.model.theme.ThemeUtils;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.view.entries.DayEntryList;
@@ -353,10 +350,9 @@ public class CalendarPage extends Fragment {
             setUpInterface();
         }
 
-        if (requireActivity().getIntent().getExtras() != null &&
-                requireActivity().getIntent().getExtras().getBoolean("isChangedCalendar")){
+        if (GlobalUpdater.getInstance().isCalendarUpdated()) {
             setUpInterface();
-            requireActivity().getIntent().removeExtra("isChangedCalendar");
+            GlobalUpdater.getInstance().setCalendarUpdated(false);
         }
     }
 }

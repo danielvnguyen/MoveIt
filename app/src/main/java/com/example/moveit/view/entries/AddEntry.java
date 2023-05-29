@@ -44,11 +44,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.moveit.R;
+import com.example.moveit.model.GlobalUpdater;
 import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
-import com.example.moveit.view.HomeActivity;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.color.MaterialColors;
@@ -219,11 +219,9 @@ public class AddEntry extends AppCompatActivity implements
                         "imageId", imageId).addOnCompleteListener(task -> {
            if (task.isSuccessful()) {
                Toast.makeText(AddEntry.this, "Updated entry successfully!", Toast.LENGTH_SHORT).show();
-               Intent intent = new Intent(this, HomeActivity.class);
-               intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-               intent.putExtra("isChangedEntries", true);
-               intent.putExtra("isChangedCalendar", true);
-               startActivity(intent);
+               GlobalUpdater.getInstance().setEntryListUpdated(true);
+               GlobalUpdater.getInstance().setCalendarUpdated(true);
+               finish();
            } else {
                Toast.makeText(AddEntry.this, "Error updating entry", Toast.LENGTH_SHORT).show();
            }
@@ -244,11 +242,9 @@ public class AddEntry extends AppCompatActivity implements
                 .document(entry.getId()).set(entry).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(AddEntry.this, "Saved entry successfully!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(this, HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        intent.putExtra("isChangedEntries", true);
-                        intent.putExtra("isChangedCalendar", true);
-                        startActivity(intent);
+                        GlobalUpdater.getInstance().setEntryListUpdated(true);
+                        GlobalUpdater.getInstance().setCalendarUpdated(true);
+                        finish();
                     } else {
                         Toast.makeText(AddEntry.this, "Error saving entry", Toast.LENGTH_SHORT).show();
                     }
@@ -279,11 +275,9 @@ public class AddEntry extends AppCompatActivity implements
                 .document(originalEntryId).delete().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(AddEntry.this, "Deleted entry successfully!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(this, HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        intent.putExtra("isChangedEntries", true);
-                        intent.putExtra("isChangedCalendar", true);
-                        startActivity(intent);
+                        GlobalUpdater.getInstance().setEntryListUpdated(true);
+                        GlobalUpdater.getInstance().setCalendarUpdated(true);
+                        finish();
                     } else {
                         Toast.makeText(AddEntry.this, "Error deleting entry", Toast.LENGTH_SHORT).show();
                     }

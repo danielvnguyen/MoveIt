@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.moveit.R;
+import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.example.moveit.model.meals.ServingSize;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,6 +46,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -84,6 +87,7 @@ public class AddMeal extends AppCompatActivity {
 
     private Button deleteBtn;
     private Boolean editMode = false;
+    private CollectionReference entryListRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,44 +101,13 @@ public class AddMeal extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         assert currentUser != null;
+        entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
 
         setUpInterface();
         setUpSaveBtn();
         setUpDeleteBtn();
         setUpImageOptions();
         setUpSpinner();
-    }
-
-    private void setUpDeleteBtn() {
-        deleteBtn.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setCancelable(true);
-            builder.setTitle(R.string.confirm_delete_meal);
-            builder.setMessage(R.string.no_takesies_backsies);
-            builder.setPositiveButton(R.string.yes, (dialog, which) -> handleDelete());
-            builder.setNegativeButton(R.string.no, (dialog, which) -> {});
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        });
-    }
-
-    private void handleDelete() {
-        DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                .document(originalMealId);
-
-        if (!originalMealImageId.equals("")) {
-            final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
-                    .child("uploads").child(originalMealImageId);
-            fileRef.delete();
-        }
-        selectedMeal.delete().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(AddMeal.this, "Deleted meal successfully!", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(AddMeal.this, "Error deleting meal", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void setUpInterface() {
@@ -195,17 +168,17 @@ public class AddMeal extends AppCompatActivity {
         }
     }
 
-    private int validateCalories(String caloriesText, String servingSizeText) {
-        if (!caloriesText.isEmpty() && (!servingSizeText.isEmpty() && !servingSizeText.equals("0")) && !selectedUnits.equals("Unit")) {
-            return 0;
-        } else if (!caloriesText.isEmpty() && (servingSizeText.isEmpty() || servingSizeText.equals("0")) && selectedUnits.equals("Unit")) {
-            return 1;
-        } else if (caloriesText.isEmpty() && (servingSizeText.isEmpty() || servingSizeText.equals("0")) && selectedUnits.equals("Unit")) {
-            return 2;
-        } else {
-            Toast.makeText(AddMeal.this, "Please fill out both calories & serving size, or only calories", Toast.LENGTH_SHORT).show();
-            return 3;
-        }
+    private void setUpDeleteBtn() {
+        deleteBtn.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setCancelable(true);
+            builder.setTitle(R.string.confirm_delete_meal);
+            builder.setMessage(R.string.no_takesies_backsies);
+            builder.setPositiveButton(R.string.yes, (dialog, which) -> handleDelete());
+            builder.setNegativeButton(R.string.no, (dialog, which) -> {});
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        });
     }
 
     private void setUpSaveBtn() {
@@ -288,15 +261,149 @@ public class AddMeal extends AppCompatActivity {
                     fileRef.putFile(mealImageUri).addOnCompleteListener(task -> fileRef.getDownloadUrl()
                             .addOnSuccessListener(uri -> {
                         currentMeal = new Meal(mealId, mealName, finalCalories, finalServingSize, mealNote, imageId);
-                        handleUpload(currentMeal);
+                        handleSave(currentMeal);
                     }));
                 } else {
                     currentMeal = new Meal(mealId, mealName, calories, servingSize, mealNote, "");
-                    handleUpload(currentMeal);
+                    handleSave(currentMeal);
                 }
                 progressDialog.dismiss();
             }
         });
+    }
+
+    private void handleDelete() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        DocumentReference selectedMeal = db.collection("meals").document(currentUser.getUid()).collection("mealList")
+                .document(originalMealId);
+
+        //Delete attached image
+        if (!originalMealImageId.equals("")) {
+            final StorageReference fileRef = storage.getReference().child(currentUser.getUid())
+                    .child("uploads").child(originalMealImageId);
+            fileRef.delete();
+        }
+
+        //Update related entries
+        entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+           for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+               Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
+               assert currentEntry != null;
+               ArrayList<String> entryMeals = currentEntry.getMeals();
+
+               if (entryMeals.contains(originalMealName)) {
+                   entryMeals.remove(originalMealName);
+                   String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
+                   entryListRef.document(documentId).update("meals", entryMeals).addOnSuccessListener(unused -> {});
+               }
+           }
+        });
+
+        selectedMeal.delete().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                progressDialog.dismiss();
+                Toast.makeText(AddMeal.this, "Deleted meal successfully!", Toast.LENGTH_SHORT).show();
+                GlobalUpdater.getInstance().setEntryListUpdated(true);
+                finish();
+            } else {
+                Toast.makeText(AddMeal.this, "Error deleting meal", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void handleUpdate(String mealName, Integer calories, ServingSize servingSize, String mealNote, String imageId) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        CollectionReference userMealsRef = db.collection("meals").document(currentUser.getUid()).collection("mealList");
+        Query queryMealsByName = userMealsRef.whereEqualTo("name", mealName);
+        queryMealsByName.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean condition = mealName.equals(originalMealName)? (Objects.requireNonNull(task.getResult()).size() > 1)
+                        : (!Objects.requireNonNull(task.getResult()).isEmpty());
+                if (condition) {
+                    Toast.makeText(AddMeal.this, "A meal with this name already exists!", Toast.LENGTH_SHORT).show();
+                } else {
+                    //Update related entries
+                    entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
+                            Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
+                            assert currentEntry != null;
+                            ArrayList<String> entryMeals = currentEntry.getMeals();
+
+                            if (entryMeals.contains(originalMealName)) {
+                                entryMeals.remove(originalMealName);
+                                entryMeals.add(mealName);
+                                String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
+                                entryListRef.document(documentId).update("meals", entryMeals).addOnSuccessListener(unused -> {});
+                            }
+                        }
+                    });
+
+                    db.collection("meals").document(currentUser.getUid())
+                            .collection("mealList").document(originalMealId).update("name", mealName,
+                                    "calories", calories, "servingSize", servingSize, "note", mealNote,
+                                    "imageId", imageId).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(AddMeal.this, "Updated meal successfully!", Toast.LENGTH_SHORT).show();
+                                    GlobalUpdater.getInstance().setEntryListUpdated(true);
+                                    finish();
+                                } else {
+                                    Toast.makeText(AddMeal.this, "Error updating meal", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    private void handleSave(Meal meal) {
+        CollectionReference userMealsRef = db.collection("meals").document(currentUser.getUid()).collection("mealList");
+        Query queryMealsByName = userMealsRef.whereEqualTo("name", meal.getName());
+        queryMealsByName.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
+                    Toast.makeText(AddMeal.this, "A meal with this name already exists!", Toast.LENGTH_SHORT).show();
+                } else {
+                    db.collection("meals").document(currentUser.getUid()).collection("mealList")
+                            .document(meal.getId()).set(meal).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Toast.makeText(AddMeal.this, "Saved meal successfully!", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                } else {
+                                    Toast.makeText(AddMeal.this, "Error saving meal", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    private Boolean compareChanges(String mealName, Integer calories, String mealNote,
+                                   Integer servingSizeNum, String servingSizeUnits ) {
+        return originalMealName.equals(mealName) && originalMealCalories.equals(String.valueOf(calories))
+                && originalMealNote.equals(mealNote) && !imageStateAltered && originalServingSizeNum.equals(String.valueOf(servingSizeNum))
+                && originalServingSizeUnits.equals(servingSizeUnits);
+    }
+
+    private int validateCalories(String caloriesText, String servingSizeText) {
+        if (!caloriesText.isEmpty() && (!servingSizeText.isEmpty() && !servingSizeText.equals("0")) && !selectedUnits.equals("Unit")) {
+            return 0;
+        } else if (!caloriesText.isEmpty() && (servingSizeText.isEmpty() || servingSizeText.equals("0")) && selectedUnits.equals("Unit")) {
+            return 1;
+        } else if (caloriesText.isEmpty() && (servingSizeText.isEmpty() || servingSizeText.equals("0")) && selectedUnits.equals("Unit")) {
+            return 2;
+        } else {
+            Toast.makeText(AddMeal.this, "Please fill out both calories & serving size, or only calories", Toast.LENGTH_SHORT).show();
+            return 3;
+        }
     }
 
     private void setUpSpinner() {
@@ -311,6 +418,8 @@ public class AddMeal extends AppCompatActivity {
             }
         });
     }
+
+    //Image related functions
 
     private void setUpImageOptions() {
         chooseImgBtn.setOnClickListener(v -> selectImage());
@@ -358,61 +467,6 @@ public class AddMeal extends AppCompatActivity {
             deleteImgBtn.setVisibility(View.VISIBLE);
             imageStateAltered = true;
         }
-    }
-
-    private void handleUpdate(String mealName, Integer calories, ServingSize servingSize, String mealNote, String imageId) {
-        CollectionReference userMealsRef = db.collection("meals").document(currentUser.getUid()).collection("mealList");
-        Query queryMealsByName = userMealsRef.whereEqualTo("name", mealName);
-        queryMealsByName.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                boolean condition = mealName.equals(originalMealName)? (Objects.requireNonNull(task.getResult()).size() > 1)
-                        : (!Objects.requireNonNull(task.getResult()).isEmpty());
-                if (condition) {
-                    Toast.makeText(AddMeal.this, "A meal with this name already exists!", Toast.LENGTH_SHORT).show();
-                } else {
-                    db.collection("meals").document(currentUser.getUid())
-                            .collection("mealList").document(originalMealId).update("name", mealName,
-                                    "calories", calories, "servingSize", servingSize, "note", mealNote,
-                                    "imageId", imageId).addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    Toast.makeText(AddMeal.this, "Updated meal successfully!", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                } else {
-                                    Toast.makeText(AddMeal.this, "Error updating meal", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-            }
-        });
-    }
-
-    private Boolean compareChanges(String mealName, Integer calories, String mealNote,
-                                   Integer servingSizeNum, String servingSizeUnits ) {
-        return originalMealName.equals(mealName) && originalMealCalories.equals(String.valueOf(calories))
-                && originalMealNote.equals(mealNote) && !imageStateAltered && originalServingSizeNum.equals(String.valueOf(servingSizeNum))
-                && originalServingSizeUnits.equals(servingSizeUnits);
-    }
-
-    private void handleUpload(Meal meal) {
-        CollectionReference userMealsRef = db.collection("meals").document(currentUser.getUid()).collection("mealList");
-        Query queryMealsByName = userMealsRef.whereEqualTo("name", meal.getName());
-        queryMealsByName.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
-                    Toast.makeText(AddMeal.this, "A meal with this name already exists!", Toast.LENGTH_SHORT).show();
-                } else {
-                    db.collection("meals").document(currentUser.getUid()).collection("mealList")
-                            .document(meal.getId()).set(meal).addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    Toast.makeText(AddMeal.this, "Saved meal successfully!", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                } else {
-                                    Toast.makeText(AddMeal.this, "Error saving meal", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-            }
-        });
     }
 
     private String getFileExtension(Uri imageUri) {
