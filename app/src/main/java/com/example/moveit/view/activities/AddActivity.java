@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.model.activities.Activity;
 import com.example.moveit.model.entries.Entry;
+import com.example.moveit.model.GlobalUpdater;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -95,13 +95,7 @@ public class AddActivity extends AppCompatActivity {
                     }
 
                     String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
-                    entryListRef.document(documentId).update("activities", entryActivities).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d("AddActivity", "Successfully updated entry activities");
-                        } else {
-                            Log.d("AddActivity", "Error updating entry activities: ", task.getException());
-                        }
-                    });
+                    entryListRef.document(documentId).update("activities", entryActivities).addOnSuccessListener(unused -> {});
                 }
             }
         });
@@ -111,6 +105,7 @@ public class AddActivity extends AppCompatActivity {
                 .collection("activityList").document(activityId).delete().addOnCompleteListener(task1 -> {
                     if (task1.isSuccessful()) {
                         Toast.makeText(AddActivity.this, "Deleted activity successfully!", Toast.LENGTH_SHORT).show();
+                        GlobalUpdater.getInstance().setEntryListUpdated(true);
                         finish();
                     } else {
                         Toast.makeText(AddActivity.this, "Error deleting activity", Toast.LENGTH_SHORT).show();
@@ -161,13 +156,7 @@ public class AddActivity extends AppCompatActivity {
                                     entryActivities.put(newActivityName, newCategoryIds);
 
                                     String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
-                                    entryListRef.document(documentId).update("activities", entryActivities).addOnCompleteListener(task1 -> {
-                                        if (task1.isSuccessful()) {
-                                            Log.d("AddActivity", "Successfully updated entry activities");
-                                        } else {
-                                            Log.d("AddActivity", "Error updating entry activities: ", task.getException());
-                                        }
-                                    });
+                                    entryListRef.document(documentId).update("activities", entryActivities).addOnSuccessListener(unused -> {});
                                 }
                             }
                         });
@@ -178,6 +167,7 @@ public class AddActivity extends AppCompatActivity {
                                 .addOnCompleteListener(task2 -> {
                                     if (task2.isSuccessful()) {
                                         Toast.makeText(AddActivity.this, "Updated activity successfully!", Toast.LENGTH_SHORT).show();
+                                        GlobalUpdater.getInstance().setEntryListUpdated(true);
                                         finish();
                                     } else {
                                         Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();

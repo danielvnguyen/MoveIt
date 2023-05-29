@@ -20,6 +20,7 @@ import com.example.moveit.R;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.entries.EntryComparator;
 import com.example.moveit.model.entries.EntryListAdapter;
+import com.example.moveit.model.GlobalUpdater;
 import com.example.moveit.view.entries.AddEntry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -178,10 +179,9 @@ public class EntriesPage extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (requireActivity().getIntent().getExtras() != null &&
-                requireActivity().getIntent().getExtras().getBoolean("isChangedEntries")){
+        if (GlobalUpdater.getInstance().isEntryListUpdated()) {
             setUpEntryList();
-            requireActivity().getIntent().removeExtra("isChangedEntries");
+            GlobalUpdater.getInstance().setEntryListUpdated(false);
         }
     }
 }
