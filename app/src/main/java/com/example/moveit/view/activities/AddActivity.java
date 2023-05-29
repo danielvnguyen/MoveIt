@@ -36,6 +36,7 @@ public class AddActivity extends AppCompatActivity {
 
     private Button saveBtn;
     private Button deleteBtn;
+    private CollectionReference entryListRef;
 
     private boolean isNew = false;
 
@@ -47,6 +48,7 @@ public class AddActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
 
         setUpInterface();
         setUpButtons();
@@ -74,8 +76,7 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void handleDelete() {
-        //Handle propagation (to entry list)
-        CollectionReference entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
+        //Update related entries
         entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
             for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
                 Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
@@ -128,17 +129,14 @@ public class AddActivity extends AppCompatActivity {
                     if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
                         Toast.makeText(AddActivity.this, "An activity with this name already exists!", Toast.LENGTH_SHORT).show();
                     } else {
-                        //Handle propagation (to entry list)
-                        CollectionReference entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
+                        //Updated related entries
                         entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
                             for (int i = 0; i < queryDocumentSnapshots.size(); i++) {
-                                //For each entry, check if current activity is inside that entry's activities
                                 Entry currentEntry = queryDocumentSnapshots.getDocuments().get(i).toObject(Entry.class);
                                 assert currentEntry != null;
                                 HashMap<String, ArrayList<String>> entryActivities = currentEntry.getActivities();
 
-                                if (entryActivities.containsKey(originalActivityName) &&
-                                        Objects.requireNonNull(
+                                if (entryActivities.containsKey(originalActivityName) && Objects.requireNonNull(
                                                 entryActivities.get(originalActivityName)).contains(categoryId)) {
                                     ArrayList<String> currentCategoryIds = entryActivities.get(originalActivityName);
                                     ArrayList<String> newCategoryIds = new ArrayList<>();
@@ -146,7 +144,6 @@ public class AddActivity extends AppCompatActivity {
 
                                     currentCategoryIds.remove(categoryId);
                                     newCategoryIds.add(categoryId);
-                                    //Account for duplicate activity names
                                     if (currentCategoryIds.isEmpty()) {
                                         entryActivities.remove(originalActivityName);
                                     }
