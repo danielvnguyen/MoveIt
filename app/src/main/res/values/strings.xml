@@ -126,4 +126,6 @@
     <string name="slide_five_text">If you ever need to refer back to this guide, simply visit the Settings tab. May your experience with MoveIt! be enjoyable!</string>
     <string name="see_guide">See Guide</string>
     <string name="sort_by">Sort By: Newest</string>
+    <string name="activity_note_hint">Keep related information to this activity, such as your personal record</string>
+    <string name="activity_notes">Activity Notes</string>
 </resources>

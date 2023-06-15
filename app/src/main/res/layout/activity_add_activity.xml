@@ -49,4 +49,31 @@
         app:strokeWidth="2dp"
         tools:visibility="visible" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/raleway"
+            android:textSize="18sp"
+            android:text="@string/activity_notes" />
+
+        <EditText
+            android:id="@+id/activityNotes"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:fontFamily="@font/raleway"
+            android:gravity="start|top"
+            android:hint="@string/activity_note_hint"
+            android:inputType="textMultiLine"
+            android:textSize="16sp" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

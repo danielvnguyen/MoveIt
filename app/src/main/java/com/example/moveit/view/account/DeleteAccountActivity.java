@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.example.moveit.R;
-import com.example.moveit.model.activities.Activity;
+import com.example.moveit.model.activities.CategoryActivity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
@@ -159,13 +159,13 @@ public class DeleteAccountActivity extends AppCompatActivity {
                 for (String categoryId : categoryIds) {
                     categoriesRef.document(categoryId).collection("activityList").get().addOnCompleteListener(task1 -> {
                         if (task1.isSuccessful()) {
-                            ArrayList<Activity> activities = new ArrayList<>();
+                            ArrayList<CategoryActivity> activities = new ArrayList<>();
                             for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
-                                Activity currentActivity = activityDoc.toObject(Activity.class);
+                                CategoryActivity currentActivity = activityDoc.toObject(CategoryActivity.class);
                                 activities.add(currentActivity);
                             }
                             WriteBatch batch = db.batch();
-                            for (Activity activity : activities) {
+                            for (CategoryActivity activity : activities) {
                                 if (activity.getCategoryId().equals(categoryId)) {
                                     batch.delete(categoriesRef.document(categoryId).collection("activityList").document(activity.getActivityId()));
                                 }

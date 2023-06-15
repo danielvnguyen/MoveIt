@@ -45,7 +45,7 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.moveit.R;
 import com.example.moveit.model.GlobalUpdater;
-import com.example.moveit.model.activities.Activity;
+import com.example.moveit.model.activities.CategoryActivity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
@@ -568,7 +568,7 @@ public class AddEntry extends AppCompatActivity implements
                                 .collection("activityList").get().addOnCompleteListener(task1 -> {
                                     if (task1.isSuccessful()) {
                                         for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task1.getResult())) {
-                                            Activity currentActivity = activityDoc.toObject(Activity.class);
+                                            CategoryActivity currentActivity = activityDoc.toObject(CategoryActivity.class);
                                             Chip activityChip = buildActivityChip(currentActivity.getName(), currentActivity.getCategoryId());
                                             activityChipGroup.addView(activityChip);
                                         }

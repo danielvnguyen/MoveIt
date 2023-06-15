@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import com.example.moveit.R;
 import com.example.moveit.view.activities.AddActivity;
 
-public class ActivityListAdapter extends ArrayAdapter<Activity> {
+public class ActivityListAdapter extends ArrayAdapter<CategoryActivity> {
     private final Context context;
     private final Integer resource;
 

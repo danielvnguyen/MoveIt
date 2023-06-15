@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.model.PasswordValidator;
-import com.example.moveit.model.activities.Activity;
+import com.example.moveit.model.activities.CategoryActivity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.meals.Meal;
 import com.example.moveit.model.meals.ServingSize;
@@ -154,7 +154,7 @@ public class RegisterActivity extends AppCompatActivity {
         String[] currentActivities = defaultActivities[position];
         for (String currentActivity : currentActivities) {
             String activityId = UUID.randomUUID().toString();
-            Activity newActivity = new Activity(currentActivity, categoryId, activityId);
+            CategoryActivity newActivity = new CategoryActivity(currentActivity, categoryId, activityId, "");
             db.collection("categories").document(currentUser.getUid())
                     .collection("categoryList").document(categoryId)
                     .collection("activityList").document(activityId).set(newActivity);

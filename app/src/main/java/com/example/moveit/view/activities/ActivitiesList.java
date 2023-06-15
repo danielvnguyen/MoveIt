@@ -15,7 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.model.GlobalUpdater;
-import com.example.moveit.model.activities.Activity;
+import com.example.moveit.model.activities.CategoryActivity;
 import com.example.moveit.model.activities.ActivityListAdapter;
 import com.example.moveit.model.entries.Entry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -37,7 +37,7 @@ public class ActivitiesList extends AppCompatActivity {
 
     private String originalCategoryName;
     private EditText categoryNameInput;
-    private ArrayAdapter<Activity> adapter;
+    private ArrayAdapter<CategoryActivity> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +68,9 @@ public class ActivitiesList extends AppCompatActivity {
         db.collection("categories").document(currentUser.getUid()).collection("categoryList")
                 .document(categoryId).collection("activityList").get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        ArrayList<Activity> activityList = new ArrayList<>();
+                        ArrayList<CategoryActivity> activityList = new ArrayList<>();
                         for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task.getResult())) {
-                            Activity currentActivity = activityDoc.toObject(Activity.class);
+                            CategoryActivity currentActivity = activityDoc.toObject(CategoryActivity.class);
                             activityList.add(currentActivity);
                         }
 
@@ -146,7 +146,7 @@ public class ActivitiesList extends AppCompatActivity {
         selectedCategory.collection("activityList").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot activityDoc : Objects.requireNonNull(task.getResult())) {
-                    Activity currentActivity = activityDoc.toObject(Activity.class);
+                    CategoryActivity currentActivity = activityDoc.toObject(CategoryActivity.class);
 
                     //Update related entries
                     CollectionReference entryListRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
