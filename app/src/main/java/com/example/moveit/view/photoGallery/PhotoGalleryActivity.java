@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.databinding.ActivityPhotoGalleryBinding;
@@ -64,6 +65,8 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 2;
     private String currentPhotoPath;
 
+    private Boolean isDefaultSort = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +81,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
 
         setUpGallery();
         setUpAddImgButtons();
+        setUpSortByBtn();
     }
 
     private void setUpAddImgButtons() {
@@ -203,7 +207,11 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                     images.add(imageData);
 
                     if (images.size() == task.getResult().getItems().size()) {
-                        images.sort((o1, o2) -> Long.compare(o2.getCreationTimeMillis(), o1.getCreationTimeMillis()));
+                        if (isDefaultSort) {
+                            images.sort((o1, o2) -> Long.compare(o2.getCreationTimeMillis(), o1.getCreationTimeMillis()));
+                        } else {
+                            images.sort((o1, o2) -> Long.compare(o1.getCreationTimeMillis(), o2.getCreationTimeMillis()));
+                        }
                         List<StorageReference> sortedImages = new ArrayList<>();
                         for (ImageData img : images) {
                             sortedImages.add(img.getReference());
@@ -222,6 +230,22 @@ public class PhotoGalleryActivity extends AppCompatActivity {
                     }
                     progressDialog.dismiss();
                 });
+            }
+        });
+    }
+
+    private void setUpSortByBtn() {
+        Button sortByBtn = findViewById(R.id.sortByBtn);
+        sortByBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isDefaultSort = !isDefaultSort;
+                if (isDefaultSort) {
+                    sortByBtn.setText("Sort By: Newest");               
+                } else {
+                    sortByBtn.setText("Sort By: Oldest");
+                }
+                setUpGallery();
             }
         });
     }

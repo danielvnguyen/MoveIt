@@ -125,4 +125,5 @@
     <string name="slide_four_text"><![CDATA[In the Settings tab, you can access your saved meals & activities, photos, reminder time, account settings, color theme, and other information]]></string>
     <string name="slide_five_text">If you ever need to refer back to this guide, simply visit the Settings tab. May your experience with MoveIt! be enjoyable!</string>
     <string name="see_guide">See Guide</string>
+    <string name="sort_by">Sort By: Newest</string>
 </resources>
