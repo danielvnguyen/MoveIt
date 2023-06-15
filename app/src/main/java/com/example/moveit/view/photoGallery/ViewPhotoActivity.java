@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.moveit.R;
+import com.example.moveit.model.GlobalUpdater;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -114,6 +115,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
         imageRef.delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(ViewPhotoActivity.this, "Successfully deleted image", Toast.LENGTH_SHORT).show();
+                GlobalUpdater.getInstance().setGalleryUpdated(true);
                 finish();
             } else {
                 Toast.makeText(ViewPhotoActivity.this, "Failed to deleted image", Toast.LENGTH_SHORT).show();

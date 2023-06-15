@@ -5,6 +5,7 @@ public class GlobalUpdater {
     private static GlobalUpdater instance;
     private boolean entryListUpdated;
     private boolean calendarUpdated;
+    private boolean galleryUpdated;
 
     private GlobalUpdater() {}
 
@@ -29,5 +30,13 @@ public class GlobalUpdater {
 
     public void setCalendarUpdated(boolean calendarUpdated) {
         this.calendarUpdated = calendarUpdated;
+    }
+
+    public boolean isGalleryUpdated() {
+        return galleryUpdated;
+    }
+
+    public void setGalleryUpdated(boolean galleryUpdated) {
+        this.galleryUpdated = galleryUpdated;
     }
 }

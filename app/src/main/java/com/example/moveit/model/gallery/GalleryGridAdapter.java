@@ -1,5 +1,4 @@
-package com.example.moveit.model;
-
+package com.example.moveit.model.gallery;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,26 +9,27 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.example.moveit.R;
-import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
+import java.util.List;
 
 public class GalleryGridAdapter extends BaseAdapter {
     private final Context context;
-    private final ListResult images;
+    private final List<StorageReference> images;
     private LayoutInflater inflater;
 
-    public GalleryGridAdapter(Context context, ListResult images) {
+    public GalleryGridAdapter(Context context, List<StorageReference> images) {
         this.context = context;
         this.images = images;
     }
 
     @Override
     public int getCount() {
-        return images.getItems().size();
+        return images.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return images.getItems().get(position);
+        return images.get(position);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class GalleryGridAdapter extends BaseAdapter {
         }
 
         ImageView imageView = convertView.findViewById(R.id.gridImage);
-        images.getItems().get(position).getDownloadUrl().addOnCompleteListener(task ->
+        images.get(position).getDownloadUrl().addOnCompleteListener(task ->
                 Glide.with(imageView.getContext()).load(task.getResult()).centerCrop().into(imageView));
 
         return convertView;

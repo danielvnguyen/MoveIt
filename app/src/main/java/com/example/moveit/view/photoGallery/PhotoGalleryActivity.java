@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -25,24 +24,27 @@ import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.databinding.ActivityPhotoGalleryBinding;
-import com.example.moveit.model.GalleryGridAdapter;
+import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.gallery.GalleryGridAdapter;
+import com.example.moveit.model.gallery.ImageData;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@SuppressWarnings("ALL")
 public class PhotoGalleryActivity extends AppCompatActivity {
 
-    private ListResult images;
+    private List<ImageData> images;
     private ActivityPhotoGalleryBinding binding;
     private FirebaseStorage storage;
     private FirebaseUser currentUser;
@@ -192,21 +194,35 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
+        images = new ArrayList<>();
         StorageReference ref = storage.getReference().child(currentUser.getUid()).child("uploads");
         ref.listAll().addOnCompleteListener(task -> {
-            images = task.getResult();
-            adapter = new GalleryGridAdapter(PhotoGalleryActivity.this, images);
-            binding.gridView.setAdapter(adapter);
-            progressDialog.dismiss();
+            for (StorageReference imageRef : Objects.requireNonNull(task.getResult()).getItems()) {
+                imageRef.getMetadata().addOnSuccessListener(metadata -> {
+                    ImageData imageData = new ImageData(imageRef, metadata.getCreationTimeMillis());
+                    images.add(imageData);
 
-            binding.gridView.setOnItemClickListener((parent, view, position, id) -> {
-                Intent intent = ViewPhotoActivity.makeIntent(this);
-                Object currentItem = binding.gridView.getItemAtPosition(position);
-                String imageId = currentItem.toString().substring(currentItem.toString().indexOf("uploads/") + 8);
-                intent.putExtra("imageId", imageId);
-                intent.putExtra("showDelete", true);
-                startActivity(intent);
-            });
+                    if (images.size() == task.getResult().getItems().size()) {
+                        images.sort((o1, o2) -> Long.compare(o2.getCreationTimeMillis(), o1.getCreationTimeMillis()));
+                        List<StorageReference> sortedImages = new ArrayList<>();
+                        for (ImageData img : images) {
+                            sortedImages.add(img.getReference());
+                            adapter = new GalleryGridAdapter(PhotoGalleryActivity.this, sortedImages);
+                            binding.gridView.setAdapter(adapter);
+
+                            binding.gridView.setOnItemClickListener((parent, view, position, id) -> {
+                                Intent intent = ViewPhotoActivity.makeIntent(this);
+                                Object currentItem = binding.gridView.getItemAtPosition(position);
+                                String imageId = currentItem.toString().substring(currentItem.toString().indexOf("uploads/") + 8);
+                                intent.putExtra("imageId", imageId);
+                                intent.putExtra("showDelete", true);
+                                startActivity(intent);
+                            });
+                        }
+                    }
+                    progressDialog.dismiss();
+                });
+            }
         });
     }
 
@@ -235,7 +251,10 @@ public class PhotoGalleryActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setUpGallery();
+        if (GlobalUpdater.getInstance().isGalleryUpdated()) {
+            setUpGallery();
+            GlobalUpdater.getInstance().setGalleryUpdated(false);
+        }
     }
 
     @Override
