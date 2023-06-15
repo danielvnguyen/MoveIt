@@ -48,6 +48,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
     private ImageView deleteImgBtn;
     private ImageView goToGalleryBtn;
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

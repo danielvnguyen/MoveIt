@@ -1,13 +1,21 @@
 package com.example.moveit.model.gallery;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.moveit.R;
 import com.google.firebase.storage.StorageReference;
 import java.util.List;
@@ -50,9 +58,20 @@ public class GalleryGridAdapter extends BaseAdapter {
         }
 
         ImageView imageView = convertView.findViewById(R.id.gridImage);
-        images.get(position).getDownloadUrl().addOnCompleteListener(task ->
-                Glide.with(imageView.getContext()).load(task.getResult()).centerCrop().into(imageView));
+        images.get(position).getDownloadUrl().addOnCompleteListener(task -> {
+            if (!isActivityDestroyed(imageView.getContext())) {
+                Glide.with(imageView.getContext()).load(task.getResult()).centerCrop().into(imageView);
+            }
+        });
 
         return convertView;
+    }
+
+    private boolean isActivityDestroyed(Context context) {
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            return activity.isDestroyed() || activity.isFinishing();
+        }
+        return false;
     }
 }
