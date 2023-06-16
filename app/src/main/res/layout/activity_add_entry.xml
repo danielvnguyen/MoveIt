@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.entries.AddEntry"
-    tools:ignore="Autofill, LabelFor, ContentDescription, TextContrastCheck">
+    tools:ignore="Autofill, LabelFor, ContentDescription, TextContrastCheck, ButtonStyle">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -265,12 +265,23 @@
                 tools:visibility="visible" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
                 android:layout_marginTop="16dp"
-                android:orientation="vertical">
+                android:layout_marginBottom="16dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/saveEntryBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/save"
+                    app:strokeColor="@color/dark_green"
+                    app:strokeWidth="2dp"
+                    android:layout_marginEnd="8dp"/>
+
                 <Button
                     android:id="@+id/deleteEntryBtn"
                     android:layout_width="wrap_content"
@@ -282,14 +293,6 @@
                     app:strokeColor="@color/dark_green"
                     app:strokeWidth="2dp" />
 
-                <Button
-                    android:id="@+id/saveEntryBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/save"
-                    app:strokeColor="@color/dark_green"
-                    app:strokeWidth="2dp" />
             </LinearLayout>
 
         </LinearLayout>

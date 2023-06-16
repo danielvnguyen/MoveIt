@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.activities.AddActivity"
-    tools:ignore="Autofill">
+    tools:ignore="Autofill, ButtonStyle">
 
     <EditText
         android:id="@+id/activityNameInput"
@@ -21,33 +21,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/saveActivityBtn"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="@font/raleway_bold"
-        android:text="@string/save"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activityNameInput"
-        app:strokeColor="@color/dark_green"
-        app:strokeWidth="2dp" />
+        app:layout_constraintTop_toBottomOf="@+id/activityNameInput">
 
-    <Button
-        android:id="@+id/deleteActivityBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:fontFamily="@font/raleway_bold"
-        android:text="@string/delete"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/saveActivityBtn"
-        app:layout_constraintTop_toBottomOf="@+id/activityNameInput"
-        app:strokeColor="@color/dark_green"
-        app:strokeWidth="2dp"
-        tools:visibility="visible" />
+        <Button
+            android:id="@+id/saveActivityBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="@font/raleway_bold"
+            android:text="@string/save"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp" />
+
+        <Button
+            android:id="@+id/deleteActivityBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="@font/raleway_bold"
+            android:text="@string/delete"
+            android:visibility="gone"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
+            tools:visibility="visible" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
