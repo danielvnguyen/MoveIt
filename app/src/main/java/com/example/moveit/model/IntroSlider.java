@@ -29,13 +29,13 @@ public class IntroSlider extends AppIntro {
         addSlide(AppIntroFragment.createInstance("Welcome!", getString(R.string.slide_one_text),
                 R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Creating entries", getString(R.string.slide_two_text),
-                R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
+                R.drawable.slide_2, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Viewing your progress", getString(R.string.slide_three_text),
-                R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
+                R.drawable.slide_3, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Settings", getString(R.string.slide_four_text),
-                R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
+                R.drawable.slide_4, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Thanks for reading!", getString(R.string.slide_five_text),
-                R.drawable.app_icon, backgroundColour, textColour, textColour, fontFamily, fontFamily));
+                R.drawable.amazing_icon_slide, backgroundColour, textColour, textColour, fontFamily, fontFamily));
 
         String[] permissions = {
                 Manifest.permission.READ_MEDIA_IMAGES,
