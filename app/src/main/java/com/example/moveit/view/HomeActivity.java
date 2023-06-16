@@ -28,6 +28,8 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
 
+    private boolean seenSlideshow;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +38,8 @@ public class HomeActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         assert currentUser != null;
+
+        seenSlideshow = getSharedPreferences("PREFS", MODE_PRIVATE).getBoolean("seenSlideshow", false);
 
         tabLayout = findViewById(R.id.homeTabs);
         viewPager = findViewById(R.id.view_pager);
@@ -70,9 +74,11 @@ public class HomeActivity extends AppCompatActivity {
         setUpAlarm();
 
         //Show introduction slide show if new user
-        if (Objects.requireNonNull(currentUser.getMetadata()).getCreationTimestamp() == currentUser.getMetadata().getLastSignInTimestamp()) {
+        if (!seenSlideshow && (Objects.requireNonNull(currentUser.getMetadata()).getCreationTimestamp() == currentUser.getMetadata().getLastSignInTimestamp())) {
             Intent i = new Intent(getApplicationContext(), IntroSlider.class);
             startActivity(i);
+
+            getSharedPreferences("PREFS", MODE_PRIVATE).edit().putBoolean("seenSlideshow", true).apply();
         }
     }
 

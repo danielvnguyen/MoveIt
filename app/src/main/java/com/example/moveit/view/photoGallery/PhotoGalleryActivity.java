@@ -201,36 +201,40 @@ public class PhotoGalleryActivity extends AppCompatActivity {
         images = new ArrayList<>();
         StorageReference ref = storage.getReference().child(currentUser.getUid()).child("uploads");
         ref.listAll().addOnCompleteListener(task -> {
-            for (StorageReference imageRef : Objects.requireNonNull(task.getResult()).getItems()) {
-                imageRef.getMetadata().addOnSuccessListener(metadata -> {
-                    ImageData imageData = new ImageData(imageRef, metadata.getCreationTimeMillis());
-                    images.add(imageData);
+            if (task.isSuccessful()) {
+                if (!task.getResult().getItems().isEmpty()) {
+                    for (StorageReference imageRef : Objects.requireNonNull(task.getResult()).getItems()) {
+                        imageRef.getMetadata().addOnSuccessListener(metadata -> {
+                            ImageData imageData = new ImageData(imageRef, metadata.getCreationTimeMillis());
+                            images.add(imageData);
 
-                    if (images.size() == task.getResult().getItems().size()) {
-                        if (isDefaultSort) {
-                            images.sort((o1, o2) -> Long.compare(o2.getCreationTimeMillis(), o1.getCreationTimeMillis()));
-                        } else {
-                            images.sort((o1, o2) -> Long.compare(o1.getCreationTimeMillis(), o2.getCreationTimeMillis()));
-                        }
-                        List<StorageReference> sortedImages = new ArrayList<>();
-                        for (ImageData img : images) {
-                            sortedImages.add(img.getReference());
-                            adapter = new GalleryGridAdapter(PhotoGalleryActivity.this, sortedImages);
-                            binding.gridView.setAdapter(adapter);
+                            if (images.size() == task.getResult().getItems().size()) {
+                                if (isDefaultSort) {
+                                    images.sort((o1, o2) -> Long.compare(o2.getCreationTimeMillis(), o1.getCreationTimeMillis()));
+                                } else {
+                                    images.sort((o1, o2) -> Long.compare(o1.getCreationTimeMillis(), o2.getCreationTimeMillis()));
+                                }
+                                List<StorageReference> sortedImages = new ArrayList<>();
+                                for (ImageData img : images) {
+                                    sortedImages.add(img.getReference());
+                                    adapter = new GalleryGridAdapter(PhotoGalleryActivity.this, sortedImages);
+                                    binding.gridView.setAdapter(adapter);
 
-                            binding.gridView.setOnItemClickListener((parent, view, position, id) -> {
-                                Intent intent = ViewPhotoActivity.makeIntent(this);
-                                Object currentItem = binding.gridView.getItemAtPosition(position);
-                                String imageId = currentItem.toString().substring(currentItem.toString().indexOf("uploads/") + 8);
-                                intent.putExtra("imageId", imageId);
-                                intent.putExtra("showDelete", true);
-                                startActivity(intent);
-                            });
-                        }
+                                    binding.gridView.setOnItemClickListener((parent, view, position, id) -> {
+                                        Intent intent = ViewPhotoActivity.makeIntent(this);
+                                        Object currentItem = binding.gridView.getItemAtPosition(position);
+                                        String imageId = currentItem.toString().substring(currentItem.toString().indexOf("uploads/") + 8);
+                                        intent.putExtra("imageId", imageId);
+                                        intent.putExtra("showDelete", true);
+                                        startActivity(intent);
+                                    });
+                                }
+                            }
+                        });
                     }
-                    progressDialog.dismiss();
-                });
+                }
             }
+            progressDialog.dismiss();
         });
     }
 
