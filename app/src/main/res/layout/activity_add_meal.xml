@@ -5,171 +5,187 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.meals.AddMeal"
-    tools:ignore="LabelFor, Autofill, ContentDescription">
+    tools:ignore="LabelFor, Autofill, ContentDescription, ButtonStyle">
 
-    <EditText
-        android:id="@+id/mealName"
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:ems="13"
-        android:inputType="textPersonName"
-        android:hint="@string/meal_name"
-        android:fontFamily="@font/raleway"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <LinearLayout
-        android:id="@+id/calorieServingSizeLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mealName">
-
-        <EditText
-            android:id="@+id/caloriesInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="24dp"
-            android:hint="@string/calories"
-            android:fontFamily="@font/raleway"
-            android:inputType="number"
-            android:maxLength="10"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="@string/per"
-            android:textSize="18sp"
-            android:textColor="@color/light_gray"
-            tools:layout_editor_absoluteY="119dp" />
-
-        <EditText
-            android:id="@+id/servingSizeInput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:textAlignment="center"
-            android:hint="@string/number_hint"
-            android:text="@string/_0"
-            android:layout_marginTop="24dp"
-            android:ems="3"
-            android:inputType="number"
-            android:maxLength="5"
-            tools:ignore="RtlCompat" />
-
-        <Spinner
-            android:id="@+id/servingSizeSpinner"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:translationY="10dp"
-            android:scrollbars="none"
-            android:spinnerMode="dropdown"/>
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <EditText
+                android:id="@+id/mealName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:ems="13"
+                android:fontFamily="@font/raleway"
+                android:hint="@string/meal_name"
+                android:inputType="textPersonName"
+                android:layout_gravity="center"/>
 
-    <EditText
-        android:id="@+id/mealNote"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:gravity="start|top"
-        android:hint="@string/meal_notes"
-        android:fontFamily="@font/raleway"
-        android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calorieServingSizeLayout" />
+            <LinearLayout
+                android:id="@+id/calorieServingSizeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
 
-    <Button
-        android:id="@+id/saveMealBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:fontFamily="@font/raleway_bold"
-        android:text="@string/save"
-        app:strokeColor="@color/dark_green"
-        app:strokeWidth="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+                <EditText
+                    android:id="@+id/caloriesInput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/raleway"
+                    android:hint="@string/calories"
+                    android:inputType="number"
+                    android:maxLength="10" />
 
-    <Button
-        android:id="@+id/deleteMealBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="@string/delete"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/saveMealBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/dark_green"
-        app:strokeWidth="2dp"
-        tools:visibility="visible" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/per"
+                    android:textColor="@color/light_gray"
+                    android:textSize="18sp"
+                    tools:layout_editor_absoluteY="119dp" />
 
-    <LinearLayout
-        android:id="@+id/imageBtnLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mealNote">
+                <EditText
+                    android:id="@+id/servingSizeInput"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="24dp"
+                    android:ems="3"
+                    android:hint="@string/number_hint"
+                    android:inputType="number"
+                    android:maxLength="5"
+                    android:text="@string/_0"
+                    android:textAlignment="center"
+                    tools:ignore="RtlCompat" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/raleway"
-            android:layout_gravity="center_vertical"
-            android:text="@string/add_image"
-            android:textSize="16sp" />
+                <Spinner
+                    android:id="@+id/servingSizeSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    android:spinnerMode="dropdown"
+                    android:translationY="10dp" />
 
-        <ImageView
-            android:id="@+id/chooseImageBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/circle_button"
-            android:scaleType="center"
-            app:srcCompat="@android:drawable/ic_menu_gallery" />
+            </LinearLayout>
 
-        <ImageView
-            android:id="@+id/takeNewImageBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/circle_button"
-            android:scaleType="center"
-            app:srcCompat="@android:drawable/ic_menu_camera" />
+            <EditText
+                android:id="@+id/mealNote"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:fontFamily="@font/raleway"
+                android:gravity="start|top"
+                android:hint="@string/meal_notes"
+                android:inputType="textMultiLine"
+                android:layout_gravity="center"/>
 
-        <ImageView
-            android:id="@+id/deleteImgBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/circle_button"
-            android:scaleType="center"
-            android:visibility="gone"
-            app:srcCompat="@android:drawable/ic_menu_delete"
-            tools:visibility="visible" />
+            <LinearLayout
+                android:id="@+id/imageBtnLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center">
 
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
 
-    <ImageView
-        android:id="@+id/mealImageView"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/deleteMealBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageBtnLayout"
-        tools:srcCompat="@drawable/default_image"
-        tools:visibility="visible" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:fontFamily="@font/raleway"
+                        android:text="@string/add_image"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/chooseImageBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_button"
+                        android:scaleType="center"
+                        app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+                    <ImageView
+                        android:id="@+id/takeNewImageBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_button"
+                        android:scaleType="center"
+                        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+                    <ImageView
+                        android:id="@+id/deleteImgBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_button"
+                        android:scaleType="center"
+                        android:visibility="gone"
+                        app:srcCompat="@android:drawable/ic_menu_delete"
+                        tools:visibility="visible" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/mealImageView"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:visibility="gone"
+                    tools:srcCompat="@drawable/default_image"
+                    tools:visibility="visible"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/saveMealBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/raleway_bold"
+                    android:text="@string/save"
+                    app:strokeColor="@color/dark_green"
+                    app:strokeWidth="2dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <Button
+                    android:id="@+id/deleteMealBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delete"
+                    android:visibility="gone"
+                    app:strokeColor="@color/dark_green"
+                    app:strokeWidth="2dp"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
