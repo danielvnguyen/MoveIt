@@ -96,6 +96,7 @@
         </activity>
         <activity
             android:name=".view.entries.AddEntry"
+            android:parentActivityName=".view.HomeActivity"
             android:exported="false" />
 
         <receiver android:name=".reminder.NotificationReceiver" />

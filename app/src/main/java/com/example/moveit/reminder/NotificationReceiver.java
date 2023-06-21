@@ -16,13 +16,12 @@ import com.example.moveit.view.entries.AddEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
 /*
-    This class is needed for background processes
+    This class is needed for background processes corresponding to notifications
  */
 public class NotificationReceiver extends BroadcastReceiver {
     private static final String NOTIFICATION_CHANNEL_ID = "10001";
@@ -36,6 +35,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         assert currentUser != null;
 
         Intent notificationIntent = new Intent(context, AddEntry.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(AddEntry.class);
