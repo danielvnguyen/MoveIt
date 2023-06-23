@@ -20,7 +20,6 @@
         android:theme="@style/Theme.MoveIt">
         <activity
             android:name=".model.IntroSlider"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false"/>
         <activity
             android:name=".view.account.DeleteAccountActivity"
