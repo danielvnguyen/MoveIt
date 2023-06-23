@@ -45,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private GoogleSignInClient signInClient;
     private static final int RC_SIGN_IN = 9001;
+    private static final String ID_TOKEN = "446715183529-ucspush1pj4sqs89s71ipeeoooq476e5.apps.googleusercontent.com";
+
     private final String[] defaultCategories = {"Strength Exercises", "Cardio Exercises", "Flexibility Exercises", "Balance Exercises"};
     private final String[][] defaultActivities = {{"Weightlifting", "Pull-ups", "Push-ups", "Planks", "Sit-ups"},
             {"Running", "Walking", "Swimming", "Skip Rope", "Cycling"}, {"Yoga", "Meditation", "Stretching"},
@@ -88,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setUpGoogleSignInBtn() {
         GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(ID_TOKEN)
                 .requestEmail()
                 .build();
         signInClient = GoogleSignIn.getClient(this, signInOptions);

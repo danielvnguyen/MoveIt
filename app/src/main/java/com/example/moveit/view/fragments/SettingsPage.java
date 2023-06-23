@@ -24,9 +24,13 @@ import com.example.moveit.view.StartActivity;
 import com.example.moveit.view.account.AccountSettingsActivity;
 import com.example.moveit.view.meals.MealList;
 import com.example.moveit.view.reminder.ReminderActivity;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsPage extends Fragment {
+    private static final String ID_TOKEN = "446715183529-ucspush1pj4sqs89s71ipeeoooq476e5.apps.googleusercontent.com";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,6 +102,13 @@ public class SettingsPage extends Fragment {
 
     private void handleLogout() {
         FirebaseAuth.getInstance().signOut();
+        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(ID_TOKEN)
+                .requestEmail()
+                .build();
+        GoogleSignInClient signInClient = GoogleSignIn.getClient(requireActivity(), signInOptions);
+        signInClient.signOut();
+
         Toast.makeText(getActivity(), "Log out successful", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(), StartActivity.class);
         startActivity(intent);
