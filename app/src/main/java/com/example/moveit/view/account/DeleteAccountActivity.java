@@ -11,6 +11,7 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -20,8 +21,14 @@ import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.example.moveit.view.StartActivity;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -32,12 +39,16 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class DeleteAccountActivity extends AppCompatActivity {
-
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private EditText passwordInput;
+    private Button showHideBtn;
+
+    private boolean isGoogleSignInOnly = false;
+    private EditText verificationInput;
+    private static final String ID_TOKEN = "446715183529-ucspush1pj4sqs89s71ipeeoooq476e5.apps.googleusercontent.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +63,22 @@ public class DeleteAccountActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         assert currentUser != null;
         passwordInput = findViewById(R.id.passwordInput);
+        showHideBtn = findViewById(R.id.passwordShowHideBtn);
+        verificationInput = findViewById(R.id.verificationInput);
 
-        setUpDeleteBtn();
-        setUpShowHideBtn();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            isGoogleSignInOnly = extras.getBoolean("isGoogleSignInOnly");
+        }
+        if (isGoogleSignInOnly) {
+            passwordInput.setVisibility(View.GONE);
+            showHideBtn.setVisibility(View.GONE);
+            verificationInput.setVisibility(View.VISIBLE);
+            setUpDeleteBtn();
+        } else {
+            setUpDeleteBtn();
+            setUpShowHideBtn();
+        }
     }
 
     private void setUpDeleteBtn() {
@@ -72,17 +96,31 @@ public class DeleteAccountActivity extends AppCompatActivity {
     }
 
     private void handleDeleteAccount() {
-        String passwordText = passwordInput.getText().toString();
-        if (TextUtils.isEmpty(passwordText)) {
-            Toast.makeText(DeleteAccountActivity.this, "Please enter your password", Toast.LENGTH_SHORT).show();
-        } else {
-            auth.signInWithEmailAndPassword(Objects.requireNonNull(currentUser.getEmail()), passwordText).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    deleteUserData();
-                } else {
-                    Toast.makeText(DeleteAccountActivity.this, "Password is incorrect", Toast.LENGTH_SHORT).show();
+        if (isGoogleSignInOnly) {
+            String verificationText = verificationInput.getText().toString();
+            if (TextUtils.isEmpty(verificationText) || !verificationText.equals("delete my account")) {
+                Toast.makeText(DeleteAccountActivity.this, "Please enter 'delete my account' to verify'", Toast.LENGTH_SHORT).show();
+            } else {
+                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+                if (account != null ) {
+                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                    currentUser.reauthenticate(credential).addOnSuccessListener(unused ->
+                            deleteUserData()).addOnFailureListener(e -> Log.d("DeleteAccountActivity", "Failed to authenticate user: ", e));
                 }
-            });
+            }
+        } else {
+            String passwordText = passwordInput.getText().toString();
+            if (TextUtils.isEmpty(passwordText)) {
+                Toast.makeText(DeleteAccountActivity.this, "Please enter your password", Toast.LENGTH_SHORT).show();
+            } else {
+                auth.signInWithEmailAndPassword(Objects.requireNonNull(currentUser.getEmail()), passwordText).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        deleteUserData();
+                    } else {
+                        Toast.makeText(DeleteAccountActivity.this, "Password is incorrect", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
     }
 
@@ -194,6 +232,13 @@ public class DeleteAccountActivity extends AppCompatActivity {
                         finishAffinity();
                         startActivity(intent);
                         Toast.makeText(DeleteAccountActivity.this, "Your account has been deleted", Toast.LENGTH_SHORT).show();
+
+                        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                .requestIdToken(ID_TOKEN)
+                                .requestEmail()
+                                .build();
+                        GoogleSignInClient signInClient = GoogleSignIn.getClient(this, signInOptions);
+                        signInClient.signOut();
                     }
                 });
             }
@@ -201,14 +246,13 @@ public class DeleteAccountActivity extends AppCompatActivity {
     }
 
     private void setUpShowHideBtn() {
-        Button currentShowHideBtn = findViewById(R.id.passwordShowHideBtn);
-        currentShowHideBtn.setOnClickListener(v -> {
-            if(currentShowHideBtn.getText().toString().equals("Show")){
+        showHideBtn.setOnClickListener(v -> {
+            if(showHideBtn.getText().toString().equals("Show")){
                 passwordInput.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                currentShowHideBtn.setText(R.string.hide);
+                showHideBtn.setText(R.string.hide);
             } else{
                 passwordInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                currentShowHideBtn.setText(R.string.show);
+                showHideBtn.setText(R.string.show);
             }
         });
     }

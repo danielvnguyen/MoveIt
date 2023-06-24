@@ -128,4 +128,6 @@
     <string name="sort_by">Sort By: Newest</string>
     <string name="activity_note_hint">Keep related information to this activity, such as your personal record</string>
     <string name="activity_notes">Activity Notes</string>
+    <string name="or">OR</string>
+    <string name="verify_hint">To verify, type \'delete my account\'</string>
 </resources>
