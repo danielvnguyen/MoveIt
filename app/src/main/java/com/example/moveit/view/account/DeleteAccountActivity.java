@@ -1,5 +1,6 @@
 package com.example.moveit.view.account;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.model.activities.CategoryActivity;
@@ -25,6 +27,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,8 +52,10 @@ public class DeleteAccountActivity extends AppCompatActivity {
     private Button showHideBtn;
 
     private boolean isGoogleSignInOnly = false;
-    private EditText verificationInput;
+    private boolean googleAccountVerified = false;
+    private GoogleSignInClient signInClient;
     private static final String ID_TOKEN = "446715183529-ucspush1pj4sqs89s71ipeeoooq476e5.apps.googleusercontent.com";
+    private static final int RC_SIGN_IN = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,21 +71,34 @@ public class DeleteAccountActivity extends AppCompatActivity {
         assert currentUser != null;
         passwordInput = findViewById(R.id.passwordInput);
         showHideBtn = findViewById(R.id.passwordShowHideBtn);
-        verificationInput = findViewById(R.id.verificationInput);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             isGoogleSignInOnly = extras.getBoolean("isGoogleSignInOnly");
         }
         if (isGoogleSignInOnly) {
+            SignInButton signInButton = findViewById(R.id.googleSignInBtn);
+            TextView googleSignInPrompt = findViewById(R.id.googleSignInPrompt);
+            GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(ID_TOKEN)
+                    .requestEmail()
+                    .build();
+            signInClient = GoogleSignIn.getClient(this, signInOptions);
+
             passwordInput.setVisibility(View.GONE);
             showHideBtn.setVisibility(View.GONE);
-            verificationInput.setVisibility(View.VISIBLE);
-            setUpDeleteBtn();
+            signInButton.setSize(SignInButton.SIZE_WIDE);
+            googleSignInPrompt.setVisibility(View.VISIBLE);
+            signInButton.setVisibility(View.VISIBLE);
+            signInButton.setOnClickListener(view -> {
+                signInClient.signOut();
+                Intent intent = signInClient.getSignInIntent();
+                startActivityForResult(intent, RC_SIGN_IN);
+            });
         } else {
-            setUpDeleteBtn();
             setUpShowHideBtn();
         }
+        setUpDeleteBtn();
     }
 
     private void setUpDeleteBtn() {
@@ -97,16 +117,10 @@ public class DeleteAccountActivity extends AppCompatActivity {
 
     private void handleDeleteAccount() {
         if (isGoogleSignInOnly) {
-            String verificationText = verificationInput.getText().toString();
-            if (TextUtils.isEmpty(verificationText) || !verificationText.equals("delete my account")) {
-                Toast.makeText(DeleteAccountActivity.this, "Please enter 'delete my account' to verify'", Toast.LENGTH_SHORT).show();
+            if (googleAccountVerified) {
+                deleteUserData();
             } else {
-                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-                if (account != null ) {
-                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-                    currentUser.reauthenticate(credential).addOnSuccessListener(unused ->
-                            deleteUserData()).addOnFailureListener(e -> Log.d("DeleteAccountActivity", "Failed to authenticate user: ", e));
-                }
+                Toast.makeText(DeleteAccountActivity.this, "Please log in to your Google account", Toast.LENGTH_SHORT).show();
             }
         } else {
             String passwordText = passwordInput.getText().toString();
@@ -121,6 +135,36 @@ public class DeleteAccountActivity extends AppCompatActivity {
                     }
                 });
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> accountTask = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleGoogleSignIn(accountTask);
+        }
+    }
+
+    private void handleGoogleSignIn(Task<GoogleSignInAccount> accountTask) {
+        try {
+            GoogleSignInAccount account = accountTask.getResult(ApiException.class);
+            AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+            currentUser.reauthenticate(credential).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    currentUser.reauthenticate(credential).addOnSuccessListener(unused -> {
+                                googleAccountVerified = true;
+                                Toast.makeText(DeleteAccountActivity.this, "Log in successful", Toast.LENGTH_SHORT).show();
+                            }).addOnFailureListener(e ->
+                            Log.d("DeleteAccountActivity", "Failed to authenticate user: ", e));
+                } else {
+                    Toast.makeText(DeleteAccountActivity.this, "Incorrect account", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (ApiException e) {
+            Log.d("LoginActivity", "Failed to log in", e);
         }
     }
 
