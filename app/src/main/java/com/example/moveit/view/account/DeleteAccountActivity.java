@@ -193,7 +193,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
                     categoryIds.add(currentCategory.getCategoryId());
                 }
 
-                //Delete activities within each category
+                //Delete activities within each category, as well as the category
                 for (String categoryId : categoryIds) {
                     categoriesRef.document(categoryId).collection("activityList").get().addOnCompleteListener(task1 -> {
                         if (task1.isSuccessful()) {
@@ -208,21 +208,13 @@ public class DeleteAccountActivity extends AppCompatActivity {
                                     batch.delete(categoriesRef.document(categoryId).collection("activityList").document(activity.getActivityId()));
                                 }
                             }
+                            batch.delete(categoriesRef.document(categoryId));
                             batch.commit()
                                     .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Activities have been removed for category: " + categoryId))
                                     .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove activities for category: " + categoryId, error));
                         }
                     });
                 }
-
-                //Delete categories
-                WriteBatch batch1 = db.batch();
-                for (String categoryId : categoryIds) {
-                    batch1.delete(categoriesRef.document(categoryId));
-                }
-                batch1.commit()
-                        .addOnSuccessListener((result) -> Log.i("DeleteAccountActivity", "Categories have been removed."))
-                        .addOnFailureListener((error) -> Log.e("DeleteAccountActivity", "Failed to remove categories.", error));
 
                 //Delete user
                 currentUser.delete().addOnCompleteListener(task2 -> {
