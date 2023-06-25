@@ -119,9 +119,12 @@ public class LoginActivity extends AppCompatActivity {
             AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
             auth.signInWithCredential(credential).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
+                    if (Objects.requireNonNull(task.getResult().getAdditionalUserInfo()).isNewUser()) {
+                        //Initialize user only if this is their first time signing in
+                        initializeUser(Objects.requireNonNull(auth.getCurrentUser()).getUid());
+                    }
                     Toast.makeText(LoginActivity.this, "Log in successful", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                    initializeUser(Objects.requireNonNull(auth.getCurrentUser()).getUid());
                     finish();
                 } else {
                     Toast.makeText(LoginActivity.this, "Failed to log in", Toast.LENGTH_SHORT).show();
