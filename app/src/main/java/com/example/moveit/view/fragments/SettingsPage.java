@@ -2,18 +2,15 @@ package com.example.moveit.view.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.example.moveit.R;
 import com.example.moveit.model.IntroSlider;
 import com.example.moveit.view.AttributionsActivity;

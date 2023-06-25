@@ -11,7 +11,13 @@ import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+
+import androidx.appcompat.app.AppCompatDelegate;
+
 import com.example.moveit.R;
+import com.example.moveit.model.theme.ThemeSharedPreferences;
+import com.example.moveit.view.account.LoginActivity;
 import com.example.moveit.view.entries.AddEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +39,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         assert currentUser != null;
+        setUpTheme(context);
 
         Intent notificationIntent = new Intent(context, AddEntry.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -62,6 +69,31 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         //Automatically create a new alarm 24H from now
         scheduleAlarm(context);
+    }
+
+    private void setUpTheme(Context context) {
+        int currentTheme = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK);
+        ThemeSharedPreferences preferencesManager = new ThemeSharedPreferences(context);
+
+        if (currentUser != null) {
+            if (preferencesManager.getValue(currentUser.getUid() + ".currentTheme", "Dark").equals("Dark")){
+                switch (currentTheme) {
+                    case Configuration.UI_MODE_NIGHT_YES:
+                        break;
+                    case Configuration.UI_MODE_NIGHT_NO:
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                        break;
+                }
+            } else if (preferencesManager.getValue(currentUser.getUid() + ".currentTheme", "Light").equals("Light")) {
+                switch (currentTheme) {
+                    case Configuration.UI_MODE_NIGHT_YES:
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                        break;
+                    case Configuration.UI_MODE_NIGHT_NO:
+                        break;
+                }
+            }
+        }
     }
 
     private void scheduleAlarm(Context context) {

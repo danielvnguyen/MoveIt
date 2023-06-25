@@ -9,12 +9,15 @@ import android.widget.TextView;
 
 import com.example.moveit.R;
 import com.example.moveit.model.theme.ThemeSharedPreferences;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
 public class SetThemeActivity extends AppCompatActivity {
     private ThemeSharedPreferences preferencesManager;
     private TextView currentThemeTV;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,10 @@ public class SetThemeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_set_theme);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         setTitle("Change Theme");
+
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert currentUser != null;
+
         preferencesManager = new ThemeSharedPreferences(SetThemeActivity.this);
         currentThemeTV = findViewById(R.id.currentThemeText);
 
@@ -30,9 +37,9 @@ public class SetThemeActivity extends AppCompatActivity {
     }
 
     private void setUpText() {
-        if (preferencesManager.getValue("currentTheme", "Dark").equals("Dark")){
+        if (preferencesManager.getValue(currentUser.getUid() + ".currentTheme", "Dark").equals("Dark")){
             currentThemeTV.setText(R.string.currentThemeDark);
-        } else if (preferencesManager.getValue("currentTheme", "Dark").equals("Light")) {
+        } else if (preferencesManager.getValue(currentUser.getUid() + ".currentTheme", "Dark").equals("Light")) {
             currentThemeTV.setText(R.string.currentThemeLight);
         } else {
             currentThemeTV.setText(R.string.currentThemeSys);
@@ -45,21 +52,21 @@ public class SetThemeActivity extends AppCompatActivity {
         Button systemDefBtn = findViewById(R.id.systemDefaultBtn);
 
         lightBtn.setOnClickListener(v -> {
-            preferencesManager.putValue("currentTheme", "Light");
+            preferencesManager.putValue(currentUser.getUid() + ".currentTheme", "Light");
             currentThemeTV.setText(R.string.currentThemeLight);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
             recreate();
         });
 
         darkBtn.setOnClickListener(v -> {
-            preferencesManager.putValue("currentTheme", "Dark");
+            preferencesManager.putValue(currentUser.getUid() + ".currentTheme", "Dark");
             currentThemeTV.setText(R.string.currentThemeDark);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             recreate();
         });
 
         systemDefBtn.setOnClickListener(v -> {
-            preferencesManager.putValue("currentTheme", "System");
+            preferencesManager.putValue(currentUser.getUid() + ".currentTheme", "System");
             currentThemeTV.setText(R.string.currentThemeSys);
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
             recreate();

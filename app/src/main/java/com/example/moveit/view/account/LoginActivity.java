@@ -2,8 +2,10 @@ package com.example.moveit.view.account;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
@@ -19,6 +21,7 @@ import com.example.moveit.model.activities.CategoryActivity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.meals.Meal;
 import com.example.moveit.model.meals.ServingSize;
+import com.example.moveit.model.theme.ThemeSharedPreferences;
 import com.example.moveit.view.HomeActivity;
 import com.example.moveit.view.StartActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -88,6 +91,33 @@ public class LoginActivity extends AppCompatActivity {
         setUpGoogleSignInBtn();
     }
 
+    private void setUpTheme() {
+        int currentTheme = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK);
+        ThemeSharedPreferences preferencesManager = new ThemeSharedPreferences(LoginActivity.this);
+
+        if (auth.getCurrentUser() != null) {
+            if (preferencesManager.getValue(auth.getCurrentUser().getUid() + ".currentTheme", "Dark").equals("Dark")){
+                switch (currentTheme) {
+                    case Configuration.UI_MODE_NIGHT_YES:
+                        break;
+                    case Configuration.UI_MODE_NIGHT_NO:
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                        recreate();
+                        break;
+                }
+            } else if (preferencesManager.getValue(auth.getCurrentUser().getUid() + ".currentTheme", "Light").equals("Light")) {
+                switch (currentTheme) {
+                    case Configuration.UI_MODE_NIGHT_YES:
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                        recreate();
+                        break;
+                    case Configuration.UI_MODE_NIGHT_NO:
+                        break;
+                }
+            }
+        }
+    }
+
     private void setUpGoogleSignInBtn() {
         GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(ID_TOKEN)
@@ -123,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                         //Initialize user only if this is their first time signing in
                         initializeUser(Objects.requireNonNull(auth.getCurrentUser()).getUid());
                     }
+                    setUpTheme();
                     Toast.makeText(LoginActivity.this, "Log in successful", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     finish();
@@ -175,6 +206,7 @@ public class LoginActivity extends AppCompatActivity {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 if (Objects.requireNonNull(auth.getCurrentUser()).isEmailVerified()) {
+                    setUpTheme();
                     Toast.makeText(LoginActivity.this, "Log in successful", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     finish();
