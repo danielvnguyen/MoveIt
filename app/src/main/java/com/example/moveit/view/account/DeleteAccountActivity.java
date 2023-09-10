@@ -46,6 +46,7 @@ import java.util.Objects;
 public class DeleteAccountActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseUser currentUser;
+    private String currentUserId;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private EditText passwordInput;
@@ -67,8 +68,9 @@ public class DeleteAccountActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
-        storage = FirebaseStorage.getInstance();
         assert currentUser != null;
+        currentUserId = currentUser.getUid();
+        storage = FirebaseStorage.getInstance();
         passwordInput = findViewById(R.id.passwordInput);
         showHideBtn = findViewById(R.id.passwordShowHideBtn);
 
@@ -118,7 +120,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
     private void handleDeleteAccount() {
         if (isGoogleSignInOnly) {
             if (googleAccountVerified) {
-                deleteUserData();
+                deleteUserData(currentUserId);
             } else {
                 Toast.makeText(DeleteAccountActivity.this, "Please log in to your Google account", Toast.LENGTH_SHORT).show();
             }
@@ -129,7 +131,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
             } else {
                 auth.signInWithEmailAndPassword(Objects.requireNonNull(currentUser.getEmail()), passwordText).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        deleteUserData();
+                        deleteUserData(currentUserId);
                     } else {
                         Toast.makeText(DeleteAccountActivity.this, "Password is incorrect", Toast.LENGTH_SHORT).show();
                     }
@@ -168,17 +170,17 @@ public class DeleteAccountActivity extends AppCompatActivity {
         }
     }
 
-    private void deleteUserData() {
+    private void deleteUserData(String userId) {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Deleting User...");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        CollectionReference entriesRef = db.collection("entries").document(currentUser.getUid()).collection("entryList");
-        CollectionReference categoriesRef = db.collection("categories").document(currentUser.getUid()).collection("categoryList");
-        CollectionReference mealsRef = db.collection("meals").document(currentUser.getUid()).collection("mealList");
-        CollectionReference reminderRef = db.collection("reminders").document(currentUser.getUid()).collection("reminderTime");
-        StorageReference storageRef = storage.getReference().child(currentUser.getUid()).child("uploads");
+        CollectionReference entriesRef = db.collection("entries").document(userId).collection("entryList");
+        CollectionReference categoriesRef = db.collection("categories").document(userId).collection("categoryList");
+        CollectionReference mealsRef = db.collection("meals").document(userId).collection("mealList");
+        CollectionReference reminderRef = db.collection("reminders").document(userId).collection("reminderTime");
+        StorageReference storageRef = storage.getReference().child(userId).child("uploads");
 
         reminderRef.document("reminder").delete();
 
