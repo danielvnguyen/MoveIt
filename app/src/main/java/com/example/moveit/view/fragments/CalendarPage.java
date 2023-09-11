@@ -21,10 +21,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
 import com.example.moveit.R;
 import com.example.moveit.model.GlobalUpdater;
 import com.example.moveit.model.theme.ThemeUtils;
@@ -52,6 +54,7 @@ public class CalendarPage extends Fragment {
     private CalendarView calendarView;
     private Calendar calendar;
     private Calendar realDate;
+    private Button resetCalendarBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,6 +86,7 @@ public class CalendarPage extends Fragment {
         });
 
         setUpInterface();
+        setUpResetCalendarBtn();
     }
 
     private void setUpEntryStreak(ArrayList<Entry> allEntries) {
@@ -134,6 +138,7 @@ public class CalendarPage extends Fragment {
     private void handlePageChange() {
         calendar = calendarView.getCurrentPageDate();
         setUpInterface();
+        setUpResetCalendarBtn();
     }
 
     private void setUpMoodCount(ArrayList<Entry> entriesInMonth) {
@@ -342,16 +347,37 @@ public class CalendarPage extends Fragment {
         return new BitmapDrawable(getResources(), bitmap);
     }
 
+    private void setUpResetCalendarBtn() {
+        resetCalendarBtn = requireView().findViewById(R.id.resetCalenderBtn);
+        resetCalendarBtn.setOnClickListener(view -> {
+            calendar = realDate;
+            try {
+                calendarView.setDate(calendar);
+            } catch (OutOfDateRangeException e) {
+                e.printStackTrace();
+            }
+            setUpInterface();
+        });
+
+        if (realDate.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
+            resetCalendarBtn.setVisibility(View.VISIBLE);
+        } else {
+            resetCalendarBtn.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         if (calendarView.getCurrentPageDate().get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
             calendar = calendarView.getCurrentPageDate();
             setUpInterface();
+            setUpResetCalendarBtn();
         }
 
         if (GlobalUpdater.getInstance().isCalendarUpdated()) {
             setUpInterface();
+            setUpResetCalendarBtn();
             GlobalUpdater.getInstance().setCalendarUpdated(false);
         }
     }
