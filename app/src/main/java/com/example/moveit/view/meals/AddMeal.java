@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -210,6 +211,7 @@ public class AddMeal extends AppCompatActivity {
                     calories = Integer.parseInt(caloriesText);
                     break;
                 case 3:
+                    saveBtn.setEnabled(true);
                     return;
                 default:
                     break;
@@ -334,6 +336,7 @@ public class AddMeal extends AppCompatActivity {
                 if (condition) {
                     Toast.makeText(AddMeal.this, "A meal with this name already exists!", Toast.LENGTH_SHORT).show();
                     saveBtn.setEnabled(true);
+                    progressDialog.dismiss();
                 } else {
                     //Update related entries
                     entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {

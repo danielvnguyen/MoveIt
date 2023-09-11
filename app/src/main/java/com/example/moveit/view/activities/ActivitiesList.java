@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,25 +92,37 @@ public class ActivitiesList extends AppCompatActivity {
         saveCategoryBtn.setOnClickListener(v -> {
             saveCategoryBtn.setEnabled(false);
             String newCategoryName = categoryNameInput.getText().toString();
-            if (newCategoryName.equals(originalCategoryName)) {
-                Toast.makeText(ActivitiesList.this, "Category name is the same", Toast.LENGTH_SHORT).show();
-                saveCategoryBtn.setEnabled(true);
-            } else if (newCategoryName.isEmpty()) {
-                Toast.makeText(ActivitiesList.this, "Please fill in category name", Toast.LENGTH_SHORT).show();
-                saveCategoryBtn.setEnabled(true);
-            } else {
-                db.collection("categories").document(currentUser.getUid())
-                        .collection("categoryList").document(categoryId)
-                        .update("name", newCategoryName).addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(ActivitiesList.this, "Updated category name successfully!", Toast.LENGTH_SHORT).show();
-                                finish();
-                            } else {
-                                Toast.makeText(ActivitiesList.this, "Error updating category name", Toast.LENGTH_SHORT).show();
-                                saveCategoryBtn.setEnabled(true);
-                            }
-                        });
-            }
+
+            CollectionReference categoriesRef = db.collection("categories").document(currentUser.getUid()).collection("categoryList");
+            Query queryCategoriesByName = categoriesRef.whereEqualTo("name", newCategoryName);
+            queryCategoriesByName.get().addOnCompleteListener(task -> {
+               if (task.isSuccessful()) {
+                   if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
+                       Toast.makeText(ActivitiesList.this, "An category with this name already exists!", Toast.LENGTH_SHORT).show();
+                       saveCategoryBtn.setEnabled(true);
+                   } else {
+                       if (newCategoryName.equals(originalCategoryName)) {
+                           Toast.makeText(ActivitiesList.this, "Category name is the same", Toast.LENGTH_SHORT).show();
+                           saveCategoryBtn.setEnabled(true);
+                       } else if (newCategoryName.isEmpty()) {
+                           Toast.makeText(ActivitiesList.this, "Please fill in category name", Toast.LENGTH_SHORT).show();
+                           saveCategoryBtn.setEnabled(true);
+                       } else {
+                           db.collection("categories").document(currentUser.getUid())
+                                   .collection("categoryList").document(categoryId)
+                                   .update("name", newCategoryName).addOnCompleteListener(task1 -> {
+                                       if (task1.isSuccessful()) {
+                                           Toast.makeText(ActivitiesList.this, "Updated category name successfully!", Toast.LENGTH_SHORT).show();
+                                           finish();
+                                       } else {
+                                           Toast.makeText(ActivitiesList.this, "Error updating category name", Toast.LENGTH_SHORT).show();
+                                           saveCategoryBtn.setEnabled(true);
+                                       }
+                                   });
+                       }
+                   }
+               }
+            });
         });
         deleteCategoryBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
