@@ -41,7 +41,9 @@ import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class DeleteAccountActivity extends AppCompatActivity {
     private FirebaseAuth auth;
@@ -120,7 +122,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
     private void handleDeleteAccount() {
         if (isGoogleSignInOnly) {
             if (googleAccountVerified) {
-                deleteUserData(currentUserId);
+                deleteUser(currentUserId);
             } else {
                 Toast.makeText(DeleteAccountActivity.this, "Please log in to your Google account", Toast.LENGTH_SHORT).show();
             }
@@ -131,7 +133,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
             } else {
                 auth.signInWithEmailAndPassword(Objects.requireNonNull(currentUser.getEmail()), passwordText).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        deleteUserData(currentUserId);
+                        deleteUser(currentUserId);
                     } else {
                         Toast.makeText(DeleteAccountActivity.this, "Password is incorrect", Toast.LENGTH_SHORT).show();
                     }
@@ -171,16 +173,10 @@ public class DeleteAccountActivity extends AppCompatActivity {
     }
 
     private void deleteUserData(String userId) {
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Deleting User...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
         CollectionReference entriesRef = db.collection("entries").document(userId).collection("entryList");
         CollectionReference categoriesRef = db.collection("categories").document(userId).collection("categoryList");
         CollectionReference mealsRef = db.collection("meals").document(userId).collection("mealList");
         CollectionReference reminderRef = db.collection("reminders").document(userId).collection("reminderTime");
-        StorageReference storageRef = storage.getReference().child(userId).child("uploads");
 
         reminderRef.document("reminder").delete();
 
@@ -220,16 +216,6 @@ public class DeleteAccountActivity extends AppCompatActivity {
             }
         });
 
-        //Images:
-        storageRef.listAll().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (int i = 0; i < Objects.requireNonNull(task.getResult()).getItems().size(); i++) {
-                    String fileName = task.getResult().getItems().get(i).getName();
-                    storageRef.child(fileName).delete();
-                }
-            }
-        });
-
         //Categories:
         categoriesRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -265,7 +251,6 @@ public class DeleteAccountActivity extends AppCompatActivity {
                 //Delete user
                 currentUser.delete().addOnCompleteListener(task2 -> {
                     if (task2.isSuccessful()) {
-                        progressDialog.dismiss();
                         Intent intent = StartActivity.makeIntent(DeleteAccountActivity.this);
                         finishAffinity();
                         startActivity(intent);
@@ -279,6 +264,64 @@ public class DeleteAccountActivity extends AppCompatActivity {
                         signInClient.signOut();
                     }
                 });
+            }
+        });
+    }
+
+    private void deleteUser(String userId) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Deleting User...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        //Delete images from Cloud Storage
+        StorageReference storageRef = storage.getReference().child(userId).child("uploads");
+        storageRef.listAll().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<StorageReference> items = task.getResult().getItems();
+                int numImages = items.size();
+
+                if (numImages > 0) {
+                    List<CompletableFuture<Void>> deleteFutures = new ArrayList<>();
+
+                    // Create CompletableFuture for each item and add them to the list
+                    for (StorageReference item : items) {
+                        CompletableFuture<Void> deleteFuture = new CompletableFuture<>();
+                        item.delete()
+                                .addOnCompleteListener(deleteTask -> {
+                                    if (deleteTask.isSuccessful()) {
+                                        deleteFuture.complete(null);
+                                    } else {
+                                        deleteFuture.completeExceptionally(deleteTask.getException());
+                                    }
+                                });
+                        deleteFutures.add(deleteFuture);
+                    }
+
+                    // Wait for all delete operations to complete
+                    CompletableFuture<Void> allOf = CompletableFuture.allOf(
+                            deleteFutures.toArray(new CompletableFuture[0]));
+
+                    allOf.thenAccept(voidResult -> {
+                        // All images deleted, you can now proceed with other data deletions
+                        deleteUserData(userId);
+                        progressDialog.dismiss();
+                    }).exceptionally(throwable -> {
+                        // Handle any exceptions that occurred during deletions
+                        Log.e("DeleteAccountActivity", "Failed to delete images.", throwable);
+                        // Proceed with other data deletions even if some images failed to delete
+                        deleteUserData(userId);
+                        progressDialog.dismiss();
+                        return null;
+                    });
+                } else {
+                    // No images found, proceed with other data deletions
+                    deleteUserData(userId);
+                    progressDialog.dismiss();
+                }
+            } else {
+                // Handle listAll() error
+                Log.e("DeleteAccountActivity", "Failed to list images.", task.getException());
             }
         });
     }
