@@ -126,14 +126,17 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void handleUpdate() {
+        saveBtn.setEnabled(false);
         CollectionReference activitiesRef = db.collection("categories").document(currentUser.getUid()).collection("categoryList")
                 .document(categoryId).collection("activityList");
         String newActivityName = activityNameInput.getText().toString();
         String newActivityNotes = activityNotesInput.getText().toString();
         if (newActivityName.isEmpty()) {
             Toast.makeText(AddActivity.this, "Please fill out the activity name", Toast.LENGTH_SHORT).show();
+            saveBtn.setEnabled(true);
         } else if (newActivityName.equals(originalActivityName) && newActivityNotes.equals(originalActivityNotes)) {
             Toast.makeText(AddActivity.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
+            saveBtn.setEnabled(true);
         } else {
             ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Loading...");
@@ -147,6 +150,7 @@ public class AddActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
                             Toast.makeText(AddActivity.this, "An activity with this name already exists!", Toast.LENGTH_SHORT).show();
+                            saveBtn.setEnabled(true);
                         } else {
                             //Updated related entries
                             entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
@@ -188,6 +192,7 @@ public class AddActivity extends AppCompatActivity {
                                             finish();
                                         } else {
                                             Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();
+                                            saveBtn.setEnabled(true);
                                         }
                                     });
                         }
@@ -205,6 +210,7 @@ public class AddActivity extends AppCompatActivity {
                                 finish();
                             } else {
                                 Toast.makeText(AddActivity.this, "Error updating activity", Toast.LENGTH_SHORT).show();
+                                saveBtn.setEnabled(true);
                             }
                         });
             }
@@ -212,6 +218,7 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void handleSave() {
+        saveBtn.setEnabled(false);
         String activityName = activityNameInput.getText().toString();
         String activityNotes = activityNotesInput.getText().toString();
         if (!activityName.isEmpty()) {
@@ -222,6 +229,7 @@ public class AddActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
                         Toast.makeText(AddActivity.this, "An activity with this name already exists!", Toast.LENGTH_SHORT).show();
+                        saveBtn.setEnabled(true);
                     } else {
                         String activityId = UUID.randomUUID().toString();
                         CategoryActivity newActivity = new CategoryActivity(activityName, categoryId, activityId, activityNotes);
@@ -234,6 +242,7 @@ public class AddActivity extends AppCompatActivity {
                                         finish();
                                     } else {
                                         Toast.makeText(AddActivity.this, "Error saving activity", Toast.LENGTH_SHORT).show();
+                                        saveBtn.setEnabled(true);
                                     }
                                 });
                     }
@@ -241,6 +250,7 @@ public class AddActivity extends AppCompatActivity {
             });
         } else {
             Toast.makeText(AddActivity.this, "Please fill out the activity name", Toast.LENGTH_SHORT).show();
+            saveBtn.setEnabled(true);
         }
     }
 

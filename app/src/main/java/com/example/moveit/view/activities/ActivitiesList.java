@@ -89,11 +89,14 @@ public class ActivitiesList extends AppCompatActivity {
         Button deleteCategoryBtn = findViewById(R.id.deleteCategoryBtn);
 
         saveCategoryBtn.setOnClickListener(v -> {
+            saveCategoryBtn.setEnabled(false);
             String newCategoryName = categoryNameInput.getText().toString();
             if (newCategoryName.equals(originalCategoryName)) {
                 Toast.makeText(ActivitiesList.this, "Category name is the same", Toast.LENGTH_SHORT).show();
+                saveCategoryBtn.setEnabled(true);
             } else if (newCategoryName.isEmpty()) {
                 Toast.makeText(ActivitiesList.this, "Please fill in category name", Toast.LENGTH_SHORT).show();
+                saveCategoryBtn.setEnabled(true);
             } else {
                 db.collection("categories").document(currentUser.getUid())
                         .collection("categoryList").document(categoryId)
@@ -103,6 +106,7 @@ public class ActivitiesList extends AppCompatActivity {
                                 finish();
                             } else {
                                 Toast.makeText(ActivitiesList.this, "Error updating category name", Toast.LENGTH_SHORT).show();
+                                saveCategoryBtn.setEnabled(true);
                             }
                         });
             }

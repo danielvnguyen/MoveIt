@@ -41,9 +41,11 @@ public class AddCategory extends AppCompatActivity {
         Button saveCategoryBtn = findViewById(R.id.saveCategoryBtn);
 
         saveCategoryBtn.setOnClickListener(v -> {
+            saveCategoryBtn.setEnabled(false);
             String categoryText = categoryNameInput.getText().toString();
             if (categoryText.isEmpty()) {
                 Toast.makeText(AddCategory.this, "Please fill out the category name", Toast.LENGTH_SHORT).show();
+                saveCategoryBtn.setEnabled(true);
             } else {
                 String categoryId = UUID.randomUUID().toString();
                 Category newCategory = new Category(categoryText, categoryId);
@@ -54,6 +56,7 @@ public class AddCategory extends AppCompatActivity {
                             finish();
                         } else {
                             Toast.makeText(AddCategory.this, "Error creating category", Toast.LENGTH_SHORT).show();
+                            saveCategoryBtn.setEnabled(true);
                         }
                     });
             }

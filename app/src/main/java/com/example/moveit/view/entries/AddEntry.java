@@ -138,8 +138,10 @@ public class AddEntry extends AppCompatActivity implements
 
     private void setUpSaveBtn() {
         saveEntryBtn.setOnClickListener(v -> {
+            saveEntryBtn.setEnabled(false);
             if (currentEntry.getMood().equals("")) {
                 Toast.makeText(AddEntry.this, "Please select a mood for the Entry", Toast.LENGTH_SHORT).show();
+                saveEntryBtn.setEnabled(true);
                 return;
             }
             ProgressDialog progressDialog = new ProgressDialog(this);
@@ -178,6 +180,7 @@ public class AddEntry extends AppCompatActivity implements
                 if (compareChanges()) {
                     Toast.makeText(AddEntry.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
+                    saveEntryBtn.setEnabled(true);
                     return;
                 }
 
@@ -224,6 +227,7 @@ public class AddEntry extends AppCompatActivity implements
                finish();
            } else {
                Toast.makeText(AddEntry.this, "Error updating entry", Toast.LENGTH_SHORT).show();
+               saveEntryBtn.setEnabled(true);
            }
         });
     }
@@ -247,6 +251,7 @@ public class AddEntry extends AppCompatActivity implements
                         finish();
                     } else {
                         Toast.makeText(AddEntry.this, "Error saving entry", Toast.LENGTH_SHORT).show();
+                        saveEntryBtn.setEnabled(true);
                     }
                 });
     }

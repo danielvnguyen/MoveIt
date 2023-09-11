@@ -85,6 +85,7 @@ public class AddMeal extends AppCompatActivity {
     private Spinner servingSizeUnitSpinner;
     private String selectedUnits = "Unit";
 
+    private Button saveBtn;
     private Button deleteBtn;
     private Boolean editMode = false;
     private CollectionReference entryListRef;
@@ -182,14 +183,16 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private void setUpSaveBtn() {
-        Button saveBtn = findViewById(R.id.saveMealBtn);
+        saveBtn = findViewById(R.id.saveMealBtn);
         saveBtn.setOnClickListener(v -> {
+            saveBtn.setEnabled(false);
             String mealName = mealNameInput.getText().toString();
             String caloriesText = caloriesInput.getText().toString();
             String servingSizeText = servingSizeInput.getText().toString();
             String mealNote = mealNoteInput.getText().toString();
             if (mealName.isEmpty()) {
                 Toast.makeText(AddMeal.this, "Please fill out the meal name", Toast.LENGTH_SHORT).show();
+                saveBtn.setEnabled(true);
                 return;
             }
 
@@ -222,6 +225,7 @@ public class AddMeal extends AppCompatActivity {
                 if (compareChanges(mealName, calories, mealNote, servingSizeNum, selectedUnits)) {
                     Toast.makeText(AddMeal.this, "You have made no changes!", Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
+                    saveBtn.setEnabled(true);
                     return;
                 }
 
@@ -329,6 +333,7 @@ public class AddMeal extends AppCompatActivity {
                         : (!Objects.requireNonNull(task.getResult()).isEmpty());
                 if (condition) {
                     Toast.makeText(AddMeal.this, "A meal with this name already exists!", Toast.LENGTH_SHORT).show();
+                    saveBtn.setEnabled(true);
                 } else {
                     //Update related entries
                     entryListRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
@@ -357,6 +362,7 @@ public class AddMeal extends AppCompatActivity {
                                     finish();
                                 } else {
                                     Toast.makeText(AddMeal.this, "Error updating meal", Toast.LENGTH_SHORT).show();
+                                    saveBtn.setEnabled(true);
                                 }
                             });
                 }
@@ -371,6 +377,7 @@ public class AddMeal extends AppCompatActivity {
             if (task.isSuccessful()) {
                 if (!Objects.requireNonNull(task.getResult()).isEmpty()) {
                     Toast.makeText(AddMeal.this, "A meal with this name already exists!", Toast.LENGTH_SHORT).show();
+                    saveBtn.setEnabled(true);
                 } else {
                     db.collection("meals").document(currentUser.getUid()).collection("mealList")
                             .document(meal.getId()).set(meal).addOnCompleteListener(task1 -> {
@@ -379,6 +386,7 @@ public class AddMeal extends AppCompatActivity {
                                     finish();
                                 } else {
                                     Toast.makeText(AddMeal.this, "Error saving meal", Toast.LENGTH_SHORT).show();
+                                    saveBtn.setEnabled(true);
                                 }
                             });
                 }
@@ -387,7 +395,7 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private Boolean compareChanges(String mealName, Integer calories, String mealNote,
-                                   Integer servingSizeNum, String servingSizeUnits ) {
+                                   Integer servingSizeNum, String servingSizeUnits) {
         return originalMealName.equals(mealName) && originalMealCalories.equals(String.valueOf(calories))
                 && originalMealNote.equals(mealNote) && !imageStateAltered && originalServingSizeNum.equals(String.valueOf(servingSizeNum))
                 && originalServingSizeUnits.equals(servingSizeUnits);

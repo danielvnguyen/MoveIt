@@ -137,8 +137,13 @@ public class CalendarPage extends Fragment {
 
     private void handlePageChange() {
         calendar = calendarView.getCurrentPageDate();
+        if (realDate.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
+            resetCalendarBtn.setVisibility(View.VISIBLE);
+        } else {
+            resetCalendarBtn.setVisibility(View.GONE);
+        }
+
         setUpInterface();
-        setUpResetCalendarBtn();
     }
 
     private void setUpMoodCount(ArrayList<Entry> entriesInMonth) {
@@ -358,12 +363,6 @@ public class CalendarPage extends Fragment {
             }
             setUpInterface();
         });
-
-        if (realDate.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
-            resetCalendarBtn.setVisibility(View.VISIBLE);
-        } else {
-            resetCalendarBtn.setVisibility(View.GONE);
-        }
     }
 
     @Override
@@ -371,13 +370,23 @@ public class CalendarPage extends Fragment {
         super.onResume();
         if (calendarView.getCurrentPageDate().get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
             calendar = calendarView.getCurrentPageDate();
+            if (realDate.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
+                resetCalendarBtn.setVisibility(View.VISIBLE);
+            } else {
+                resetCalendarBtn.setVisibility(View.GONE);
+            }
+
             setUpInterface();
-            setUpResetCalendarBtn();
         }
 
         if (GlobalUpdater.getInstance().isCalendarUpdated()) {
+            if (realDate.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
+                resetCalendarBtn.setVisibility(View.VISIBLE);
+            } else {
+                resetCalendarBtn.setVisibility(View.GONE);
+            }
+
             setUpInterface();
-            setUpResetCalendarBtn();
             GlobalUpdater.getInstance().setCalendarUpdated(false);
         }
     }
