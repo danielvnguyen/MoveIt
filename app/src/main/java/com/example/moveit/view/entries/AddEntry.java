@@ -348,12 +348,12 @@ public class AddEntry extends AppCompatActivity implements
     }
 
     private void setDateTime(long dateTimeMilliseconds) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy h:mm a");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy_h:mm a");
         Date resultDate = new Date(dateTimeMilliseconds);
         String dateTimeText = sdf.format(resultDate);
-
-        String dateText = dateTimeText.substring(0, 12);
-        String timeText = dateTimeText.substring(12);
+        String[] parts = dateTimeText.split("_");
+        String dateText = parts[0];
+        String timeText = parts[1];
         dateInput.setText(dateText);
         timeInput.setText(timeText);
     }
