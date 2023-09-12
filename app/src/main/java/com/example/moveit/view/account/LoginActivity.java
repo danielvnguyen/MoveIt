@@ -126,7 +126,6 @@ public class LoginActivity extends AppCompatActivity {
         signInClient = GoogleSignIn.getClient(this, signInOptions);
 
         SignInButton googleSignInBtn = findViewById(R.id.googleSignInBtn);
-        googleSignInBtn.setSize(SignInButton.SIZE_WIDE);
         googleSignInBtn.setOnClickListener(view -> {
             Intent intent = signInClient.getSignInIntent();
             startActivityForResult(intent, RC_SIGN_IN);

@@ -15,25 +15,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_marginBottom="8dp">
 
         <TextView
-            android:id="@+id/googleSignInPrompt"
+            android:id="@+id/authenticationPrompt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="16sp"
             android:layout_marginBottom="8dp"
-            android:text="@string/google_sign_in_prompt"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:gravity="center"
+            android:text="@string/authentication_prompt"
+            android:textSize="16sp"
+            android:visibility="visible" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/googleSignInBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"
+            app:buttonSize="wide"
             tools:visibility="visible" />
 
         <LinearLayout
@@ -52,8 +53,8 @@
                 android:id="@+id/passwordShowHideBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/show"
                 android:layout_marginStart="16dp"
+                android:text="@string/show"
                 app:strokeColor="@color/dark_green"
                 app:strokeWidth="2dp" />
 

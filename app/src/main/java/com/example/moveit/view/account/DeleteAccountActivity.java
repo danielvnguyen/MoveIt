@@ -3,6 +3,7 @@ package com.example.moveit.view.account;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -60,6 +61,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
     private static final String ID_TOKEN = "446715183529-ucspush1pj4sqs89s71ipeeoooq476e5.apps.googleusercontent.com";
     private static final int RC_SIGN_IN = 9001;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +77,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         passwordInput = findViewById(R.id.passwordInput);
         showHideBtn = findViewById(R.id.passwordShowHideBtn);
+        TextView authenticationPrompt = findViewById(R.id.authenticationPrompt);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -82,17 +85,15 @@ public class DeleteAccountActivity extends AppCompatActivity {
         }
         if (isGoogleSignInOnly) {
             SignInButton signInButton = findViewById(R.id.googleSignInBtn);
-            TextView googleSignInPrompt = findViewById(R.id.googleSignInPrompt);
             GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(ID_TOKEN)
                     .requestEmail()
                     .build();
             signInClient = GoogleSignIn.getClient(this, signInOptions);
 
+            authenticationPrompt.setText("To verify, please sign in to your Google account");
             passwordInput.setVisibility(View.GONE);
             showHideBtn.setVisibility(View.GONE);
-            signInButton.setSize(SignInButton.SIZE_WIDE);
-            googleSignInPrompt.setVisibility(View.VISIBLE);
             signInButton.setVisibility(View.VISIBLE);
             signInButton.setOnClickListener(view -> {
                 signInClient.signOut();
@@ -101,6 +102,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
             });
         } else {
             setUpShowHideBtn();
+            authenticationPrompt.setText("To verify, please enter your password");
         }
         setUpDeleteBtn();
     }

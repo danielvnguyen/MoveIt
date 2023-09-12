@@ -129,6 +129,6 @@
     <string name="activity_note_hint">Keep related information to this activity, such as your personal record</string>
     <string name="activity_notes">Activity Notes</string>
     <string name="or">OR</string>
-    <string name="google_sign_in_prompt">To verify, please sign in to your Google account</string>
+    <string name="authentication_prompt">To verify, please…</string>
     <string name="reset_calendar">Reset Calendar</string>
 </resources>
