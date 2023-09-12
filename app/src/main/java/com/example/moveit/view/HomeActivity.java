@@ -71,10 +71,9 @@ public class HomeActivity extends AppCompatActivity {
 
         //Show introduction slide show if new user
         boolean seenSlideshow = getSharedPreferences("PREFS", MODE_PRIVATE).getBoolean(currentUser.getUid() + ".seenSlideshow", false);
-        if (!seenSlideshow && (Objects.requireNonNull(currentUser.getMetadata()).getCreationTimestamp() == currentUser.getMetadata().getLastSignInTimestamp())) {
+        if (!seenSlideshow) {
             Intent i = new Intent(getApplicationContext(), IntroSlider.class);
             startActivity(i);
-
             getSharedPreferences("PREFS", MODE_PRIVATE).edit().putBoolean(currentUser.getUid()+".seenSlideshow", true).apply();
         }
     }
