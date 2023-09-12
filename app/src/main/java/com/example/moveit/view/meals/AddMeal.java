@@ -138,9 +138,17 @@ public class AddMeal extends AppCompatActivity {
             originalMealId = extras.get("mealId").toString();
             originalMealImageId = extras.get("mealImageId").toString();
             originalMealName = extras.get("mealName").toString();
-            originalMealCalories = extras.get("calories").toString();
             originalMealNote = extras.get("mealNote").toString();
-            originalServingSizeNum = extras.get("servingSizeNum").toString();
+            if (extras.get("calories") == null) {
+                originalMealCalories = null;
+            } else {
+                originalMealCalories = extras.get("calories").toString();
+            }
+            if (extras.get("servingSizeNum") == null) {
+                originalServingSizeNum = null;
+            } else {
+                originalServingSizeNum = extras.get("servingSizeNum").toString();
+            }
             originalServingSizeUnits = extras.get("servingSizeUnits").toString();
             selectedUnits = originalServingSizeUnits;
 
@@ -197,7 +205,7 @@ public class AddMeal extends AppCompatActivity {
                 return;
             }
 
-            Integer calories = 0;
+            Integer calories = null;
             Integer servingSizeNum = null;
             ServingSize servingSize = new ServingSize();
             int validationResult = validateCalories(caloriesText, servingSizeText);
@@ -405,12 +413,16 @@ public class AddMeal extends AppCompatActivity {
     }
 
     private int validateCalories(String caloriesText, String servingSizeText) {
+        //Calories & serving size filled out
         if (!caloriesText.isEmpty() && (!servingSizeText.isEmpty() && !servingSizeText.equals("0")) && !selectedUnits.equals("Unit")) {
             return 0;
+        //Only calories filled out
         } else if (!caloriesText.isEmpty() && (servingSizeText.isEmpty() || servingSizeText.equals("0")) && selectedUnits.equals("Unit")) {
             return 1;
+        //Neither are filled out
         } else if (caloriesText.isEmpty() && (servingSizeText.isEmpty() || servingSizeText.equals("0")) && selectedUnits.equals("Unit")) {
             return 2;
+        //Only serving size is filled out (invalid)
         } else {
             Toast.makeText(AddMeal.this, "Please fill out both calories & serving size, or only calories", Toast.LENGTH_SHORT).show();
             return 3;

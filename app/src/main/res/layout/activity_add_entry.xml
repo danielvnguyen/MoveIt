@@ -88,7 +88,7 @@
                     android:fontFamily="@font/raleway"
                     android:hint="@string/calories"
                     android:inputType="number"
-                    android:maxLength="5"
+                    android:maxLength="7"
                     android:text="@string/_0" />
 
             </LinearLayout>

@@ -10,7 +10,7 @@ public class ServingSize {
     }
 
     public ServingSize() {
-        this.size = 0;
+        this.size = null;
         this.units = "Unit";
     }
 

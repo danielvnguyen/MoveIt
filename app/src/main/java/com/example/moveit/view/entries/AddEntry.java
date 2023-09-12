@@ -484,7 +484,11 @@ public class AddEntry extends AppCompatActivity implements
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot mealDoc : Objects.requireNonNull(task.getResult())) {
                             Meal currentMeal = mealDoc.toObject(Meal.class);
-                            mealCaloriesMap.put(currentMeal.getName(), currentMeal.getCalories());
+                            if (currentMeal.getCalories() == null) {
+                                mealCaloriesMap.put(currentMeal.getName(), 0);
+                            } else {
+                                mealCaloriesMap.put(currentMeal.getName(), currentMeal.getCalories());
+                            }
 
                             Chip mealChip = buildMealChip(currentMeal.getName());
                             if (!currentMeal.getImageId().equals("")) {

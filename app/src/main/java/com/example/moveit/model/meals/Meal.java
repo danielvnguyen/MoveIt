@@ -23,7 +23,7 @@ public class Meal {
     public Meal() {
         this.id = "";
         this.name = "";
-        this.calories = 0;
+        this.calories = null;
         this.servingSize = new ServingSize();
         this.note = "";
         this.imageId = "";
