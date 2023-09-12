@@ -176,14 +176,13 @@ public class CalendarPage extends Fragment {
                         break;
                 }
             }
-            amazingCountTV.setText(String.valueOf(amazingCount));
-            greatCountTV.setText(String.valueOf(greatCount));
-            goodCountTV.setText(String.valueOf(goodCount));
-            mehCountTV.setText(String.valueOf(mehCount));
-            badCountTV.setText(String.valueOf(badCount));
-
-            setUpPieChart(amazingCount, greatCount, goodCount, mehCount, badCount);
         }
+        amazingCountTV.setText(String.valueOf(amazingCount));
+        greatCountTV.setText(String.valueOf(greatCount));
+        goodCountTV.setText(String.valueOf(goodCount));
+        mehCountTV.setText(String.valueOf(mehCount));
+        badCountTV.setText(String.valueOf(badCount));
+        setUpPieChart(amazingCount, greatCount, goodCount, mehCount, badCount);
     }
 
     private void setUpPieChart(int amazingCount, int greatCount, int goodCount, int mehCount, int badCount) {
@@ -214,7 +213,11 @@ public class CalendarPage extends Fragment {
 
         Typeface ralewayTypeface = getResources().getFont(R.font.raleway);
         pieChart.setCenterTextTypeface(ralewayTypeface);
-        pieChart.setCenterText(String.valueOf(amazingCount + greatCount + goodCount + mehCount + badCount));
+        if ((amazingCount + greatCount + goodCount + mehCount + badCount) == 0) {
+            pieChart.setCenterText("");
+        } else {
+            pieChart.setCenterText(String.valueOf(amazingCount + greatCount + goodCount + mehCount + badCount));
+        }
         pieChart.setCenterTextSize(35);
         pieChart.setCenterTextOffset(0, -25);
         pieChart.setCenterTextColor(ThemeUtils.getTextColor(requireContext()));
