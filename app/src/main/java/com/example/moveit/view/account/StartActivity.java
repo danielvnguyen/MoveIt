@@ -1,4 +1,4 @@
-package com.example.moveit.view;
+package com.example.moveit.view.account;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -9,8 +9,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import com.example.moveit.R;
 import com.example.moveit.model.theme.ThemeSharedPreferences;
-import com.example.moveit.view.account.LoginActivity;
-import com.example.moveit.view.account.RegisterActivity;
+import com.example.moveit.view.homepage.HomeActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

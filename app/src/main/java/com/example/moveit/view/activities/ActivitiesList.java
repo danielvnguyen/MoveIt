@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.example.moveit.R;
-import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.account.GlobalUpdater;
 import com.example.moveit.model.activities.CategoryActivity;
 import com.example.moveit.model.activities.ActivityListAdapter;
 import com.example.moveit.model.entries.Entry;

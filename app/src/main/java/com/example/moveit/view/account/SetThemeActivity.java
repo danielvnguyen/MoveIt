@@ -1,4 +1,4 @@
-package com.example.moveit.view;
+package com.example.moveit.view.account;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -6,12 +6,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.example.moveit.R;
 import com.example.moveit.model.theme.ThemeSharedPreferences;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.Objects;
 
 public class SetThemeActivity extends AppCompatActivity {

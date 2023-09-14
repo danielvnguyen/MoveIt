@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".model.IntroSlider"
+            android:name=".view.account.IntroSlider"
             android:exported="false"/>
         <activity
             android:name=".view.account.DeleteAccountActivity"
@@ -49,11 +49,11 @@
             android:name=".view.account.ForgotPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".view.SetThemeActivity"
+            android:name=".view.account.SetThemeActivity"
             android:configChanges="uiMode"
             android:exported="false" />
         <activity
-            android:name=".view.HomeActivity"
+            android:name=".view.homepage.HomeActivity"
             android:exported="false" />
         <activity
             android:name=".view.categories.AddCategory"
@@ -80,7 +80,7 @@
             android:name=".view.account.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".view.StartActivity"
+            android:name=".view.account.StartActivity"
             android:configChanges="uiMode"
             android:exported="true"
             android:noHistory="true">
@@ -92,10 +92,10 @@
         </activity>
         <activity
             android:name=".view.entries.AddEntry"
-            android:parentActivityName=".view.HomeActivity"
+            android:parentActivityName=".view.homepage.HomeActivity"
             android:exported="false" />
 
-        <receiver android:name=".reminder.NotificationReceiver" />
+        <receiver android:name=".model.reminder.NotificationReceiver" />
 
         <meta-data
             android:name="preloaded_fonts"

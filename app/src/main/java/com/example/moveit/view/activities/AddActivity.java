@@ -2,7 +2,6 @@ package com.example.moveit.view.activities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +14,7 @@ import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.model.activities.CategoryActivity;
 import com.example.moveit.model.entries.Entry;
-import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.account.GlobalUpdater;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;

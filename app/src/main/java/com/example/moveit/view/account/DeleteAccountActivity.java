@@ -23,7 +23,6 @@ import com.example.moveit.model.activities.CategoryActivity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
-import com.example.moveit.view.StartActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

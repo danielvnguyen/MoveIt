@@ -1,31 +1,22 @@
 package com.example.moveit.view.account;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.TooltipCompat;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Patterns;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.moveit.R;
-import com.example.moveit.model.PasswordValidator;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.moveit.model.account.PasswordValidator;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.Objects;
 
 public class ChangePasswordActivity extends AppCompatActivity {

@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.example.moveit.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.util.Objects;
 
 public class UpdateEmailActivity extends AppCompatActivity {

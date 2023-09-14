@@ -1,4 +1,4 @@
-package com.example.moveit.view.fragments;
+package com.example.moveit.view.homepage;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -28,7 +28,7 @@ import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
 import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
 import com.example.moveit.R;
-import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.account.GlobalUpdater;
 import com.example.moveit.model.theme.ThemeUtils;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.view.entries.DayEntryList;

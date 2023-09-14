@@ -1,7 +1,6 @@
 package com.example.moveit.view.entries;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import com.example.moveit.R;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.entries.EntryComparator;
@@ -18,7 +16,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;

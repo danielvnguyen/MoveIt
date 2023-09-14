@@ -1,4 +1,4 @@
-package com.example.moveit.reminder;
+package com.example.moveit.model.reminder;
 
 public class Reminder {
     private long reminderTime;

@@ -5,14 +5,14 @@ public class CategoryActivity {
     private final String name;
     private final String categoryId;
     private final String activityId;
-    private String note;
+    private final String note;
 
     public CategoryActivity(String name, String categoryId, String activityId, String note){
         this.name = name;
         this.categoryId = categoryId;
         this.activityId = activityId;
         this.note = note;
-    };
+    }
 
     public CategoryActivity() {
         this.name = "";
@@ -35,9 +35,5 @@ public class CategoryActivity {
 
     public String getNote() {
         return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
     }
 }

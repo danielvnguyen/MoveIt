@@ -1,4 +1,4 @@
-package com.example.moveit.model;
+package com.example.moveit.model.account;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

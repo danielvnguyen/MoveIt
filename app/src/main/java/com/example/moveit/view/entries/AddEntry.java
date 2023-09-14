@@ -44,7 +44,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.moveit.R;
-import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.account.GlobalUpdater;
 import com.example.moveit.model.activities.CategoryActivity;
 import com.example.moveit.model.categories.Category;
 import com.example.moveit.model.entries.Entry;
@@ -71,6 +71,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+@SuppressWarnings("ALL")
 @SuppressLint("SimpleDateFormat")
 public class AddEntry extends AppCompatActivity implements
         TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {

@@ -1,4 +1,4 @@
-package com.example.moveit.model;
+package com.example.moveit.model.account;
 
 //Global class used to update fragments in the HomeActivity
 public class GlobalUpdater {

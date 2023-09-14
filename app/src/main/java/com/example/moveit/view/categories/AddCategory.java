@@ -1,22 +1,18 @@
 package com.example.moveit.view.categories;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.example.moveit.R;
 import com.example.moveit.model.categories.Category;
-import com.example.moveit.view.activities.ActivitiesList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-
 import java.util.Objects;
 import java.util.UUID;
 

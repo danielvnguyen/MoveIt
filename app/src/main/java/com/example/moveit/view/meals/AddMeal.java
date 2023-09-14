@@ -18,7 +18,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -29,10 +28,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.example.moveit.R;
-import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.account.GlobalUpdater;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.meals.Meal;
 import com.example.moveit.model.meals.ServingSize;
@@ -52,6 +50,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
+@SuppressWarnings("ALL")
 public class AddMeal extends AppCompatActivity {
 
     private Meal currentMeal;

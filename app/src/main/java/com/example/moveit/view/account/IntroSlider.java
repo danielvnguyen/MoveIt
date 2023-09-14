@@ -1,4 +1,4 @@
-package com.example.moveit.model;
+package com.example.moveit.view.account;
 
 import android.Manifest;
 import android.os.Build;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-
 import com.example.moveit.R;
 import com.example.moveit.model.theme.ThemeUtils;
 import com.github.appintro.AppIntro;

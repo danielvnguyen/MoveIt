@@ -1,4 +1,4 @@
-package com.example.moveit.view.fragments;
+package com.example.moveit.view.homepage;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -15,19 +15,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.example.moveit.R;
 import com.example.moveit.model.entries.Entry;
 import com.example.moveit.model.entries.EntryComparator;
 import com.example.moveit.model.entries.EntryListAdapter;
-import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.account.GlobalUpdater;
 import com.example.moveit.view.entries.AddEntry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,7 +40,6 @@ public class EntriesPage extends Fragment {
     private Calendar currentDate;
     private Calendar realDate;
     private Button nextMonthBtn;
-    private Button previousMonthBtn;
     private TextView dateTextView;
     private Button resetDateBtn;
 
@@ -81,7 +78,7 @@ public class EntriesPage extends Fragment {
 
     private void setUpDateAndPageBtns() {
         nextMonthBtn = requireView().findViewById(R.id.nextMonthBtn);
-        previousMonthBtn = requireView().findViewById(R.id.previousMonthBtn);
+        Button previousMonthBtn = requireView().findViewById(R.id.previousMonthBtn);
         dateTextView = requireView().findViewById(R.id.entryMonthTV);
         nextMonthBtn.setEnabled(false);
         nextMonthBtn.setVisibility(View.INVISIBLE);

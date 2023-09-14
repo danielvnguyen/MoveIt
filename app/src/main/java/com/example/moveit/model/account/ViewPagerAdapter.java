@@ -1,13 +1,12 @@
-package com.example.moveit.model;
+package com.example.moveit.model.account;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-
-import com.example.moveit.view.fragments.CalendarPage;
-import com.example.moveit.view.fragments.EntriesPage;
-import com.example.moveit.view.fragments.SettingsPage;
+import com.example.moveit.view.homepage.CalendarPage;
+import com.example.moveit.view.homepage.EntriesPage;
+import com.example.moveit.view.homepage.SettingsPage;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
@@ -27,7 +26,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
                 return new EntriesPage();
         }
     }
-
 
     @Override
     public int getItemCount() {

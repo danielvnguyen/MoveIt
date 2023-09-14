@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.databinding.ActivityPhotoGalleryBinding;
-import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.account.GlobalUpdater;
 import com.example.moveit.model.gallery.GalleryGridAdapter;
 import com.example.moveit.model.gallery.ImageData;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -245,7 +245,7 @@ public class PhotoGalleryActivity extends AppCompatActivity {
             public void onClick(View view) {
                 isDefaultSort = !isDefaultSort;
                 if (isDefaultSort) {
-                    sortByBtn.setText("Sort By: Newest");               
+                    sortByBtn.setText("Sort By: Newest");
                 } else {
                     sortByBtn.setText("Sort By: Oldest");
                 }

@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.example.moveit.model.PasswordValidator;
+import com.example.moveit.model.account.PasswordValidator;
 
 public class PasswordValidatorTest {
     PasswordValidator passwordValidator;

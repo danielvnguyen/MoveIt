@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:configChanges="uiMode"
-    tools:context=".view.SetThemeActivity">
+    tools:context=".view.account.SetThemeActivity">
 
     <TextView
         android:id="@+id/currentThemeText"

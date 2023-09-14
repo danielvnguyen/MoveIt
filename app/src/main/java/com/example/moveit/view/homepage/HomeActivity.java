@@ -1,4 +1,4 @@
-package com.example.moveit.view;
+package com.example.moveit.view.homepage;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
@@ -7,10 +7,10 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import com.example.moveit.R;
-import com.example.moveit.model.IntroSlider;
-import com.example.moveit.reminder.NotificationReceiver;
-import com.example.moveit.model.ViewPagerAdapter;
-import com.example.moveit.reminder.Reminder;
+import com.example.moveit.model.reminder.NotificationReceiver;
+import com.example.moveit.model.account.ViewPagerAdapter;
+import com.example.moveit.model.reminder.Reminder;
+import com.example.moveit.view.account.IntroSlider;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

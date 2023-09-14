@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.moveit.R;
-import com.example.moveit.model.GlobalUpdater;
+import com.example.moveit.model.account.GlobalUpdater;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;

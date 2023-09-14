@@ -1,7 +1,6 @@
 package com.example.moveit.view.meals;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import com.example.moveit.R;
 import com.example.moveit.model.meals.Meal;
 import com.example.moveit.model.meals.MealListAdapter;
@@ -22,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
 import java.util.Objects;
 

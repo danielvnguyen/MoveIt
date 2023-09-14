@@ -1,7 +1,6 @@
-package com.example.moveit.reminder;
+package com.example.moveit.model.reminder;
 
 import static android.content.Context.ALARM_SERVICE;
-
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -12,12 +11,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-
 import androidx.appcompat.app.AppCompatDelegate;
-
 import com.example.moveit.R;
 import com.example.moveit.model.theme.ThemeSharedPreferences;
-import com.example.moveit.view.account.LoginActivity;
 import com.example.moveit.view.entries.AddEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

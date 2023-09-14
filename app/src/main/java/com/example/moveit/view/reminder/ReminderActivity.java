@@ -1,7 +1,7 @@
 package com.example.moveit.view.reminder;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
@@ -15,8 +15,8 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import com.example.moveit.R;
-import com.example.moveit.reminder.NotificationReceiver;
-import com.example.moveit.reminder.Reminder;
+import com.example.moveit.model.reminder.NotificationReceiver;
+import com.example.moveit.model.reminder.Reminder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,6 +39,7 @@ public class ReminderActivity extends AppCompatActivity implements TimePickerDia
 
     private int selectedHour;
     private int selectedMinute;
+    @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.moveit.view.fragments;
+package com.example.moveit.view.homepage;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,11 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 import com.example.moveit.R;
-import com.example.moveit.model.IntroSlider;
+import com.example.moveit.view.account.IntroSlider;
 import com.example.moveit.view.categories.CategoriesList;
 import com.example.moveit.view.photoGallery.PhotoGalleryActivity;
-import com.example.moveit.view.SetThemeActivity;
-import com.example.moveit.view.StartActivity;
+import com.example.moveit.view.account.SetThemeActivity;
+import com.example.moveit.view.account.StartActivity;
 import com.example.moveit.view.account.AccountSettingsActivity;
 import com.example.moveit.view.meals.MealList;
 import com.example.moveit.view.reminder.ReminderActivity;
