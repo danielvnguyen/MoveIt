@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
+    id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 android {
@@ -51,4 +52,5 @@ dependencies {
     implementation 'com.applandeo:material-calendar-view:1.7.0'
     implementation 'com.github.AppIntro:AppIntro:6.2.0'
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 }

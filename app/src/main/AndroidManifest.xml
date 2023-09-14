@@ -31,9 +31,6 @@
             android:name=".view.entries.DayEntryList"
             android:exported="false" />
         <activity
-            android:name=".view.AttributionsActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.photoGallery.ViewPhotoActivity"
             android:exported="false" />
         <activity

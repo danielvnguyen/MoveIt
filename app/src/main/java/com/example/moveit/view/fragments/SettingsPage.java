@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.example.moveit.R;
 import com.example.moveit.model.IntroSlider;
-import com.example.moveit.view.AttributionsActivity;
 import com.example.moveit.view.categories.CategoriesList;
 import com.example.moveit.view.photoGallery.PhotoGalleryActivity;
 import com.example.moveit.view.SetThemeActivity;
@@ -24,6 +23,7 @@ import com.example.moveit.view.reminder.ReminderActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsPage extends Fragment {
@@ -74,8 +74,8 @@ public class SettingsPage extends Fragment {
             startActivity(intent);
         });
         attributionsBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AttributionsActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
+            OssLicensesMenuActivity.setActivityTitle(getString(R.string.attributions));
         });
         editReminderBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ReminderActivity.class);
