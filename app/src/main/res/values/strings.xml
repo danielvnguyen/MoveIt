@@ -29,7 +29,6 @@
     <string name="photo_gallery">Photo Gallery</string>
     <string name="reminder_time">Set Reminder Time</string>
     <string name="select_theme">Change Theme</string>
-    <string name="about">About</string>
     <string name="search">Search…</string>
     <string name="register_title">Create Account</string>
     <string name="login_title">Login</string>
@@ -57,15 +56,7 @@
     <string name="photo_gallery_title">Your Photo Gallery</string>
     <string name="view_photo_title">Viewing a Photo</string>
     <string name="date_time"><![CDATA[Date & Time]]></string>
-    <string name="about_description">MoveIt! is a Fitness Tracker Android app built to motivate users to stay fit, allowing users to create daily entries to reflect on their day, save custom meals and activities, and view their progress in a quick and easy way</string>
-    <string name="author_info">I initially developed MoveIt! as a way to motivate my friends, family, and me to get into shape, allowing us to get into the routine of tracking our everyday progress, calorie intake, activities done, and overall mood for the day</string>
-    <string name="socials_text">Feel free to check out my socials!</string>
-    <string name="current_app_version">Current App Version:</string>
     <string name="attributions">Attributions</string>
-    <string name="contact_support">Contact Support</string>
-    <string name="view_change_log">View Change Log</string>
-    <string name="linked_in_url">https://www.linkedin.com/in/daniel-v-nguyen/</string>
-    <string name="github_url">https://github.com/danielvnguyen</string>
     <string name="category_name">Category Name</string>
     <string name="add_category_title">Adding New Category</string>
     <string name="no_activities">You have no activities in this category</string>
@@ -131,4 +122,8 @@
     <string name="or">OR</string>
     <string name="authentication_prompt">To verify, please…</string>
     <string name="reset_calendar">Reset Calendar</string>
+    <string name="illustrations">Illustrations</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="illustration_attributions">Illustration Attributions</string>
+    <string name="reset_prompt">Enter your email to reset your password</string>
 </resources>

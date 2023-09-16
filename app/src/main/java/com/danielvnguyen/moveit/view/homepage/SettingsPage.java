@@ -23,7 +23,6 @@ import com.danielvnguyen.moveit.view.reminder.ReminderActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsPage extends Fragment {
@@ -74,8 +73,8 @@ public class SettingsPage extends Fragment {
             startActivity(intent);
         });
         attributionsBtn.setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
-            OssLicensesMenuActivity.setActivityTitle(getString(R.string.attributions));
+            Intent intent = new Intent(getActivity(), AttributionsActivity.class);
+            startActivity(intent);
         });
         editReminderBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ReminderActivity.class);
