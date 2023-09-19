@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:446715183529:android:b5c9eed903482459cd04b8",
+        "mobilesdk_app_id": "1:446715183529:android:eb1588625771cc57cd04b8",
         "android_client_info": {
           "package_name": "com.danielvnguyen.moveit"
         }
       },
       "oauth_client": [
         {
-          "client_id": "446715183529-j7oecpr1r51sn8m282rrpmumqbfg936f.apps.googleusercontent.com",
+          "client_id": "446715183529-4j2mc7o3kbo98nrhkk9g9d2lcla1k5k1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.danielvnguyen.moveit",
-            "certificate_hash": "983d970c62684cd4edc83a14413ec7899d60d346"
+            "certificate_hash": "d7bf4537acd231036c1b3db97e890918b9f9663e"
           }
         },
         {
