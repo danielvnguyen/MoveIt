@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.moveit">
+    package="com.danielvnguyen.moveit">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
@@ -19,11 +19,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
-            android:name=".model.IntroSlider"
-            android:exported="false"/>
+            android:name=".view.homepage.IllustrationsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.homepage.AttributionsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.account.IntroSlider"
+            android:exported="false" />
         <activity
             android:name=".view.account.DeleteAccountActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".view.reminder.ReminderActivity"
             android:exported="false" />
@@ -49,11 +55,11 @@
             android:name=".view.account.ForgotPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".view.SetThemeActivity"
+            android:name=".view.account.SetThemeActivity"
             android:configChanges="uiMode"
             android:exported="false" />
         <activity
-            android:name=".view.HomeActivity"
+            android:name=".view.homepage.HomeActivity"
             android:exported="false" />
         <activity
             android:name=".view.categories.AddCategory"
@@ -80,7 +86,7 @@
             android:name=".view.account.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".view.StartActivity"
+            android:name=".view.account.StartActivity"
             android:configChanges="uiMode"
             android:exported="true"
             android:noHistory="true">
@@ -92,10 +98,10 @@
         </activity>
         <activity
             android:name=".view.entries.AddEntry"
-            android:parentActivityName=".view.HomeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".view.homepage.HomeActivity" />
 
-        <receiver android:name=".reminder.NotificationReceiver" />
+        <receiver android:name=".model.reminder.NotificationReceiver" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -103,7 +109,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.android.fileprovider"
+            android:authorities="com.danielvnguyen.android.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

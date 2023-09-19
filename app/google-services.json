@@ -7,14 +7,22 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:446715183529:android:cdb9068cfaf7046bcd04b8",
+        "mobilesdk_app_id": "1:446715183529:android:b5c9eed903482459cd04b8",
         "android_client_info": {
-          "package_name": "com.example.moveit"
+          "package_name": "com.danielvnguyen.moveit"
         }
       },
       "oauth_client": [
         {
-          "client_id": "446715183529-ucspush1pj4sqs89s71ipeeoooq476e5.apps.googleusercontent.com",
+          "client_id": "446715183529-j7oecpr1r51sn8m282rrpmumqbfg936f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.danielvnguyen.moveit",
+            "certificate_hash": "983d970c62684cd4edc83a14413ec7899d60d346"
+          }
+        },
+        {
+          "client_id": "446715183529-oc50ki8eegl865k3ouq25ck4l2spnqic.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +35,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "446715183529-ucspush1pj4sqs89s71ipeeoooq476e5.apps.googleusercontent.com",
+              "client_id": "446715183529-oc50ki8eegl865k3ouq25ck4l2spnqic.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
