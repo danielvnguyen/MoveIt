@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Random;
 
 /*
     This class is needed for background processes corresponding to notifications
@@ -29,6 +30,17 @@ public class NotificationReceiver extends BroadcastReceiver {
     private static final String NOTIFICATION_CHANNEL_ID = "10001";
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
+    private final String[] reminderMessages = {
+            "Reflect on your daily habits for a healthier, happier you! Share your wellness journey.",
+            "Small changes lead to big results. Jot down your healthy choices and wins today!",
+            "Nourish your mind, body, and soul. Document your healthy choices in your journal.",
+            "Wellness is a daily commitment. Record how today's choices contribute to your health!",
+            "Your wellness story matters. Reflect on today's healthy habits and discoveries.",
+            "Every healthy choice counts. Share your journey toward a balanced lifestyle!",
+            "Discover the power of mindfulness in your wellness journey. Reflect on today's steps.",
+            "Celebrate progress, no matter how small. Share your healthy lifestyle wins!",
+            "Building healthy habits one day at a time. What positive changes did you make today?",
+            "Embrace a vibrant life through reflection. Record your steps toward a healthier you!"};
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -48,7 +60,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         Notification.Builder builder = new Notification.Builder(context);
         Notification notification = builder.setContentTitle("Daily Entry Reminder")
-                .setContentText("How was your day?")
+                .setContentText(reminderMessages[new Random().nextInt(reminderMessages.length)])
                 .setSmallIcon(R.drawable.app_icon)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent).build();
