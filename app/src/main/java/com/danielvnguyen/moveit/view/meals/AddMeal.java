@@ -499,19 +499,17 @@ public class AddMeal extends AppCompatActivity {
 
     private void startCameraIntent() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-            File imageFile = null;
-            try {
-                imageFile = createImageFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            if (imageFile != null) {
-                Uri imageUri = FileProvider.getUriForFile(this,
-                        "com.danielvnguyen.android.fileprovider", imageFile);
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
-            }
+        File imageFile = null;
+        try {
+            imageFile = createImageFile();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        if (imageFile != null) {
+            Uri imageUri = FileProvider.getUriForFile(this,
+                    "com.danielvnguyen.android.fileprovider", imageFile);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
         }
     }
 
