@@ -10,24 +10,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-
 import com.danielvnguyen.moveit.R;
 import com.danielvnguyen.moveit.model.entries.Entry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -119,12 +116,10 @@ public class YearlyCalendarActivity extends AppCompatActivity {
     private View createMiniMonthView(int month, List<Entry> entries) {
         Context context = this;
 
-        // Root layout for a month cell
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(8, 8, 8, 8);
 
-        // Layout params to ensure grid cell fits screen evenly
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
         params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
@@ -138,43 +133,108 @@ public class YearlyCalendarActivity extends AppCompatActivity {
 
         GridLayout monthGrid = new GridLayout(context);
         monthGrid.setColumnCount(7);
+        monthGrid.setRowCount(7);
+
+        // Add header row with day initials
+        String[] dayInitials = {"S", "M", "T", "W", "T", "F", "S"};
+        for (String day : dayInitials) {
+            TextView dayHeader = new TextView(context);
+            dayHeader.setText(day);
+            dayHeader.setTextSize(12);
+            dayHeader.setGravity(Gravity.CENTER);
+            dayHeader.setPadding(4, 4, 4, 4);
+
+            GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+            lp.width = 0;
+            lp.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+            lp.height = dpToPx(context, 24);
+            dayHeader.setLayoutParams(lp);
+
+            monthGrid.addView(dayHeader);
+        }
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, month);
         cal.set(Calendar.DAY_OF_MONTH, 1);
-        int firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+        int firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // Sunday = 1
         int daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        // Empty spaces before the first day
+        int totalCells = 0;
+
+        // Empty cells before first day (offset from Sunday = 1)
         for (int i = 1; i < firstDayOfWeek; i++) {
-            TextView empty = new TextView(context);
-            empty.setText(" ");
-            monthGrid.addView(empty);
+            monthGrid.addView(createFixedDayCell(context, "", false));
+            totalCells++;
         }
 
+        // Day cells
         for (int day = 1; day <= daysInMonth; day++) {
-            TextView dayView = new TextView(context);
-            dayView.setText(String.valueOf(day));
-            dayView.setTextSize(12);
-            dayView.setPadding(2, 2, 2, 2);
-            dayView.setGravity(Gravity.CENTER);
+            boolean hasEntry = false;
+            Drawable moodIcon = null;
 
             for (Entry entry : entries) {
                 Calendar entryDate = Calendar.getInstance();
                 entryDate.setTimeInMillis(entry.getDateTime());
                 if (entryDate.get(Calendar.DAY_OF_MONTH) == day) {
-                    Drawable moodIcon = getMoodIconDrawable(entry.getMood());
-                    moodIcon.setBounds(0, 0, 48, 48);
-                    dayView.setCompoundDrawables(null, moodIcon, null, null);
+                    moodIcon = getMoodIconDrawable(entry.getMood());
+                    hasEntry = true;
                     break;
                 }
             }
 
-            monthGrid.addView(dayView);
+            monthGrid.addView(createFixedDayCell(context, String.valueOf(day), hasEntry, moodIcon));
+            totalCells++;
+        }
+
+        // Fill remaining blank cells to make 6 full rows of days (6 * 7 = 42 cells)
+        while (totalCells < 42) {
+            monthGrid.addView(createFixedDayCell(context, "", false));
+            totalCells++;
         }
 
         layout.addView(monthGrid);
         return layout;
+    }
+
+    private View createFixedDayCell(Context context, String text, boolean hasEntry) {
+        return createFixedDayCell(context, text, hasEntry, null);
+    }
+
+    private View createFixedDayCell(Context context, String text, boolean hasEntry, @Nullable Drawable moodIcon) {
+        LinearLayout cellLayout = new LinearLayout(context);
+        cellLayout.setOrientation(LinearLayout.VERTICAL);
+        cellLayout.setGravity(Gravity.CENTER);
+        cellLayout.setPadding(4, 4, 4, 4);
+
+        GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+        lp.width = 0;
+        lp.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+        lp.height = dpToPx(context, 48);  // fixed height in dp
+        cellLayout.setLayoutParams(lp);
+
+        TextView dayNumber = new TextView(context);
+        dayNumber.setText(text);
+        dayNumber.setTextSize(12);
+        dayNumber.setGravity(Gravity.CENTER);
+
+        cellLayout.addView(dayNumber);
+
+        if (hasEntry && moodIcon != null) {
+            ImageView moodView = new ImageView(context);
+            moodView.setImageDrawable(moodIcon);
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dpToPx(context, 16), dpToPx(context, 16));
+            iconParams.topMargin = dpToPx(context, 2);
+            moodView.setLayoutParams(iconParams);
+            cellLayout.addView(moodView);
+        }
+
+        return cellLayout;
+    }
+
+    private int dpToPx(Context context, int dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 
     private Drawable getMoodIconDrawable(String mood) {
