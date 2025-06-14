@@ -1,5 +1,6 @@
 package com.danielvnguyen.moveit.view.timer;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
@@ -22,6 +24,9 @@ public class StopwatchFragment extends Fragment {
     private TextView stopwatchDisplay;
     private Button startBtn, stopBtn, lapBtn, resetBtn, resumeBtn;
     private ListView lapListView;
+
+    private LinearLayout activeButtonsLayout;
+    private LinearLayout pausedButtonsLayout;
 
     private long startTime = 0L;
     private long timeBuffer = 0L;
@@ -46,6 +51,9 @@ public class StopwatchFragment extends Fragment {
         resumeBtn = view.findViewById(R.id.resumeBtn);
         lapListView = view.findViewById(R.id.lapListView);
 
+        activeButtonsLayout = view.findViewById(R.id.activeButtons);
+        pausedButtonsLayout = view.findViewById(R.id.pausedButtons);
+
         lapAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, lapTimes);
         lapListView.setAdapter(lapAdapter);
 
@@ -57,7 +65,6 @@ public class StopwatchFragment extends Fragment {
                 int minutes = (int) (timeElapsed / 60000);
                 int seconds = (int) (timeElapsed % 60000) / 1000;
                 int milliseconds = (int) (timeElapsed % 1000);
-
                 String time = String.format(Locale.getDefault(), "%02d:%02d:%02d", minutes, seconds, milliseconds / 10);
                 stopwatchDisplay.setText(time);
                 handler.postDelayed(this, 10);
@@ -70,6 +77,8 @@ public class StopwatchFragment extends Fragment {
         resumeBtn.setOnClickListener(v -> resumeStopwatch());
         resetBtn.setOnClickListener(v -> resetStopwatch());
 
+        resetStopwatch();
+
         return view;
     }
 
@@ -77,6 +86,9 @@ public class StopwatchFragment extends Fragment {
         startTime = SystemClock.elapsedRealtime();
         handler.post(runnable);
         isRunning = true;
+
+        activeButtonsLayout.setVisibility(View.VISIBLE);
+        pausedButtonsLayout.setVisibility(View.GONE);
 
         startBtn.setVisibility(View.GONE);
         stopBtn.setVisibility(View.VISIBLE);
@@ -88,10 +100,8 @@ public class StopwatchFragment extends Fragment {
         handler.removeCallbacks(runnable);
         isRunning = false;
 
-        stopBtn.setVisibility(View.GONE);
-        lapBtn.setVisibility(View.GONE);
-        resumeBtn.setVisibility(View.VISIBLE);
-        resetBtn.setVisibility(View.VISIBLE);
+        activeButtonsLayout.setVisibility(View.GONE);
+        pausedButtonsLayout.setVisibility(View.VISIBLE);
     }
 
     private void resumeStopwatch() {
@@ -99,8 +109,10 @@ public class StopwatchFragment extends Fragment {
         handler.post(runnable);
         isRunning = true;
 
-        resumeBtn.setVisibility(View.GONE);
-        resetBtn.setVisibility(View.GONE);
+        activeButtonsLayout.setVisibility(View.VISIBLE);
+        pausedButtonsLayout.setVisibility(View.GONE);
+
+        startBtn.setVisibility(View.GONE);
         stopBtn.setVisibility(View.VISIBLE);
         lapBtn.setVisibility(View.VISIBLE);
     }
@@ -115,11 +127,12 @@ public class StopwatchFragment extends Fragment {
         lapTimes.clear();
         lapAdapter.notifyDataSetChanged();
 
+        activeButtonsLayout.setVisibility(View.VISIBLE);
+        pausedButtonsLayout.setVisibility(View.GONE);
+
         startBtn.setVisibility(View.VISIBLE);
         stopBtn.setVisibility(View.GONE);
         lapBtn.setVisibility(View.GONE);
-        resumeBtn.setVisibility(View.GONE);
-        resetBtn.setVisibility(View.GONE);
     }
 
     private void recordLap() {

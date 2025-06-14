@@ -1,6 +1,7 @@
 package com.danielvnguyen.moveit.view.timer;
 
 import android.app.AlertDialog;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -45,7 +46,6 @@ public class TimerFragment extends Fragment {
 
         pauseBtn.setOnClickListener(v -> pauseTimer());
         resumeBtn.setOnClickListener(v -> resumeTimer());
-
         resetBtn.setOnClickListener(v -> resetTimer());
 
         return view;

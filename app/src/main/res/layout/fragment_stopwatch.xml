@@ -13,56 +13,71 @@
         android:textStyle="bold"
         android:layout_marginBottom="16dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:minWidth="200dp"
+        android:gravity="center" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <Button
-            android:id="@+id/startBtn"
-            android:text="Start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/stopBtn"
-            android:text="Stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/lapBtn"
-            android:text="Lap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:gravity="center"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp">
 
-        <Button
-            android:id="@+id/resumeBtn"
-            android:text="Resume"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/activeButtons"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:visibility="visible">
 
-        <Button
-            android:id="@+id/resetBtn"
-            android:text="Reset"
-            android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/startBtn"
+                android:text="Start"
+                android:layout_marginHorizontal="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/stopBtn"
+                android:text="Stop"
+                android:layout_marginHorizontal="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/lapBtn"
+                android:text="Lap"
+                android:layout_marginHorizontal="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pausedButtons"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone" />
-    </LinearLayout>
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/resumeBtn"
+                android:text="Resume"
+                android:layout_marginHorizontal="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/resetBtn"
+                android:text="Reset"
+                android:layout_marginHorizontal="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </FrameLayout>
 
     <ListView
         android:id="@+id/lapListView"
