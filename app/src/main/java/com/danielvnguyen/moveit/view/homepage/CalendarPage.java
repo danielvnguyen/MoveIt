@@ -32,6 +32,7 @@ import com.danielvnguyen.moveit.model.account.GlobalUpdater;
 import com.danielvnguyen.moveit.model.theme.ThemeUtils;
 import com.danielvnguyen.moveit.model.entries.Entry;
 import com.danielvnguyen.moveit.view.entries.DayEntryList;
+import com.danielvnguyen.moveit.view.yearlyView.YearlyCalendarActivity;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -55,6 +56,7 @@ public class CalendarPage extends Fragment {
     private Calendar calendar;
     private Calendar realDate;
     private Button resetCalendarBtn;
+    private Button yearlyViewBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,6 +89,15 @@ public class CalendarPage extends Fragment {
 
         setUpInterface();
         setUpResetCalendarBtn();
+        setUpYearlyViewBtn();
+    }
+
+    private void setUpYearlyViewBtn() {
+        yearlyViewBtn = requireView().findViewById(R.id.yearlyViewBtn);
+        yearlyViewBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), YearlyCalendarActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void setUpEntryStreak(ArrayList<Entry> allEntries) {

@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MoveIt">
         <activity
+            android:name=".view.yearlyView.YearlyCalendarActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.timer.TimerActivity"
             android:exported="false" />
         <activity

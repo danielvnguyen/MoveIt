@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/stopwatchLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -35,6 +36,8 @@
                 android:id="@+id/startBtn"
                 android:text="Start"
                 android:layout_marginHorizontal="8dp"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -42,6 +45,8 @@
                 android:id="@+id/stopBtn"
                 android:text="Stop"
                 android:layout_marginHorizontal="8dp"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
@@ -50,6 +55,8 @@
                 android:id="@+id/lapBtn"
                 android:text="Lap"
                 android:layout_marginHorizontal="8dp"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
@@ -67,6 +74,8 @@
                 android:id="@+id/resumeBtn"
                 android:text="Resume"
                 android:layout_marginHorizontal="8dp"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -74,6 +83,8 @@
                 android:id="@+id/resetBtn"
                 android:text="Reset"
                 android:layout_marginHorizontal="8dp"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
