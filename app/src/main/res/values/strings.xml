@@ -27,6 +27,9 @@
     <string name="edit_meal_title">Editing Meal</string>
     <string name="activity_list_title">Your Activity Categories</string>
     <string name="photo_gallery">Photo Gallery</string>
+    <string name="timer_btn">Timer / Stopwatch</string>
+    <string name="timer">Timer</string>
+    <string name="stopwatch">Stopwatch</string>
     <string name="reminder_time">Set Reminder Time</string>
     <string name="select_theme">Change Theme</string>
     <string name="search">Search…</string>
@@ -127,4 +130,9 @@
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="illustration_attributions">Illustration Attributions</string>
     <string name="reset_prompt">Enter your email to reset your password</string>
+    <string name="title_activity_timer">TimerActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

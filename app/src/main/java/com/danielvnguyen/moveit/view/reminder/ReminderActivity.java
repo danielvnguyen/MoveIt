@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.danielvnguyen.moveit.R;
 import com.danielvnguyen.moveit.model.reminder.NotificationReceiver;
 import com.danielvnguyen.moveit.model.reminder.Reminder;
-import com.danielvnguyen.moveit.view.homepage.HomeActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;

@@ -7,13 +7,11 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
-
 import com.danielvnguyen.moveit.R;
 import com.danielvnguyen.moveit.model.reminder.NotificationReceiver;
 import com.danielvnguyen.moveit.model.account.ViewPagerAdapter;
 import com.danielvnguyen.moveit.model.reminder.Reminder;
 import com.danielvnguyen.moveit.view.account.IntroSlider;
-import com.danielvnguyen.moveit.view.reminder.ReminderActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
