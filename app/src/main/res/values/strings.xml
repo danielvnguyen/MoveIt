@@ -27,6 +27,9 @@
     <string name="edit_meal_title">Editing Meal</string>
     <string name="activity_list_title">Your Activity Categories</string>
     <string name="photo_gallery">Photo Gallery</string>
+    <string name="timer_btn">Timer / Stopwatch</string>
+    <string name="timer">Timer</string>
+    <string name="stopwatch">Stopwatch</string>
     <string name="reminder_time">Set Reminder Time</string>
     <string name="select_theme">Change Theme</string>
     <string name="search">Search…</string>
@@ -115,6 +118,7 @@
     <string name="slide_three_text">In the Calendar tab, you can see a monthly view of your entries, along with your entry streak and mood count. Clicking on a day will pull up the entries made that day</string>
     <string name="slide_four_text"><![CDATA[In the Settings tab, you can access your saved meals & activities, photos, reminder time, account settings, color theme, and other information]]></string>
     <string name="slide_five_text">If you ever need to refer back to this guide, simply visit the Settings tab. May your experience with MoveIt! be enjoyable!</string>
+    <string name="schedule_alarm_permission">To send you daily motivational reminders, we need permission to schedule exact alarms. Please allow permission in your system settings page. </string>
     <string name="see_guide">See Guide</string>
     <string name="sort_by">Sort By: Newest</string>
     <string name="activity_note_hint">Keep related information to this activity, such as your personal record</string>
@@ -126,4 +130,9 @@
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="illustration_attributions">Illustration Attributions</string>
     <string name="reset_prompt">Enter your email to reset your password</string>
+    <string name="title_activity_timer">TimerActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -39,6 +39,16 @@
                 android:text="@string/meals" />
 
             <Button
+                android:id="@+id/timerBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:drawableLeft="@drawable/timer_icon"
+                app:strokeColor="@color/dark_green"
+                app:strokeWidth="2dp"
+                android:text="@string/timer_btn" />
+
+            <Button
                 android:id="@+id/photoGalleryBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

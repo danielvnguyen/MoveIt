@@ -20,6 +20,7 @@ import com.danielvnguyen.moveit.view.account.StartActivity;
 import com.danielvnguyen.moveit.view.account.AccountSettingsActivity;
 import com.danielvnguyen.moveit.view.meals.MealList;
 import com.danielvnguyen.moveit.view.reminder.ReminderActivity;
+import com.danielvnguyen.moveit.view.timer.TimerActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -51,6 +52,7 @@ public class SettingsPage extends Fragment {
         Button editReminderBtn = requireView().findViewById(R.id.editReminderBtn);
         Button accountSettingsBtn = requireView().findViewById(R.id.accountSettingsBtn);
         Button seeGuideBtn = requireView().findViewById(R.id.seeGuideBtn);
+        Button timerBtn = requireView().findViewById(R.id.timerBtn);
 
         editActivitiesBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CategoriesList.class);
@@ -66,6 +68,10 @@ public class SettingsPage extends Fragment {
         });
         accountSettingsBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), AccountSettingsActivity.class);
+            startActivity(intent);
+        });
+        timerBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), TimerActivity.class);
             startActivity(intent);
         });
         photoGalleryBtn.setOnClickListener(v -> {

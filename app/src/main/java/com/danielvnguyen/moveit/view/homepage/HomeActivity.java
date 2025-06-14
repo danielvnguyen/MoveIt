@@ -6,6 +6,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 import com.danielvnguyen.moveit.R;
 import com.danielvnguyen.moveit.model.reminder.NotificationReceiver;
 import com.danielvnguyen.moveit.model.account.ViewPagerAdapter;
@@ -67,8 +68,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        setUpAlarm();
-
         //Show introduction slide show if new user
         boolean seenSlideshow = getSharedPreferences("PREFS", MODE_PRIVATE).getBoolean(currentUser.getUid() + ".seenSlideshow", false);
         if (!seenSlideshow) {
@@ -76,9 +75,22 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(i);
             getSharedPreferences("PREFS", MODE_PRIVATE).edit().putBoolean(currentUser.getUid()+".seenSlideshow", true).apply();
         }
+
+        setUpAlarm();
     }
 
     private void setUpAlarm() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                // Redirect to system settings to ask user for permission
+                Toast.makeText(HomeActivity.this, "Please allow permission for MoveIt!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                startActivity(intent);
+                return;
+            }
+        }
+
         Calendar calendar = Calendar.getInstance();
         db.collection("reminders").document(currentUser.getUid())
                 .collection("reminderTime").get().addOnCompleteListener(task -> {
@@ -96,7 +108,7 @@ public class HomeActivity extends AppCompatActivity {
                             calendar.set(Calendar.MINUTE, c.get(Calendar.MINUTE));
                             calendar.set(Calendar.SECOND, c.get(Calendar.SECOND));
                         }
-                        //Check if a reminder has passed, instantiate a new one.
+
                         if (calendar.getTime().compareTo(new Date()) < 0) {
                             calendar.add(Calendar.DAY_OF_MONTH, 1);
                         }
