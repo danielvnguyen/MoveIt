@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.danielvnguyen.moveit.R;
 import com.danielvnguyen.moveit.model.reminder.NotificationReceiver;
 import com.danielvnguyen.moveit.model.reminder.Reminder;
+import com.danielvnguyen.moveit.view.homepage.HomeActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -125,6 +126,17 @@ public class ReminderActivity extends AppCompatActivity implements TimePickerDia
     }
 
     private void setUpAlarm(Reminder currentTime) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if (alarmManager != null && !alarmManager.canScheduleExactAlarms()) {
+                // Redirect to system settings to ask user for permission
+                Toast.makeText(ReminderActivity.this, "Please allow permission for MoveIt!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                startActivity(intent);
+                return;
+            }
+        }
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(currentTime.getReminderTime());
 

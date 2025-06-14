@@ -35,6 +35,8 @@ public class IntroSlider extends AppIntro {
                 R.drawable.slide_4, backgroundColour, textColour, textColour, fontFamily, fontFamily));
         addSlide(AppIntroFragment.createInstance("Thanks for reading!", getString(R.string.slide_five_text),
                 R.drawable.amazing_icon_slide, backgroundColour, textColour, textColour, fontFamily, fontFamily));
+        addSlide(AppIntroFragment.createInstance("Enable Daily Reminders", getString(R.string.schedule_alarm_permission),
+                R.drawable.alarm_permission, backgroundColour, textColour, textColour, fontFamily, fontFamily));
 
         String[] permissions = {
                 Manifest.permission.READ_MEDIA_IMAGES,
