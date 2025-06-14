@@ -1,6 +1,5 @@
 package com.danielvnguyen.moveit.view.timer;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.danielvnguyen.moveit.R;
-
 import java.util.ArrayList;
 import java.util.Locale;
 

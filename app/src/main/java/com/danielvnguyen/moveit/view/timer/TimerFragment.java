@@ -1,29 +1,36 @@
 package com.danielvnguyen.moveit.view.timer;
 
 import android.app.AlertDialog;
-import android.graphics.Typeface;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.NumberPicker;
-import android.widget.TextView;
+import android.widget.*;
 import androidx.fragment.app.Fragment;
 import com.danielvnguyen.moveit.R;
+
 import java.util.Locale;
+import java.util.Map;
 
 public class TimerFragment extends Fragment {
 
     private TextView timerDisplay;
     private Button setTimeBtn, startBtn, pauseBtn, resumeBtn, resetBtn;
+    private Button savePresetBtn, loadPresetBtn, deletePresetBtn;
 
     private CountDownTimer countDownTimer;
     private long totalMillis = 0;
     private long millisLeft = 0;
     private boolean isTimerRunning = false;
+
+    private SharedPreferences prefs;
+    private static final String PREFS_NAME = "timer_presets";
+
+    private MediaPlayer mediaPlayer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,6 +42,11 @@ public class TimerFragment extends Fragment {
         pauseBtn = view.findViewById(R.id.pauseBtn);
         resumeBtn = view.findViewById(R.id.resumeBtn);
         resetBtn = view.findViewById(R.id.resetBtn);
+        savePresetBtn = view.findViewById(R.id.savePresetBtn);
+        loadPresetBtn = view.findViewById(R.id.loadPresetBtn);
+        deletePresetBtn = view.findViewById(R.id.deletePresetBtn);
+
+        prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
         setTimeBtn.setOnClickListener(v -> showTimePickerDialog());
 
@@ -47,6 +59,10 @@ public class TimerFragment extends Fragment {
         pauseBtn.setOnClickListener(v -> pauseTimer());
         resumeBtn.setOnClickListener(v -> resumeTimer());
         resetBtn.setOnClickListener(v -> resetTimer());
+
+        savePresetBtn.setOnClickListener(v -> promptPresetNameToSave());
+        loadPresetBtn.setOnClickListener(v -> showLoadPresetDialog());
+        deletePresetBtn.setOnClickListener(v -> showDeletePresetDialog());
 
         return view;
     }
@@ -103,6 +119,7 @@ public class TimerFragment extends Fragment {
                 isTimerRunning = false;
                 timerDisplay.setText("Done!");
                 toggleButtonsAfterFinish();
+                playAlarmSound();
             }
         }.start();
 
@@ -133,7 +150,6 @@ public class TimerFragment extends Fragment {
         updateDisplay(millisLeft);
         isTimerRunning = false;
 
-        // Show Set Time button, hide Reset and other control buttons
         setTimeBtn.setVisibility(View.VISIBLE);
         resetBtn.setVisibility(View.GONE);
         startBtn.setVisibility(View.VISIBLE);
@@ -151,7 +167,6 @@ public class TimerFragment extends Fragment {
     }
 
     private void toggleButtonsInitialState() {
-        // After time is set but before timer starts
         setTimeBtn.setVisibility(View.VISIBLE);
         resetBtn.setVisibility(View.GONE);
         startBtn.setVisibility(View.VISIBLE);
@@ -160,7 +175,6 @@ public class TimerFragment extends Fragment {
     }
 
     private void toggleButtonsRunningState() {
-        // When timer is running
         setTimeBtn.setVisibility(View.GONE);
         resetBtn.setVisibility(View.VISIBLE);
         startBtn.setVisibility(View.GONE);
@@ -169,12 +183,101 @@ public class TimerFragment extends Fragment {
     }
 
     private void toggleButtonsAfterFinish() {
-        // When timer finishes
         setTimeBtn.setVisibility(View.VISIBLE);
         resetBtn.setVisibility(View.GONE);
         startBtn.setVisibility(View.VISIBLE);
         pauseBtn.setVisibility(View.GONE);
         resumeBtn.setVisibility(View.GONE);
     }
-}
 
+    private void promptPresetNameToSave() {
+        EditText input = new EditText(getContext());
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Save Preset")
+                .setMessage("Enter a name for this preset:")
+                .setView(input)
+                .setPositiveButton("Save", (dialog, which) -> {
+                    String name = input.getText().toString().trim();
+                    if (!name.isEmpty()) {
+                        prefs.edit().putLong(name, totalMillis).apply();
+                        Toast.makeText(getContext(), "Preset saved", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showLoadPresetDialog() {
+        Map<String, ?> allPresets = prefs.getAll();
+        if (allPresets.isEmpty()) {
+            Toast.makeText(getContext(), "No presets saved", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] names = allPresets.keySet().toArray(new String[0]);
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Load Preset")
+                .setItems(names, (dialog, which) -> {
+                    String name = names[which];
+                    totalMillis = prefs.getLong(name, 0);
+                    millisLeft = totalMillis;
+                    updateDisplay(millisLeft);
+                    toggleButtonsInitialState();
+                })
+                .show();
+    }
+
+    private void showDeletePresetDialog() {
+        Map<String, ?> allPresets = prefs.getAll();
+        if (allPresets.isEmpty()) {
+            Toast.makeText(getContext(), "No presets saved", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] names = allPresets.keySet().toArray(new String[0]);
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Delete Preset")
+                .setItems(names, (dialog, which) -> {
+                    String name = names[which];
+                    prefs.edit().remove(name).apply();
+                    Toast.makeText(getContext(), "Deleted preset: " + name, Toast.LENGTH_SHORT).show();
+                })
+                .show();
+    }
+
+    private void playAlarmSound() {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+
+        mediaPlayer = MediaPlayer.create(getContext(), R.raw.timer);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Time's up!")
+                .setMessage("The timer has completed.")
+                .setCancelable(false)
+                .setPositiveButton("Dismiss", (dialog, which) -> {
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+}
