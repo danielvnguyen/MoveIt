@@ -12,6 +12,7 @@ import com.danielvnguyen.moveit.R;
 import com.danielvnguyen.moveit.model.entries.Entry;
 import com.danielvnguyen.moveit.model.entries.EntryComparator;
 import com.danielvnguyen.moveit.model.entries.EntryListAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,6 +26,7 @@ public class DayEntryList extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
     private Calendar currentDate;
+    private FloatingActionButton addEntryBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +43,18 @@ public class DayEntryList extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         assert currentUser != null;
+        addEntryBtn = this.findViewById(R.id.addEntry);
 
+        setUpAddEntryBtn();
         setUpList();
+    }
+
+    private void setUpAddEntryBtn() {
+        addEntryBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AddEntry.class);
+            intent.putExtra("entryDate", currentDate.getTimeInMillis());
+            startActivity(intent);
+        });
     }
 
     private void setUpList() {
