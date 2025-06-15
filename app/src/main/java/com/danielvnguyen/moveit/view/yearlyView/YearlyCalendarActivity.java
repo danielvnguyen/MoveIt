@@ -2,6 +2,11 @@ package com.danielvnguyen.moveit.view.yearlyView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -21,6 +26,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import com.danielvnguyen.moveit.R;
 import com.danielvnguyen.moveit.model.entries.Entry;
+import com.danielvnguyen.moveit.model.theme.ThemeUtils;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,6 +48,7 @@ public class YearlyCalendarActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private GridLayout yearGrid;
     private Spinner yearSpinner;
+    private PieChart yearlyPieChart;
     private int selectedYear;
 
     @Override
@@ -48,6 +59,7 @@ public class YearlyCalendarActivity extends AppCompatActivity {
         setTitle(getString(R.string.yearly_view));
 
         yearGrid = findViewById(R.id.year_grid);
+        yearlyPieChart = findViewById(R.id.yearlyPieChart);
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -85,6 +97,12 @@ public class YearlyCalendarActivity extends AppCompatActivity {
     private void loadYearlyEntries(int year) {
         yearGrid.removeAllViews();
 
+        TextView amazingCountTV = this.findViewById(R.id.amazingMoodCountTV);
+        TextView greatCountTV = this.findViewById(R.id.greatMoodCountTV);
+        TextView goodCountTV = this.findViewById(R.id.goodMoodCountTV);
+        TextView mehCountTV = this.findViewById(R.id.mehMoodCountTV);
+        TextView badCountTV = this.findViewById(R.id.badMoodCountTV);
+
         db.collection("entries")
                 .document(currentUser.getUid())
                 .collection("entryList")
@@ -92,6 +110,10 @@ public class YearlyCalendarActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Map<Integer, List<Entry>> entriesByMonth = new HashMap<>();
+
+                        // Mood counters
+                        int amazingCount = 0, greatCount = 0, goodCount = 0, mehCount = 0, badCount = 0;
+
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Entry entry = doc.toObject(Entry.class);
                             Calendar cal = Calendar.getInstance();
@@ -101,19 +123,94 @@ public class YearlyCalendarActivity extends AppCompatActivity {
 
                             if (entryYear == year) {
                                 entriesByMonth.computeIfAbsent(month, k -> new ArrayList<>()).add(entry);
+
+                                switch (entry.getMood()) {
+                                    case "Amazing":
+                                        amazingCount++;
+                                        break;
+                                    case "Great":
+                                        greatCount++;
+                                        break;
+                                    case "Good":
+                                        goodCount++;
+                                        break;
+                                    case "Meh":
+                                        mehCount++;
+                                        break;
+                                    case "Bad":
+                                        badCount++;
+                                        break;
+                                }
                             }
                         }
 
                         for (int month = 0; month < 12; month++) {
                             List<Entry> monthEntries = entriesByMonth.getOrDefault(month, new ArrayList<>());
-                            View monthView = createMiniMonthView(month, monthEntries);
+                            View monthView = createMiniMonthView(year, month, monthEntries);
                             yearGrid.addView(monthView);
                         }
+
+                        amazingCountTV.setText(String.valueOf(amazingCount));
+                        greatCountTV.setText(String.valueOf(greatCount));
+                        goodCountTV.setText(String.valueOf(goodCount));
+                        mehCountTV.setText(String.valueOf(mehCount));
+                        badCountTV.setText(String.valueOf(badCount));
+                        setUpPieChart(amazingCount, greatCount, goodCount, mehCount, badCount);
                     }
                 });
     }
 
-    private View createMiniMonthView(int month, List<Entry> entries) {
+    private void setUpPieChart(int amazingCount, int greatCount, int goodCount, int mehCount, int badCount) {
+        yearlyPieChart.setRotationAngle(180f);
+        yearlyPieChart.setMaxAngle(180f);
+
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        int total = amazingCount + greatCount + goodCount + mehCount + badCount;
+        if (total == 0) {
+            yearlyPieChart.clear();
+            yearlyPieChart.setCenterText("No Data");
+            yearlyPieChart.invalidate();
+            return;
+        }
+
+        entries.add(new PieEntry((float) amazingCount / total, ""));
+        entries.add(new PieEntry((float) greatCount / total, ""));
+        entries.add(new PieEntry((float) goodCount / total, ""));
+        entries.add(new PieEntry((float) mehCount / total, ""));
+        entries.add(new PieEntry((float) badCount / total, ""));
+
+        PieDataSet dataSet = new PieDataSet(entries, "");
+        dataSet.setColors(
+                ContextCompat.getColor(this, R.color.amazingColour),
+                ContextCompat.getColor(this, R.color.greatColour),
+                ContextCompat.getColor(this, R.color.goodColour),
+                ContextCompat.getColor(this, R.color.mehColour),
+                ContextCompat.getColor(this, R.color.badColour)
+        );
+        PieData data = new PieData(dataSet);
+        data.setDrawValues(false);
+
+        yearlyPieChart.setData(data);
+
+        yearlyPieChart.getDescription().setEnabled(false);
+        yearlyPieChart.setRotationEnabled(false);
+        yearlyPieChart.setDrawEntryLabels(false);
+        yearlyPieChart.setTransparentCircleRadius(1f);
+        yearlyPieChart.setTouchEnabled(false);
+        yearlyPieChart.getLegend().setEnabled(false);
+
+        Typeface ralewayTypeface = getResources().getFont(R.font.raleway);
+        yearlyPieChart.setCenterTextTypeface(ralewayTypeface);
+        yearlyPieChart.setCenterText(String.valueOf(total));
+        yearlyPieChart.setCenterTextSize(35);
+        yearlyPieChart.setCenterTextOffset(0, -25);
+        yearlyPieChart.setCenterTextColor(ThemeUtils.getTextColor(this));
+        yearlyPieChart.setHoleColor(android.graphics.Color.TRANSPARENT);
+
+        yearlyPieChart.invalidate();
+    }
+
+    private View createMiniMonthView(int year, int month, List<Entry> entries) {
         Context context = this;
 
         LinearLayout layout = new LinearLayout(context);
@@ -154,32 +251,38 @@ public class YearlyCalendarActivity extends AppCompatActivity {
         }
 
         Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, month);
         cal.set(Calendar.DAY_OF_MONTH, 1);
 
-        int firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // Sunday = 1
+        int firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         int daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-
         int totalCells = 0;
 
-        // Empty cells before first day (offset from Sunday = 1)
         for (int i = 1; i < firstDayOfWeek; i++) {
             monthGrid.addView(createFixedDayCell(context, "", false));
             totalCells++;
         }
 
-        // Day cells
         for (int day = 1; day <= daysInMonth; day++) {
-            boolean hasEntry = false;
-            Drawable moodIcon = null;
-
+            List<Entry> todaysEntries = new ArrayList<>();
             for (Entry entry : entries) {
                 Calendar entryDate = Calendar.getInstance();
                 entryDate.setTimeInMillis(entry.getDateTime());
                 if (entryDate.get(Calendar.DAY_OF_MONTH) == day) {
-                    moodIcon = getMoodIconDrawable(entry.getMood());
-                    hasEntry = true;
-                    break;
+                    todaysEntries.add(entry);
+                }
+            }
+
+            boolean hasEntry = !todaysEntries.isEmpty();
+            Drawable moodIcon = null;
+
+            if (hasEntry) {
+                todaysEntries.sort((a, b) -> Long.compare(b.getDateTime(), a.getDateTime()));
+                moodIcon = getMoodIconDrawable(todaysEntries.get(0).getMood());
+
+                if (todaysEntries.size() > 1 && moodIcon != null) {
+                    moodIcon = createCountLabel(moodIcon, todaysEntries.size());
                 }
             }
 
@@ -187,7 +290,6 @@ public class YearlyCalendarActivity extends AppCompatActivity {
             totalCells++;
         }
 
-        // Fill remaining blank cells to make 6 full rows of days (6 * 7 = 42 cells)
         while (totalCells < 42) {
             monthGrid.addView(createFixedDayCell(context, "", false));
             totalCells++;
@@ -210,17 +312,15 @@ public class YearlyCalendarActivity extends AppCompatActivity {
         GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
         lp.width = 0;
         lp.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-        lp.height = dpToPx(context, 48);  // fixed height in dp
+        lp.height = dpToPx(context, 48);
         cellLayout.setLayoutParams(lp);
 
         TextView dayNumber = new TextView(context);
         dayNumber.setText(text);
         dayNumber.setTextSize(12);
         dayNumber.setGravity(Gravity.CENTER);
-
         cellLayout.addView(dayNumber);
 
-        // Always add an icon view or a placeholder to keep the height consistent
         ImageView moodView = new ImageView(context);
         LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dpToPx(context, 16), dpToPx(context, 16));
         iconParams.topMargin = dpToPx(context, 2);
@@ -235,11 +335,6 @@ public class YearlyCalendarActivity extends AppCompatActivity {
         cellLayout.addView(moodView);
 
         return cellLayout;
-    }
-
-    private int dpToPx(Context context, int dp) {
-        float density = context.getResources().getDisplayMetrics().density;
-        return Math.round(dp * density);
     }
 
     private Drawable getMoodIconDrawable(String mood) {
@@ -273,6 +368,27 @@ public class YearlyCalendarActivity extends AppCompatActivity {
                 break;
         }
         return wrappedDrawable;
+    }
+
+    private Drawable createCountLabel(Drawable moodDrawable, int count) {
+        int newWidth = moodDrawable.getIntrinsicWidth() + 150;
+
+        Bitmap bitmap = Bitmap.createBitmap(newWidth, moodDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        moodDrawable.setBounds(0, 0, moodDrawable.getIntrinsicWidth(), moodDrawable.getIntrinsicHeight());
+        moodDrawable.draw(canvas);
+
+        Paint paint = new Paint();
+        paint.setColor(ThemeUtils.getTextColor(this));
+        paint.setTextSize(100);
+        canvas.drawText(("+" + (count - 1)), canvas.getWidth() * 0.5f, canvas.getHeight() / 2f, paint);
+
+        return new BitmapDrawable(getResources(), bitmap);
+    }
+
+    private int dpToPx(Context context, int dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 
     @Override
