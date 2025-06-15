@@ -114,10 +114,10 @@
     <string name="days_in_a_row">Days in a Row:</string>
     <string name="of_entries"># of Entries</string>
     <string name="add_today_s_entry">Add today\'s entry!</string>
-    <string name="slide_one_text">MoveIt! is a fitness app for Android that helps users stay fit by allowing them to create daily entries, save custom meals and activities, and track their progress easily</string>
-    <string name="slide_two_text">You can create an entry by pressing the (+) button on the Entries page. After filling out the entry, you can save it by pressing the save button</string>
-    <string name="slide_three_text">In the Calendar tab, you can see a monthly view of your entries, along with your entry streak and mood count. Clicking on a day will pull up the entries made that day</string>
-    <string name="slide_four_text"><![CDATA[In the Settings tab, you can access your saved meals & activities, photos, reminder time, account settings, color theme, and other information]]></string>
+    <string name="slide_one_text">MoveIt! is a fitness app for Android that helps users stay fit by allowing them to create daily entries, save custom meals and activities, and track their progress easily.</string>
+    <string name="slide_two_text">You can create an entry by pressing the (+) button on the Entries page. After filling out the entry, you can save it by pressing the save button.</string>
+    <string name="slide_three_text">The Calendar tab lets you view your entries by month or year, track your entry streak and mood count, and quickly access any day’s entries. Tap a date to view, add, or edit entries for that day.</string>
+    <string name="slide_four_text"><![CDATA[In the Settings tab, you can access your saved meals & activities, timer & stopwatch, photos, reminder time, account settings, color theme, and other information.]]></string>
     <string name="slide_five_text">If you ever need to refer back to this guide, simply visit the Settings tab. May your experience with MoveIt! be enjoyable!</string>
     <string name="schedule_alarm_permission">To send you daily motivational reminders, we need permission to schedule exact alarms. Please allow permission in your system settings page. </string>
     <string name="see_guide">See Guide</string>
