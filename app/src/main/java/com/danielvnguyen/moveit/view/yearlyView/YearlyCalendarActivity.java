@@ -220,14 +220,19 @@ public class YearlyCalendarActivity extends AppCompatActivity {
 
         cellLayout.addView(dayNumber);
 
+        // Always add an icon view or a placeholder to keep the height consistent
+        ImageView moodView = new ImageView(context);
+        LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dpToPx(context, 16), dpToPx(context, 16));
+        iconParams.topMargin = dpToPx(context, 2);
+        moodView.setLayoutParams(iconParams);
+
         if (hasEntry && moodIcon != null) {
-            ImageView moodView = new ImageView(context);
             moodView.setImageDrawable(moodIcon);
-            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dpToPx(context, 16), dpToPx(context, 16));
-            iconParams.topMargin = dpToPx(context, 2);
-            moodView.setLayoutParams(iconParams);
-            cellLayout.addView(moodView);
+            moodView.setVisibility(View.VISIBLE);
+        } else {
+            moodView.setVisibility(View.INVISIBLE);
         }
+        cellLayout.addView(moodView);
 
         return cellLayout;
     }
