@@ -308,7 +308,9 @@ public class AddEntry extends AppCompatActivity implements
         progressDialog.show();
 
         Bundle extras = getIntent().getExtras();
-        if (extras != null) {
+
+        if (extras != null && extras.containsKey("entryId")) {
+            // EDIT MODE
             setTitle(getString(R.string.editing_entry_title));
             deleteEntryBtn.setVisibility(View.VISIBLE);
             editMode = true;
@@ -323,8 +325,8 @@ public class AddEntry extends AppCompatActivity implements
             originalActivities = (HashMap<String, ArrayList<String>>) extras.getSerializable("selectedActivities");
 
             if (!originalEntryImageId.equals("")) {
-                final StorageReference fileRef = FirebaseStorage.getInstance().getReference().child(currentUser.getUid())
-                        .child("uploads").child(originalEntryImageId);
+                final StorageReference fileRef = FirebaseStorage.getInstance().getReference()
+                        .child(currentUser.getUid()).child("uploads").child(originalEntryImageId);
                 fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                     Glide.with(entryImageView.getContext()).load(uri).centerInside().into(entryImageView);
                     entryImageView.setVisibility(View.VISIBLE);
@@ -336,6 +338,7 @@ public class AddEntry extends AppCompatActivity implements
             entryNote.setText(originalEntryNote);
             dateTimeValue = originalDateTime;
             setDateTime(dateTimeValue);
+
             Calendar originalCalendar = Calendar.getInstance();
             originalCalendar.setTimeInMillis(originalDateTime);
             selectedYear = originalCalendar.get(Calendar.YEAR);
@@ -345,11 +348,28 @@ public class AddEntry extends AppCompatActivity implements
             selectedMinute = originalCalendar.get(Calendar.MINUTE);
             selectMood(Objects.requireNonNull(moodButtonsMap.get(originalMood)));
 
-        } else {
+        } else if (extras != null && extras.containsKey("entryDate")) {
+            // NEW ENTRY FOR SPECIFIC DATE (not edit mode)
             setTitle(getString(R.string.add_entry_title));
+            editMode = false;
+            dateTimeValue = extras.getLong("entryDate");
+
+            setDateTime(dateTimeValue);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(dateTimeValue);
+            selectedYear = calendar.get(Calendar.YEAR);
+            selectedMonth = calendar.get(Calendar.MONTH);
+            selectedDay = calendar.get(Calendar.DAY_OF_MONTH);
+
+        } else {
+            // NEW ENTRY FOR CURRENT TIME
+            setTitle(getString(R.string.add_entry_title));
+            editMode = false;
             getCurrentDateTime();
             setDateTime(dateTimeValue);
         }
+
         progressDialog.dismiss();
     }
 

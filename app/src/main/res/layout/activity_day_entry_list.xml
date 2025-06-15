@@ -3,7 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.entries.DayEntryList">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addEntry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            app:srcCompat="@android:drawable/ic_input_add"
+            tools:ignore="ContentDescription" />
 
         <ListView
             android:id="@+id/entriesInDayLV"

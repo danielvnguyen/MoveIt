@@ -1,7 +1,7 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="24dp">
@@ -26,6 +26,8 @@
         <Button
             android:id="@+id/setTimeBtn"
             android:text="Set Time"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp" />
@@ -33,6 +35,8 @@
         <Button
             android:id="@+id/startBtn"
             android:text="Start"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp" />
@@ -40,6 +44,8 @@
         <Button
             android:id="@+id/resetBtn"
             android:text="Reset"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -48,6 +54,8 @@
         <Button
             android:id="@+id/pauseBtn"
             android:text="Pause"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -56,6 +64,8 @@
         <Button
             android:id="@+id/resumeBtn"
             android:text="Resume"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone" />
@@ -70,6 +80,8 @@
         <Button
             android:id="@+id/savePresetBtn"
             android:text="Save"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp" />
@@ -77,6 +89,8 @@
         <Button
             android:id="@+id/loadPresetBtn"
             android:text="Load"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp" />
@@ -84,6 +98,8 @@
         <Button
             android:id="@+id/deletePresetBtn"
             android:text="Delete"
+            app:strokeColor="@color/dark_green"
+            app:strokeWidth="2dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

@@ -28,6 +28,7 @@
     <string name="activity_list_title">Your Activity Categories</string>
     <string name="photo_gallery">Photo Gallery</string>
     <string name="timer_btn">Timer / Stopwatch</string>
+    <string name="yearly_view">Yearly View</string>
     <string name="timer">Timer</string>
     <string name="stopwatch">Stopwatch</string>
     <string name="reminder_time">Set Reminder Time</string>
