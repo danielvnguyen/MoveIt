@@ -25,6 +25,7 @@
         <item name="abbreviationsLabelsColor">@color/white</item>
         <item name="daysLabelsColor">@color/white</item>
         <item name="headerColor">@color/dark_green</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
 
     <style name="MyActionBar" parent="Widget.AppCompat.ActionBar">
