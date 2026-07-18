@@ -61,3 +61,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 }
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'io.grpc' && details.requested.name.contains('okhttp')) {
+            details.useVersion '1.64.0'
+        }
+    }
+}
